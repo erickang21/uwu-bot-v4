@@ -1,5 +1,5 @@
 const Store = require("./Store.js");
-const { OWNER_ID } = require("../utils/constants.js");
+const { DEVS } = require("../utils/constants.js");
 
 class CommandStore extends Store {
   constructor(client) {
@@ -51,7 +51,7 @@ class CommandStore extends Store {
       // Skip disabled commands.
       if (!command.enabled) return false;
       // Skip owner commands.
-      if (command.ownerOnly && msg.author.id !== OWNER_ID) return false;
+      if (command.devOnly && !DEVS.includes(msg.author.id)) return false;
       // Skip guild only commands.
       if (!msg.guild && command.guildOnly) return false;
       // Skip commands that the user does not have permissions to run.
