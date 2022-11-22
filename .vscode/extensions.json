@@ -1,0 +1,7 @@
+{
+	"recommendations": [
+		"eamodio.gitlens",
+		"oderwat.indent-rainbow",
+		"esbenp.prettier-vscode"
+	]
+}

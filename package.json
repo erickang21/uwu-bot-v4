@@ -1,0 +1,25 @@
+{
+	"name": "uwu-bot-v4",
+	"version": "0.1.0",
+	"description": "",
+	"repository": "https://github.com/erickang21/uwu-bot-v4",
+	"main": "dist/index.js",
+	"private": true,
+	"scripts": {
+		"start": "cross-env NODE_ENV=production node .",
+		"build": "tsc",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"engines": {
+		"node": ">=16",
+		"pnpm": ">=3"
+	},
+	"author": "Jack Chakany <jacany@chaker.net>",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^18.11.9",
+		"cross-env": "^7.0.3",
+		"prettier": "^2.7.1",
+		"typescript": "^4.9.3"
+	}
+}
