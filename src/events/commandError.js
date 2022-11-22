@@ -1,6 +1,5 @@
 const Event = require("../structures/Event.js");
-const { random } = require("../utils/utils.js");
-const responses = require("../utils/responses.js");
+const { EMOJIS } = require("../utils/constants.js");
 
 class CommandError extends Event {
   async run(ctx, err) {
@@ -12,15 +11,19 @@ class CommandError extends Event {
 
     this.client.log.error(err);
 
-    if (ctx.owner) {
-      await ctx.reply(random(responses.reloadErr)
-        .replace(/{{command}}/g, ctx.command.name)
-        .replace(/{{user}}/g, ctx.author.username)
-        .replace(/{{response}}/g, err.message || err))
+    if (ctx.dev) {
+      await ctx.reply({
+        embeds: [this.client.embed(ctx.author).setDescription(`${EMOJIS.X} **\`\`${ctx.command.name}\`\` threw an error**` + "\n```js\n" + err + "```")]
+      })
         .catch(() => null);
+      
     } else {
       // TODO(banana): Personalize this response for your bot.
-      await ctx.reply("Something went wrong with the command, whoopsie! I have reportd it to my master, now you are gonna have to wait for it to be fixed, how is that? ｡ﾟ･ (>﹏<) ･ﾟ｡").catch(() => null);
+      // TODO: update support server with constant
+      await ctx.reply({
+        embeds: [this.client.embed(ctx.author).setDescription(`${EMOJIS.X} **Whoops! Running \`\`${ctx.command.name}\`\` went wrong and the issue has been reported. In the meantime you can join my [support server!](https://discord.gg/vCMEmNJ)**`)]
+      })
+        .catch(() => null);
     }
 
     const channel = this.client.channels.cache.get("513368885144190986");
