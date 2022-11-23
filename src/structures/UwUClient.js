@@ -10,7 +10,8 @@ class UwUClient extends Client {
       intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.DirectMessages
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.MessageContent
       ],
       allowedMentions: { parse: ["users"] },
       partials: [Partials.Channel]

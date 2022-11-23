@@ -1,7 +1,9 @@
 const Event = require("../structures/Event.js");
 const CommandContext = require("../structures/CommandContext.js");
 const { distance } = require("fastest-levenshtein");
+const { escapeRegex } = require("../utils/utils.js");
 
+// eslint-disable-next-line quotes
 const quotes = ['"', "'", '“”', '‘’'];
 const flagRegex = new RegExp(`(?:--|—)(\\w[\\w-]+)(?:=(?:${quotes.map((qu) => `[${qu}]((?:[^${qu}\\\\]|\\\\.)*)[${qu}]`).join("|")}|([\\w<>@#&!-]+)))?`, "g");
 const delim = new RegExp("(\\s)(?:\\s)+");
@@ -24,15 +26,14 @@ class MessageCreate extends Event {
 
     const { user } = this.client;
 
-    let rawContent = message.content;
-    let prefixLength = 0;
-    const regex = new RegExp(`<@!?${user.id}>${!message.guild ? "|" : ""}`);
+    const prefix = "uwu"; // TODO: this will need to use database later.
+    const regex = new RegExp(`^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`);
     const match = message.content.match(regex);
 
-    if (match) {
-      prefixLength = match[0].length;
-      rawContent = message.content.slice(prefixLength).trim();
-    }
+    if (!match) return;
+
+    const prefixLength = match[0].length;
+    const rawContent = message.content.slice(prefixLength).trim();
 
     // A mention only.
     if (!rawContent) {
