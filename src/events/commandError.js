@@ -26,17 +26,25 @@ class CommandError extends Event {
         .catch(() => null);
     }
 
-    const channel = this.client.channels.cache.get("513368885144190986");
-    if (!channel) return;
+    const report = (client) => {
+      const channel = client.channels.cache.get("513368885144190986");
+      if (!channel) return;
 
-    const embed = this.client.embed(ctx.author)
-      .setTitle("Command Error")
-      .setDescription(`An Error occured in command: ${ctx.command.name}\n\`\`\`js\n${err.stack || err}\`\`\``)
-      .setFooter({
-        text: `User ID: ${ctx.author.id}, Guild: ${ctx.guild ? ctx.guild.name : "DM"}`
-      });
+      const embed = client.embed(ctx.author)
+        .setTitle("Command Error")
+        .setDescription(`An Error occured in command: ${ctx.command.name}\n\`\`\`js\n${err.stack || err}\`\`\``)
+        .setFooter({
+          text: `User ID: ${ctx.author.id}, Guild: ${ctx.guild ? ctx.guild.name : "DM"}`
+        });
 
-    return channel.send({ embeds: [embed] }).catch(() => null);
+      return channel.send({ embeds: [embed] }).catch(() => null);
+    };
+
+    if (this.client.shard) {
+      this.client.shard.broadcastEval(report);
+    } else {
+      report(this.client);
+    }
   }
 }
 
