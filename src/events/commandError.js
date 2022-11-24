@@ -41,9 +41,9 @@ class CommandError extends Event {
     };
 
     if (this.client.shard) {
-      this.client.shard.broadcastEval(report);
+      return this.client.shard.broadcastEval(report);
     } else {
-      report(this.client);
+      return report(this.client);
     }
   }
 }
