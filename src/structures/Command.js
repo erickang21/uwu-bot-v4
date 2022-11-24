@@ -14,7 +14,6 @@ class Command extends Base {
     this.devOnly = options.devOnly ?? false;
     this.aliases = options.aliases ?? [];
     this.cooldown = options.cooldown ?? 0;
-    this.cost = options.cost ?? 0;
     this.nsfw = options.nsfw ?? false;
     this.category = options.category ?? toProperCase(basename(file.dir)) ?? "General";
     this.guildOnly = options.guildOnly ?? false;
@@ -26,9 +25,6 @@ class Command extends Base {
 
     this.botPermissions = new PermissionsBitField(options.botPermissions ?? []).freeze();
     this.userPermissions = new PermissionsBitField(options.userPermissions ?? []).freeze();
-
-    // Helper alias.
-    this.responses = this.client.responses;
   }
 
   async execute(ctx) {
