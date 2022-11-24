@@ -12,18 +12,15 @@ class Reload extends Command {
         {
           name: "piece",
           description: "The piece to reload.",
-          type: "string"
+          type: "string",
+          required: true
         }
       ]
     });
   }
 
   async run(ctx, options) {
-    const pieceName = options.getString("piece");
-    if (!pieceName) {
-      return ctx.reply(random(responses.reloadMissingArg));
-    }
-
+    const pieceName = options.getString("piece"); 
     const piece = this.client.commands.get(pieceName) || this.client.events.get(pieceName);
 
     if (!piece) return ctx.reply("I could not find that piece.");

@@ -45,6 +45,21 @@ class UwUClient extends Client {
     }
   }
 
+  async setActivity() {
+    const guilds = await this.getGuildCount();
+    const setPresence = async (client, { guilds }) => {
+      await client.user.setActivity(`uwu help | ${guilds} servers`);
+    };
+
+    this.log.debug(`setActivity() requested. ${guilds} servers.`);
+
+    if (this.shard) {
+      return this.shard.broadcastEval(setPresence, { context: { guilds } });
+    } else {
+      return setPresence(this, { guilds });
+    }
+  }
+
   /**
    * Embed template.
    * @param {UserResolvable} [user] - Set the embed's author if given.

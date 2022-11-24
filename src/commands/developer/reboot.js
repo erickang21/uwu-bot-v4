@@ -6,14 +6,28 @@ class Reboot extends Command {
       description: "Shuts down/Reboots the bot.",
       devOnly: true,
       aliases: ["shutdown", "restart"],
-      modes: ["text"]
+      modes: ["text"],
+      options: [
+        {
+          name: "shard",
+          type: "integer",
+          description: "The shard to restart."
+        }
+      ]
     });
   }
 
-  async run(ctx) { // eslint-disable-line no-unused-vars
-    await ctx.reply("Shutting down...");
-    // await this.client.dbClient.close();
-    process.exit();
+  async run(ctx, options) {
+    const shard = options.getInteger("shard") ?? this.client.shard?.ids[0];
+
+    await ctx.reply(`Shutting down${shard ? ` shard ${shard}` : ""}...`);
+    if (this.client.shard) {
+      return this.client.shard.broadcastEval(client => {
+        if (client.shard.ids.includes(shard)) process.exit();
+      });
+    } else {
+      process.exit();
+    }
   }
 }
 

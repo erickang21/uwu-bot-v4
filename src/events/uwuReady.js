@@ -8,10 +8,7 @@ class ReadyEvent extends Event {
 
     log.info(`Logged in as ${user.tag} (${user.id})`);
     log.info(`Bot is in ${guilds} servers.`);
-
-    await this.client.user.setActivity(`uwu help | ${guilds} servers`, {
-      type: ActivityType.Playing
-    });
+    this.client.setActivity();
   }
 }
 

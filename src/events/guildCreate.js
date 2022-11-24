@@ -12,13 +12,9 @@ class GuildCreate extends Event {
     const { log } = this.client;
 
     log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
+    await this.client.setActivity();
 
-    const guilds = await this.client.getGuildCount();
-    await this.client.user.setActivity(`uwu help | ${guilds} servers`, {
-      type: ActivityType.Playing
-    });
-
-    const report = (client) => {
+    const report = async (client) => {
       const channel = client.channels.cache.get("559511019190353920");
       if (!channel) return;
 
@@ -38,7 +34,7 @@ class GuildCreate extends Event {
         })
         .setFooter({ text: guild.id });
 
-      return channel.send({ embeds: [embed] }).catch(() => null);
+      await channel.send({ embeds: [embed] }).catch(() => null);
     };
 
     if (this.client.shard) {
