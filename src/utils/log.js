@@ -10,7 +10,8 @@ const modes = [
 ];
 
 class Logger {
-  constructor(level) {
+  constructor(client, level) {
+    this.client = client;
     this.setLevel(level ?? "trace");
 
     for (let i = 0; i < modes.length; i++) {
@@ -34,13 +35,15 @@ class Logger {
   log(level, name, color, ...args) {
     if (level < this.level) return;
 
+    const shardID = this.client.shard?.ids[0] ?? "?";
+    const shard = `\x1b[33m[Shard ${shardID}]\x1b[0m`;
     const tag = name.padEnd(5, " ");
     const dt = new Date();
     const time = [dt.getHours(), dt.getMinutes(), dt.getSeconds()]
       .map(date => date.toString().padStart(2, "0"))
       .join(":");
     
-    console.log(`${color}[${tag} ${time}]\x1b[0m`, ...args);
+    console.log(`${color}[${tag} ${time}]\x1b[0m ${shard}`, ...args);
     return this;
   }
 }

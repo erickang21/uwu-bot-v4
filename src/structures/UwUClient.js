@@ -18,7 +18,7 @@ class UwUClient extends Client {
     });
 
     this.dev = !!process.env.DEV;
-    this.log = new Logger(this.dev ? "trace" : "info");
+    this.log = new Logger(this, this.dev ? "trace" : "info");
     this.commands = new CommandStore(this);
     this.events = new EventStore(this);
 

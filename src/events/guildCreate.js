@@ -1,0 +1,52 @@
+const Event = require("../structures/Event.js");
+const { EmbedBuilder, ActivityType } = require("discord.js");
+
+class GuildCreate extends Event {
+  async run(guild) {
+    if (!guild.available) return;
+
+    const owner = guild.owner?.user ?? await this.client.users
+      .fetch(guild.ownerID)
+      .catch(() => null);
+
+    const { log } = this.client;
+
+    log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
+
+    const guilds = await this.client.getGuildCount();
+    await this.client.user.setActivity(`uwu help | ${guilds} servers`, {
+      type: ActivityType.Playing
+    });
+
+    const report = (client) => {
+      const channel = client.channels.cache.get("559511019190353920");
+      if (!channel) return;
+
+      const embed = client.embed()
+        .setTitle("uwu bot joined a new server!")
+        .setDescription("${guild.name}")
+        .setThumbnail(guild.iconURL())
+        .addFields({
+          name: "Owner",
+          value: owner.tag ?? "No Owner Information",
+          inline: true
+        })
+        .addFields({
+          name: "Member Count",
+          value: guild.memberCount.toString(),
+          inline: true
+        })
+        .setFooter({ text: guild.id });
+
+      return channel.send({ embeds: [embed] }).catch(() => null);
+    };
+
+    if (this.client.shard) {
+      return this.client.shard.broadcastEval(report);
+    } else {
+      return report(this.client);
+    } 
+  }
+}
+
+module.exports = GuildCreate;
