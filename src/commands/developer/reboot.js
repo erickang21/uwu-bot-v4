@@ -18,13 +18,17 @@ class Reboot extends Command {
   }
 
   async run(ctx, options) {
-    const shard = options.getInteger("shard") ?? this.client.shard?.ids[0];
+    const shard = options.getInteger("shard");
 
-    await ctx.reply(`Shutting down${shard ? ` shard ${shard}` : ""}...`);
+    await ctx.reply(`Shutting down${typeof shard !== "undefined" ? ` shard ${shard}` : " all shards"}...`);
     if (this.client.shard) {
-      return this.client.shard.broadcastEval(client => {
-        if (client.shard.ids.includes(shard)) process.exit();
-      });
+      return this.client.shard.broadcastEval((client, { shard }) => {
+        if (typeof shard !== "undefined") {
+          if (client.shard.ids.includes(shard)) process.exit();
+        } else {
+          process.exit();
+        }
+      }, { context: { shard } });
     } else {
       process.exit();
     }
