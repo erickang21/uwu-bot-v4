@@ -21,6 +21,10 @@ class UwUClient extends Client {
     this.log = new Logger(this.dev ? "trace" : "info");
     this.commands = new CommandStore(this);
     this.events = new EventStore(this);
+
+    this.once("ready", () => {
+      this.emit("uwuReady");
+    });
   }
 
   async load() {
