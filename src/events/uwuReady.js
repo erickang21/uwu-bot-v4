@@ -1,4 +1,5 @@
 const Event = require("../structures/Event.js");
+const { ActivityType } = require("discord.js");
 
 class ReadyEvent extends Event {
   async run() {
@@ -6,6 +7,11 @@ class ReadyEvent extends Event {
 
     log.info(`Logged in as ${user.tag} (${user.id})`);
     log.info(`Bot is in ${this.client.guilds.cache.size} servers.`);
+
+    const guilds = await this.client.getGuildCount();
+    await this.client.user.setActivity(`uwu help | ${guilds} servers`, {
+      type: ActivityType.Playing
+    });
   }
 }
 

@@ -36,6 +36,15 @@ class UwUClient extends Client {
     }
   }
 
+  async getGuildCount() {
+    if (this.shard) {
+      const count = await this.shard.fetchClientValues("guilds.cache.size");
+      return count.reduce((acc, guild) => acc + guild, 0);
+    } else {
+      return this.guilds.cache.size;
+    }
+  }
+
   /**
    * Embed template.
    * @param {UserResolvable} [user] - Set the embed's author if given.
