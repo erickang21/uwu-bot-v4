@@ -1,6 +1,7 @@
 const Command = require("../../structures/Command.js");
 const { inspect } = require("util");
 const { getCodeBlock } = require("../../utils/utils.js");
+const { request } = require("undici");
 
 class Eval extends Command {
   constructor(...args) {
@@ -40,10 +41,11 @@ class Eval extends Command {
         // since I don't care about hastebin anymore and always kept it to short evals.
         // also use undici instead for requests.
         try {
-          const { key } = await fetch("https://hastebin.com/documents", {
+          const { key } = await request("https://hastebin.com/documents", {
             method: "POST",
             body: output
-          }).then((res) => res.json());
+          }).then(({ body }) => body.json());
+
           return ctx.reply(`Output was to long so it was uploaded to hastebin https://hastebin.com/${key}.js `);
         } catch (error) {
           return ctx.reply(`I tried to upload the output to hastebin but encountered this error ${error.name}:${error.message}`);
