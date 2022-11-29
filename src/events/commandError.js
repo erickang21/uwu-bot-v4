@@ -11,6 +11,8 @@ class CommandError extends Event {
 
     this.client.log.error(err);
 
+    const errorId = Date.now().toString(36) + Math.random().toString(36).substring(100);
+
     if (ctx.dev) {
       await ctx.reply({
         embeds: [this.client.embed(ctx.author).setDescription(`${EMOJIS.X} **\`\`${ctx.command.name}\`\` threw an error**` + "\n```js\n" + err + "```")]
@@ -21,29 +23,31 @@ class CommandError extends Event {
       // TODO(banana): Personalize this response for your bot.
       // TODO: update support server with constant
       await ctx.reply({
-        embeds: [this.client.embed(ctx.author).setDescription(`${EMOJIS.X} **Whoops! Running \`\`${ctx.command.name}\`\` went wrong and the issue has been reported. In the meantime you can join my [support server!](https://discord.gg/vCMEmNJ)**`)]
+        embeds: [this.client.embed(ctx.author).setDescription(`${EMOJIS.X} **Whoops! Running \`\`${ctx.command.name}\`\` went wrong and the issue has been reported. In the meantime you can join my [support server](https://discord.gg/vCMEmNJ), give them error code \`\`${errorId}\`\`**`)]
       })
         .catch(() => null);
     }
 
     const report = (client) => {
-      const channel = client.channels.cache.get("513368885144190986");
+      const channel = client.channels.cache.get("867791409008607276");
       if (!channel) return;
 
       const embed = client.embed(ctx.author)
         .setTitle("Command Error")
         .setDescription(`An Error occured in command: ${ctx.command.name}\n\`\`\`js\n${err.stack || err}\`\`\``)
-        .setFooter({
-          text: `User ID: ${ctx.author.id}, Guild: ${ctx.guild ? ctx.guild.name : "DM"}`
-        });
+        .setFields([{name: "Error ID", value: `\`\`${errorId}\`\``, inline: true}, {name: "User ID", value: `\`\`${ctx.author.id}\`\``, inline: true}, {name: "Guild", value: ctx.guild ? ctx.guild.name : "DM", inline: true}])
+        .setTimestamp(new Date());
 
       return channel.send({ embeds: [embed] }).catch(() => null);
     };
 
-    if (this.client.shard) {
-      return this.client.shard.broadcastEval(report);
-    } else {
-      return report(this.client);
+    // No point error reporting in dev mode
+    if (!ctx.dev) {
+      if (this.client.shard) {
+        return this.client.shard.broadcastEval(report);
+      } else {
+        return report(this.client);
+      }
     }
   }
 }
