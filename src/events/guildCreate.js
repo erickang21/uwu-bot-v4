@@ -1,5 +1,4 @@
 const Event = require("../structures/Event.js");
-const { EmbedBuilder, ActivityType } = require("discord.js");
 
 class GuildCreate extends Event {
 	async run(guild) {

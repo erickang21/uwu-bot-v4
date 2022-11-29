@@ -5,10 +5,10 @@
 	"description": "General purpose Discord Bot",
 	"main": "index.js",
 	"scripts": {
-		"test": "eslint .",
 		"start": "cross-env NODE_ENV=production node .",
 		"dev": "cross-env NODE_ENV=development node .",
 		"pretty": "prettier --write .",
+		"lint": "eslint .",
 		"deploy": "node src/deploy-commands.js"
 	},
 	"repository": {
@@ -37,6 +37,7 @@
 		"img-api": "^1.0.4"
 	},
 	"devDependencies": {
+		"eslint": "^8.28.0",
 		"prettier": "^2.8.0"
 	}
 }

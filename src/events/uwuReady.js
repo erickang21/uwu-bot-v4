@@ -1,5 +1,4 @@
 const Event = require("../structures/Event.js");
-const { ActivityType } = require("discord.js");
 
 class ReadyEvent extends Event {
 	async run() {
