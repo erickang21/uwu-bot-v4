@@ -5,8 +5,7 @@ class GuildCreate extends Event {
   async run(guild) {
     if (!guild.available) return;
 
-    const owner = guild.owner?.user ?? await this.client.users
-      .fetch(guild.ownerID)
+    const owner = await this.client.users.fetch(guild.ownerId)
       .catch(() => null);
 
     const { log } = this.client;
@@ -24,7 +23,7 @@ class GuildCreate extends Event {
         .setThumbnail(guild.iconURL())
         .addFields({
           name: "Owner",
-          value: owner.tag ?? "No Owner Information",
+          value: owner?.tag ?? "No Owner Information",
           inline: true
         })
         .addFields({
