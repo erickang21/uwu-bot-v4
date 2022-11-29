@@ -35,13 +35,28 @@ class CommandError extends Event {
       const embed = client.embed(ctx.author)
         .setTitle("Command Error")
         .setDescription(`An Error occured in command: ${ctx.command.name}\n\`\`\`js\n${err.stack || err}\`\`\``)
-        .setFields([{name: "Error ID", value: `\`\`${errorId}\`\``, inline: true}, {name: "User ID", value: `\`\`${ctx.author.id}\`\``, inline: true}, {name: "Guild", value: ctx.guild ? ctx.guild.name : "DM", inline: true}])
+        .setFields([
+          {
+            name: "Error ID",
+            value: `\`\`${errorId}\`\``,
+            inline: true
+          },
+          {
+            name: "User ID",
+            value: `\`\`${ctx.author.id}\`\``,
+            inline: true
+          },
+          {
+            name: "Guild",
+            value: ctx.guild ? ctx.guild.name : "DM",
+            inline: true
+          }
+        ])
         .setTimestamp(new Date());
 
       return channel.send({ embeds: [embed] }).catch(() => null);
     };
 
-    // No point error reporting in dev mode
     if (!ctx.dev) {
       if (this.client.shard) {
         return this.client.shard.broadcastEval(report);
