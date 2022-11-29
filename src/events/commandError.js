@@ -79,7 +79,6 @@ class CommandError extends Event {
 			return channel.send({ embeds: [embed] }).catch(() => null);
 		};
 
-		// No point error reporting in dev mode
 		if (!ctx.dev) {
 			if (this.client.shard) {
 				return this.client.shard.broadcastEval(report);
