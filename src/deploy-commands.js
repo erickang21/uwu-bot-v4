@@ -12,17 +12,21 @@ const UwUClient = require("./structures/UwUClient.js");
 const client = new UwUClient();
 
 async function main() {
-  await client.load();
-  const body = [];
+	await client.load();
+	const body = [];
 
-  for (const command of client.commands.values()) {
-    if (command.modes.includes("slash") && command.enabled && !command.devOnly) {
-      body.push(command.getSlashCommandData().toJSON());
-    }
-  }
+	for (const command of client.commands.values()) {
+		if (
+			command.modes.includes("slash") &&
+			command.enabled &&
+			!command.devOnly
+		) {
+			body.push(command.getSlashCommandData().toJSON());
+		}
+	}
 
-  await rest.put(Routes.applicationCommands(CLIENT_ID), { body });
-  console.log(`Successfully registered ${body.length} application commands.`);
+	await rest.put(Routes.applicationCommands(CLIENT_ID), { body });
+	console.log(`Successfully registered ${body.length} application commands.`);
 }
 
 main();
