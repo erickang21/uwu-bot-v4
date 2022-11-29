@@ -17,7 +17,7 @@ class UwUClient extends Client {
       partials: [Partials.Channel]
     });
 
-    this.dev = !!process.env.DEV;
+    this.dev = process.env.NODE_ENV == "development";
     this.log = new Logger(this, this.dev ? "trace" : "info");
     this.commands = new CommandStore(this);
     this.events = new EventStore(this);
