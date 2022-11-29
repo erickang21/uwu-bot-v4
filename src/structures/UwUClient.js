@@ -47,8 +47,8 @@ class UwUClient extends Client {
 
   async setActivity() {
     const guilds = await this.getGuildCount();
-    const setPresence = async (client, { guilds }) => {
-      await client.user.setActivity(`uwu help | ${guilds} servers`);
+    const setPresence = (client, { guilds }) => {
+      client.user.setActivity(`uwu help | ${guilds} servers`);
     };
 
     this.log.debug(`setActivity() requested. ${guilds} servers.`);
