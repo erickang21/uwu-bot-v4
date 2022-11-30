@@ -42,9 +42,6 @@ class Eval extends Command {
 			if (output.length < 1950) {
 				return ctx.reply(`\`\`\`js\n${output}\n\`\`\``);
 			} else {
-				// FIXME(ravener): This is broken, never bothered to fix this
-				// since I don't care about hastebin anymore and always kept it to short evals.
-				// also use undici instead for requests.
 				try {
 					const { key } = await request(
 						"https://hastebin.com/documents",
