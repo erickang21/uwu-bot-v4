@@ -1,43 +1,43 @@
 {
-	"name": "uwu-bot",
-	"version": "0.0.1",
-	"private": true,
-	"description": "General purpose Discord Bot",
-	"main": "index.js",
-	"scripts": {
-		"start": "cross-env NODE_ENV=production node .",
-		"dev": "cross-env NODE_ENV=development node .",
-		"pretty": "prettier --write .",
-		"lint": "eslint .",
-		"deploy": "node src/deploy-commands.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/erickang21/uwu-bot-v4.git"
-	},
-	"keywords": [
-		"miyako",
-		"discord",
-		"bot",
-		"api"
-	],
-	"author": "Ravener <ravener.anime@gmail.com> (https://ravener.vercel.app/)",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/erickang21/uwu-bot-v4/issues"
-	},
-	"homepage": "https://github.com/erickang21/uwu-bot-v4#readme",
-	"dependencies": {
-		"cheerio": "^1.0.0-rc.12",
-		"common-tags": "^1.8.2",
-		"cross-env": "^7.0.3",
-		"discord.js": "^14.3.0",
-		"dotenv": "^16.0.1",
-		"fastest-levenshtein": "^1.0.16",
-		"img-api": "^1.0.4"
-	},
-	"devDependencies": {
-		"eslint": "^8.28.0",
-		"prettier": "^2.8.0"
-	}
+  "name": "uwu-bot",
+  "version": "0.0.1",
+  "private": true,
+  "description": "General purpose Discord Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node .",
+    "dev": "cross-env NODE_ENV=development node .",
+    "pretty": "prettier --write .",
+    "lint": "eslint .",
+    "deploy": "node src/deploy-commands.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erickang21/uwu-bot-v4.git"
+  },
+  "keywords": [
+    "miyako",
+    "discord",
+    "bot",
+    "api"
+  ],
+  "author": "Ravener <ravener.anime@gmail.com> (https://ravener.vercel.app/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erickang21/uwu-bot-v4/issues"
+  },
+  "homepage": "https://github.com/erickang21/uwu-bot-v4#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "common-tags": "^1.8.2",
+    "cross-env": "^7.0.3",
+    "discord.js": "^14.3.0",
+    "dotenv": "^16.0.1",
+    "fastest-levenshtein": "^1.0.16",
+    "img-api": "^1.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.28.0",
+    "prettier": "^2.8.0"
+  }
 }
