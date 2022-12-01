@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const fetch = require("node-fetch");
+const { request } = require("undici");
 
 class Hug extends Command {
   constructor(...args) {
@@ -18,8 +18,8 @@ class Hug extends Command {
   
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const { url } = await fetch("https://nekos.life/api/v2/img/hug")
-      .then((r) => r.json());
+    const { url } = await request("https://nekos.life/api/v2/img/hug")
+      .then(({ body }) => body.json());
     const embed = this.client
       .embed(null)
       .setTitle(`Hug!`)
