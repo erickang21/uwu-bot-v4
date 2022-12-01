@@ -77,10 +77,10 @@ class UwUClient extends Client {
     const embed = new EmbedBuilder(data).setColor(COLOR);
 
     if (user) {
-      const name = user.tag;
+      const text = user.tag;
       const iconURL = user.displayAvatarURL({ size: 64 });
 
-      embed.setFooter({ name, iconURL });
+      embed.setFooter({ text, iconURL });
     }
 
     return embed;

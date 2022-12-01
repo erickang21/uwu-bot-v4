@@ -23,7 +23,6 @@ class Hug extends Command {
     const embed = this.client
       .embed(user)
       .setTitle(`Hug!`)
-      .setColor(0x05a2fc)
       .setImage(url)
       //.setFooter(`Requested by: ${ctx.author.tag} | Powered by nekos.life`, ctx.author.displayAvatarURL({ size: 32 }));
     if (user.id !== ctx.author.id) embed.setDescription(`**${ctx.author.username}** is hugging **${user.username}**!`)
