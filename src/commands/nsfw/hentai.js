@@ -14,7 +14,7 @@ class Hentai extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const data = await request("https://api.waifu.im/random/?selected_tags=hentai&gif=true")
+    const data = await request("https://api.waifu.im/search/?selected_tags=hentai&gif=true")
       .then(({ body }) => body.json());
     const embed = this.client
       .embed(ctx.author)
