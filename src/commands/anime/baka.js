@@ -22,4 +22,4 @@ class Baka extends Command {
 }
 
 
-module.exports = Hug;
+module.exports = Baka;
