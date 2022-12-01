@@ -1,6 +1,6 @@
 {
   "name": "uwu-bot",
-  "version": "0.0.1",
+  "version": "4.0.0-alpha",
   "private": true,
   "description": "General purpose Discord Bot",
   "main": "index.js",
@@ -15,18 +15,8 @@
     "type": "git",
     "url": "git+https://github.com/erickang21/uwu-bot-v4.git"
   },
-  "keywords": [
-    "miyako",
-    "discord",
-    "bot",
-    "api"
-  ],
+  "license": "UNLICENSED",
   "author": "Ravener <ravener.anime@gmail.com> (https://ravener.vercel.app/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/erickang21/uwu-bot-v4/issues"
-  },
-  "homepage": "https://github.com/erickang21/uwu-bot-v4#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "common-tags": "^1.8.2",
