@@ -1,6 +1,6 @@
 const Command = require("../../structures/Command.js");
 const { version } = require("discord.js");
-const { DEVS } = require("../../utils/constants.js");
+const { DEVS, EMOJIS } = require("../../utils/constants.js");
 
 class Stats extends Command {
   constructor(...args) {
@@ -45,56 +45,56 @@ class Stats extends Command {
       .setDescription("A very useful Discord bot for all your server's needs!")
       .addFields(
         {
-          name: "Shard <:powercube:783783098163658783>",
+          name: `Shard ${EMOJIS.POWERCUBE}`,
           value: `**${ctx.guild.shard.id + 1}** of **${
             this.client.shard.count
           }**`,
         },
         {
-          name: "Servers <:trustedDBB:559115961421266965>",
+          name: `Servers ${EMOJIS.TROPHY}`,
           value: `${guildCount}`,
         },
-        { name: "Users <:invite:849404519937867809> ", value: `${totalUsers}` },
+        { name: `Users ${EMOJIS.INVITE}`, value: `${totalUsers}` },
         {
-          name: "Average Users/Server <:EARLY_SUPPORTER:715216600873304237>",
+          name: `Average Users/Server ${EMOJIS.EARLY_SUPPORTER}`,
           value: `${Math.floor(totalUsers / guildCount)}`,
         },
-        { name: "Uptime <a:OnMyWay:874325709106057257>", value: uptime },
-        { name: "Memory <a:EQ:559923444234584064>", value: `${memUsage} MB` },
+        { name: `Uptime ${EMOJIS.ON_MY_WAY}`, value: uptime },
+        { name: `Memory ${EMOJIS.EQ}`, value: `${memUsage} MB` },
         {
-          name: "Commands <:Trophy:645620279439130639>",
+          name: `Commands ${EMOJIS.TROPHY_2}`,
           value: `${this.store.size}`,
         },
         {
-          name: "Commands Run (since uptime) :chart_with_upwards_trend:",
+          name: `Commands Run (since uptime) ${EMOJIS.CHART_UP}`,
           value: `${this.store.ran}`,
         },
         {
-          name: "Node.js Version <:Nodejs:550362497945829378>",
+          name: `Node.js Version ${EMOJIS.NODEJS}`,
           value: process.version,
         },
         {
-          name: "Discord.js Version <:discord:749665645590741023>",
+          name: `Discord.js Version ${EMOJIS.DISCORD}`,
           value: `v${version}`,
         },
         {
           name: "Bot Links",
           value: [
-            "<:DBL:829408131531931679> [Top.gg Page](https://top.gg/bot/520682706896683009)",
-            "<:Docs:829408832441679933> [Documentation](https://docs.uwubot.tk)",
+            `${EMOJIS.DBL} [Top.gg Page](https://top.gg/bot/520682706896683009)`,
+            `${EMOJIS.DOCS} [Documentation](https://docs.uwubot.tk)`,
           ].join("\n"),
         },
         {
           name: "Socials",
           value: [
-            "<:discord:749665645590741023> [banana's hideout ♡](https://discord.gg/vCMEmNJ)",
-            "<:youtube:829407559063437342> [banana bs](https://www.youtube.com/channel/UC6No09LRXzCk8omS1CMnzSw)",
-            "<:twitter:749665645573963847> [itzbananauwu](https://twitter.com/itzbananauwu)",
-            "<:twitch:749665645477756960> [itzbananauwu](https://www.twitch.tv/itzbananauwu)",
-            "<:github:749666788832313415> [erickang21](https://github.com/itzbananauwu)",
+            `${EMOJIS.DISCORD} [banana's hideout ♡](https://discord.gg/vCMEmNJ)`,
+            `${EMOJIS.YOUTUBE} [banana bs](https://www.youtube.com/channel/UC6No09LRXzCk8omS1CMnzSw)`,
+            `${EMOJIS.TWITTER} [itzbananauwu](https://twitter.com/itzbananauwu)`,
+            `${EMOJIS.TWITCH} [itzbananauwu](https://www.twitch.tv/itzbananauwu)`,
+            `${EMOJIS.GITHUB} [erickang21](https://github.com/itzbananauwu)`,
           ].join("\n"),
         },
-        { name: "Developers", value: devList.join("\n") }
+        { name: `Developers ${EMOJIS.CODE}`, value: devList.join("\n") }
       );
 
     return ctx.reply({ embeds: [embed] });

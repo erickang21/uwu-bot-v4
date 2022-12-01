@@ -2,6 +2,7 @@ const Event = require("../structures/Event.js");
 const CommandContext = require("../structures/CommandContext.js");
 const { distance } = require("fastest-levenshtein");
 const { escapeRegex } = require("../utils/utils.js");
+const { EMOJIS } = require("../utils/constants.js");
 
 // eslint-disable-next-line quotes
 const quotes = ['"', "'", "“”", "‘’"];
@@ -49,7 +50,7 @@ class MessageCreate extends Event {
     // A mention only.
     if (!rawContent) {
       return message.channel.send(
-        "👋 Hi there! Run `@uwu bot help` to see all I can do or browse the slash commands by typing `/`"
+        `${EMOJIS.WAVE} Hi there! Run \`\`@uwu bot help\`\` to see all I can do or browse the slash commands by typing \`\`/\`\``
       );
     }
 
@@ -73,15 +74,13 @@ class MessageCreate extends Event {
 
     if (command.devOnly && !ctx.dev) {
       return ctx.reply({
-        content:
-          "This command can only be used by the developers. <a:GirlComfy:823577888431276082>",
+        content: `This command can only be used by the developers. ${EMOJIS.GIRL_CHILLING}`,
       });
     }
 
     if (command.nsfw && !ctx.channel.nsfw) {
       return ctx.reply({
-        content:
-          "This command can only be run in NSFW channels. <:PaimonBonk:994603931323863101>",
+        content: `This command can only be run in NSFW channels. ${EMOJIS.BONK}`,
       });
     }
 
@@ -107,7 +106,9 @@ class MessageCreate extends Event {
     if (minDistance > 2) return;
 
     const match = arr[minIndex];
-    return msg.channel.send(`|\`❔\`| Did you mean \`${match}\`?`);
+    return msg.channel.send(
+      `${EMOJIS.QUESTION_MARK} Did you mean \`${match}\`?`
+    );
   }
 }
 
