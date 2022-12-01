@@ -14,7 +14,7 @@ class Yuri extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const data = await request("https://api.waifu.im/search/?selected_tags=paizuri&gif=true")
+    const data = await request("https://api.waifu.im/search/?included_tags=paizuri&gif=true")
       .then(({ body }) => body.json());
     const embed = this.client
       .embed(ctx.author)
