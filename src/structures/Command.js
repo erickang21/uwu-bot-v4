@@ -23,6 +23,7 @@ class Command extends Base {
     this.loading = options.loading;
     this.options = options.options ?? [];
     this.delim = options.delim ?? " ";
+    this.ephemeral = options.ephemeral ?? false;
 
     this.botPermissions = new PermissionsBitField(
       options.botPermissions ?? []
@@ -36,6 +37,7 @@ class Command extends Base {
     try {
       this.client.log.debug(`Running command '${this.name}'`);
       if (ctx.text) await ctx.channel.sendTyping();
+      else await ctx.interaction.deferReply({ ephemeral: this.ephemeral });
 
       const options = ctx.slash
         ? ctx.interaction.options
