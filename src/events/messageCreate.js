@@ -73,7 +73,13 @@ class MessageCreate extends Event {
 
     if (command.devOnly && !ctx.dev) {
       return ctx.reply({
-        content: "This command can only be used by the bot devs.",
+        content: "This command can only be used by the developers. <a:GirlComfy:823577888431276082>",
+      });
+    }
+
+    if (command.nsfw && !ctx.channel.nsfw) {
+      return ctx.reply({
+        content: "This command can only be run in NSFW channels. <:PaimonBonk:994603931323863101>",
       });
     }
 

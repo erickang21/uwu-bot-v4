@@ -3,11 +3,11 @@ const Command = require("../../structures/Command.js");
 const { EmbedBuilder } = require("discord.js");
 const { request } = require("undici");
 
-class Hentai extends Command {
+class Yuri extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Hentai.",
-      usage: "hentai",
+      description: "[NSFW] Yuri.",
+      usage: "yuri",
       nsfw: true
     });
   }
