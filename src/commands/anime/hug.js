@@ -21,11 +21,11 @@ class Hug extends Command {
     const { url } = await request("https://nekos.life/api/v2/img/hug")
       .then(({ body }) => body.json());
     const embed = this.client
-      .embed(null)
+      .embed(user)
       .setTitle(`Hug!`)
       .setColor(0x05a2fc)
       .setImage(url)
-      .setFooter(`Requested by: ${ctx.author.tag} | Powered by nekos.life`, ctx.author.displayAvatarURL({ size: 32 }));
+      //.setFooter(`Requested by: ${ctx.author.tag} | Powered by nekos.life`, ctx.author.displayAvatarURL({ size: 32 }));
     if (user.id !== ctx.author.id) embed.setDescription(`**${ctx.author.username}** is hugging **${user.username}**!`)
     return ctx.reply({ embeds: [embed] });
       

@@ -80,7 +80,7 @@ class UwUClient extends Client {
       const name = user.tag;
       const iconURL = user.displayAvatarURL({ size: 64 });
 
-      embed.setAuthor({ name, iconURL });
+      embed.setFooter({ name, iconURL });
     }
 
     return embed;
