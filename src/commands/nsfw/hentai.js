@@ -1,12 +1,13 @@
 
 const Command = require("../../structures/Command.js");
 const { EmbedBuilder } = require("discord.js");
-const fetch = require("node-fetch");
+const { request } = require("undici");
 
 class Hentai extends Command {
   constructor(...args) {
     super(...args, {
       description: "[NSFW] Hentai.",
+      usage: "tickle [user]",
       nsfw: true
     });
   }
