@@ -1,4 +1,5 @@
 const Command = require("../../structures/Command.js");
+const { PermissionsBitField } = require("discord.js");
 
 class Invite extends Command {
     constructor(...args) {
