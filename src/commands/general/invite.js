@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { PermissionsBitField } = require("discord.js");
+
 
 class Invite extends Command {
     constructor(...args) {
@@ -9,13 +9,10 @@ class Invite extends Command {
     }
     
     async run(ctx) {
-      const permissions = new PermissionsBitField(3072n)
-        .add(...this.store.map(command => command.botPermissions))
-        .bitfield;
       const embed = this.client
         .embed(this.client.user)
         .setTitle(`Invite me!`)
-        .setDescription(`**Invite Link:** https://discordapp.com/oauth2/authorize?client_id=${this.client.user.id}&permissions=${permissions}&scope=bot\n\n**Support Server:** https://discord.gg/vCMEmNJ`)
+        .setDescription(`**Invite Link:** https://discordapp.com/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot\n\n**Support Server:** https://discord.gg/vCMEmNJ`)
       return ctx.reply({ embeds: [embed] });
     }
 }
