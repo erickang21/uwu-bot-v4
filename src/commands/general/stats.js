@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
 const { EmbedBuilder, version } = require("discord.js");
+const { DEVS } = require("../../utils/constants.js");
 
 class Stats extends Command {
     constructor(...args) {
@@ -27,7 +28,11 @@ class Stats extends Command {
         const totalUsers = users.reduce((a, b) => a + b, 0);
         let memUsage = await this.client.shard.broadcastEval(() => process.memoryUsage().heapUsed / 1024 / 1024);
         memUsage = memUsage.reduce((a, b) => a + b, 0).toFixed(2);
-    
+        let devList = [];
+        for (const d of DEVS) {
+          let test = await this.client.users.fetch(d)
+          devList.push(test.tag)
+        }
         const embed = this.client.embed(this.client.user)
           .setTitle("uwu bot")
           .setDescription("A very useful Discord bot for all your server's needs!")
@@ -47,12 +52,13 @@ class Stats extends Command {
                 "<:Docs:829408832441679933> [Documentation](https://docs.uwubot.tk)"
               ].join("\n")},
               {name: "Socials", value: [
-            "<:discord:749665645590741023> [banana's hideout ♡](https://discord.gg/vCMEmNJ)",
-            "<:youtube:829407559063437342> [banana bs](https://www.youtube.com/channel/UC6No09LRXzCk8omS1CMnzSw)",
-            "<:twitter:749665645573963847> [itzbananauwu](https://twitter.com/itzbananauwu)",
-            "<:twitch:749665645477756960> [itzbananauwu](https://www.twitch.tv/itzbananauwu)",
-            "<:github:749666788832313415> [erickang21](https://github.com/itzbananauwu)"
-          ].join("\n")});
+              "<:discord:749665645590741023> [banana's hideout ♡](https://discord.gg/vCMEmNJ)",
+              "<:youtube:829407559063437342> [banana bs](https://www.youtube.com/channel/UC6No09LRXzCk8omS1CMnzSw)",
+              "<:twitter:749665645573963847> [itzbananauwu](https://twitter.com/itzbananauwu)",
+              "<:twitch:749665645477756960> [itzbananauwu](https://www.twitch.tv/itzbananauwu)",
+              "<:github:749666788832313415> [erickang21](https://github.com/itzbananauwu)"
+              ].join("\n")},
+              {name: "Developers", value: devList.join("\n")});
     
         return ctx.reply({ embeds: [embed] })
       }
