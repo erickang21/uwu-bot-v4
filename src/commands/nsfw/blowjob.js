@@ -16,20 +16,22 @@ class Blowjob extends Command {
       ],
     });
   }
-  
+
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const { url } = await request("https://api.waifu.pics/nsfw/blowjob")
-      .then(({ body }) => body.json());
+    const { url } = await request("https://api.waifu.pics/nsfw/blowjob").then(
+      ({ body }) => body.json()
+    );
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Blowjob :eggplant:")
-      .setImage(url)
-    if (user.id !== ctx.author.id) embed.setTitle(`**${ctx.author.username}** is giving **${user.username}** a BJ! :eggplant:`)
+      .setImage(url);
+    if (user.id !== ctx.author.id)
+      embed.setTitle(
+        `**${ctx.author.username}** is giving **${user.username}** a BJ! :eggplant:`
+      );
     return ctx.reply({ embeds: [embed] });
-      
   }
 }
-
 
 module.exports = Blowjob;

@@ -5,21 +5,20 @@ class Catgirl extends Command {
   constructor(...args) {
     super(...args, {
       description: "For those who believe in catgirl supremacy.",
-      usage: "catgirl"
+      usage: "catgirl",
     });
   }
-  
-  async run(ctx, options) {
-    const { url } = await request("https://nekos.life/api/v2/img/gecg")
-      .then(({ body }) => body.json());
+
+  async run(ctx) {
+    const { url } = await request("https://nekos.life/api/v2/img/gecg").then(
+      ({ body }) => body.json()
+    );
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`Catgirl`)
-      .setImage(url)
+      .setImage(url);
     return ctx.reply({ embeds: [embed] });
-      
   }
 }
-
 
 module.exports = Catgirl;

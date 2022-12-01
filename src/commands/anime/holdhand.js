@@ -15,20 +15,22 @@ class Holdhand extends Command {
       ],
     });
   }
-  
+
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const { url } = await request("https://api.waifu.pics/sfw/handhold")
-      .then(({ body }) => body.json());
+    const { url } = await request("https://api.waifu.pics/sfw/handhold").then(
+      ({ body }) => body.json()
+    );
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`HOLD HANDS! :3`)
-      .setImage(url)
-    if (user.id !== ctx.author.id) embed.setDescription(`**${ctx.author.username}** is holding hands with **${user.username}**!`)
+      .setImage(url);
+    if (user.id !== ctx.author.id)
+      embed.setDescription(
+        `**${ctx.author.username}** is holding hands with **${user.username}**!`
+      );
     return ctx.reply({ embeds: [embed] });
-      
   }
 }
-
 
 module.exports = Holdhand;
