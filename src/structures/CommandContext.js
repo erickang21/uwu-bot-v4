@@ -55,6 +55,19 @@ class CommandContext {
     return this.interaction?.channel ?? this.message.channel;
   }
 
+  get settings() {
+    if (this.guild) {
+      return this.client.settings.guilds.get(this.guild.id);
+    }
+
+    return this.client.settings.guilds.defaults;
+  }
+
+  updateSettings(options) {
+    if (!this.guild) return;
+    return this.client.settings.guilds.update(this.guild.id, options);
+  }
+
   get createdTimestamp() {
     return this[this.slash ? "interaction" : "message"].createdTimestamp;
   }

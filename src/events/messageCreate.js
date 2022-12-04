@@ -35,8 +35,9 @@ class MessageCreate extends Event {
     if (message.channel.partial) await message.channel.fetch();
 
     const { user } = this.client;
+    const settings = this.client.settings.guilds.get(message.guild?.id);
 
-    const prefix = "uwu"; // TODO: this will need to use database later.
+    const prefix = settings.prefix;
     const regex = new RegExp(
       `^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`
     );

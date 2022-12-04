@@ -1,13 +1,11 @@
-const {
-  Client,
-  EmbedBuilder,
-  GatewayIntentBits,
-  Partials,
-} = require("discord.js");
+const { Client, EmbedBuilder, GatewayIntentBits, Partials } = require("discord.js");
 const { COLOR } = require("../utils/constants.js");
+const { MongoClient } = require("mongodb");
 const Logger = require("../utils/log.js");
 const CommandStore = require("./CommandStore.js");
 const EventStore = require("./EventStore.js");
+const Settings = require("./Settings.js");
+const sfhema = require("../utils/schema.js");
 
 class UwUClient extends Client {
   constructor() {
@@ -26,6 +24,11 @@ class UwUClient extends Client {
     this.log = new Logger(this, this.dev ? "trace" : "info");
     this.commands = new CommandStore(this);
     this.events = new EventStore(this);
+    this.db = null;
+    this.dbClient = null;
+    this.settings = {
+      guilds: new Settings(this, "guilds", schema.guilds)
+    };
 
     this.once("ready", () => {
       this.emit("uwuReady");
@@ -86,8 +89,24 @@ class UwUClient extends Client {
     return embed;
   }
 
+  async connectDatabase() {
+    this.dbClient = await MongoClient.connect(process.env.MONGODB, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    this.log.info("Connected to MongoDB");
+    this.db = this.dbClient.db();
+
+    for (const [name, settings] of Object.entries(this.settings)) {
+      await settings.init();
+      this.log.info(`Loaded ${settings.cache.size} settings for ${name}`);
+    }
+  }
+
   async login() {
     await this.load();
+    await this.connectDatabase();
 
     const { TOKEN, TOKEN_DEV } = process.env;
     return super.login(this.dev ? TOKEN_DEV : TOKEN);
