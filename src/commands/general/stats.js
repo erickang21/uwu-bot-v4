@@ -1,6 +1,7 @@
 const Command = require("../../structures/Command.js");
 const { version } = require("discord.js");
 const { DEVS, EMOJIS } = require("../../utils/constants.js");
+const { getBytes, getDuration } = require("../../utils/utils.js");
 
 class Stats extends Command {
   constructor(...args) {
@@ -12,35 +13,22 @@ class Stats extends Command {
 
   async run(ctx) {
     const { client } = this;
-
-    const seconds = Math.floor(client.uptime / 1000) % 60;
-    const minutes = Math.floor((client.uptime / (1000 * 60)) % 60);
-    const hours = Math.floor((client.uptime / (1000 * 60 * 60)) % 24);
-    const days = Math.floor((client.uptime / (1000 * 60 * 60 * 24)) % 7);
-    const uptime = [
-      `${days} Days`,
-      `${hours} hours`,
-      `${minutes} minutes`,
-      `${seconds} seconds`,
-    ]
-      .filter((time) => !time.startsWith("0"))
-      .join(", ");
+    const uptime = getDuration(client.uptime);
     const guildCount = await this.client.getGuildCount();
     const users = await this.client.shard.broadcastEval((c) =>
       c.guilds.cache.reduce((sum, guild) => sum + guild.memberCount, 0)
     );
     const totalUsers = users.reduce((a, b) => a + b, 0);
-    let memUsage = await this.client.shard.broadcastEval(
-      () => process.memoryUsage().heapUsed / 1024 / 1024
-    );
-    memUsage = memUsage.reduce((a, b) => a + b, 0).toFixed(2);
+    let memUsage = await this.client.shard.broadcastEval(() => process.memoryUsage().heapUsed);
+    memUsage = memUsage.reduce((a, b) => a + b, 0);
+
     let devList = [];
     for (const d of DEVS) {
       let test = await this.client.users.fetch(d);
       devList.push(test.tag);
     }
-    const embed = this.client
-      .embed(this.client.user)
+
+    const embed = this.client.embed(this.client.user)
       .setTitle("uwu bot")
       .setDescription("A very useful Discord bot for all your server's needs!")
       .addFields(
@@ -60,7 +48,7 @@ class Stats extends Command {
           value: `${Math.floor(totalUsers / guildCount)}`,
         },
         { name: `Uptime ${EMOJIS.ON_MY_WAY}`, value: uptime },
-        { name: `Memory ${EMOJIS.EQ}`, value: `${memUsage} MB` },
+        { name: `Memory ${EMOJIS.EQ}`, value: getBytes(memUsage) },
         {
           name: `Commands ${EMOJIS.TROPHY_2}`,
           value: `${this.store.size}`,
