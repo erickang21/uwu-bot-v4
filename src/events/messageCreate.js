@@ -1,31 +1,21 @@
 const Event = require("../structures/Event.js");
 const CommandContext = require("../structures/CommandContext.js");
 const { distance } = require("fastest-levenshtein");
-const { escapeRegex } = require("../utils/utils.js");
+const { escapeRegex, missingPermissions, plural } = require("../utils/utils.js");
 const { EMOJIS } = require("../utils/constants.js");
 
 // eslint-disable-next-line quotes
 const quotes = ['"', "'", "“”", "‘’"];
-const flagRegex = new RegExp(
-  `(?:--|—)(\\w[\\w-]+)(?:=(?:${quotes
-    .map((qu) => `[${qu}]((?:[^${qu}\\\\]|\\\\.)*)[${qu}]`)
-    .join("|")}|([\\w<>@#&!-]+)))?`,
-  "g"
-);
+const flagRegex = new RegExp(`(?:--|—)(\\w[\\w-]+)(?:=(?:${quotes.map((qu) => `[${qu}]((?:[^${qu}\\\\]|\\\\.)*)[${qu}]`).join("|")}|([\\w<>@#&!-]+)))?`, "g");
 const delim = new RegExp("(\\s)(?:\\s)+");
 
 class MessageCreate extends Event {
   getFlags(content) {
     const flags = {};
-    content = content
-      .replace(flagRegex, (match, fl, ...quote) => {
-        flags[fl] = (quote.slice(0, -2).find((el) => el) || fl).replace(
-          /\\/g,
-          ""
-        );
-        return "";
-      })
-      .replace(delim, "$1");
+    content = content.replace(flagRegex, (match, fl, ...quote) => {
+      flags[fl] = (quote.slice(0, -2).find((el) => el) || fl).replace(/\\/g, "");
+      return "";
+    }).replace(delim, "$1");
 
     return { content, flags };
   }
@@ -38,9 +28,7 @@ class MessageCreate extends Event {
     const settings = this.client.settings.guilds.get(message.guild?.id);
 
     const prefix = settings.prefix;
-    const regex = new RegExp(
-      `^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`
-    );
+    const regex = new RegExp(`^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`);
     const match = message.content.match(regex);
 
     if (!match) return;
@@ -50,9 +38,7 @@ class MessageCreate extends Event {
 
     // A mention only.
     if (!rawContent) {
-      return message.channel.send(
-        `${EMOJIS.WAVE} Hi there! Run \`\`@uwu bot help\`\` to see all I can do or browse the slash commands by typing \`\`/\`\``
-      );
+      return message.channel.send(`${EMOJIS.WAVE} Hi there! Run \`\`@uwu bot help\`\` to see all I can do or browse the slash commands by typing \`\`/\`\``);
     }
 
     const { content, flags } = this.getFlags(rawContent);
@@ -65,12 +51,9 @@ class MessageCreate extends Event {
     if (!command.modes.includes("text")) return;
 
     const ctx = new CommandContext(command, {
-      message,
-      flags,
-      content,
-      prefixLength,
-      alias,
-      args,
+      message, flags,
+      content, prefixLength,
+      alias, args
     });
 
     if (command.devOnly && !ctx.dev) {
@@ -85,7 +68,41 @@ class MessageCreate extends Event {
       });
     }
 
+    if (!(await this.checkPermissions(ctx, command))) return;
+
     return command.execute(ctx);
+  }
+
+  async checkPermissions(ctx, command) {
+    // No Permissions for DMs
+    if (!ctx.guild) return true;
+
+    const permissions = ctx.channel.permissionsFor(this.client.user);
+    const missing = missingPermissions(permissions, command.botPermissions);
+
+    if (missing.length) {
+      await ctx.reply({
+        content: `I need the following permission${plural(missing)} to run that command: **${missing.join(", ")}**`
+      });
+
+      return false;
+    }
+
+    // Ddvelopers bypasse permission restrictions.
+    if (ctx.dev) return true;
+
+    const userPermissions = ctx.channel.permissionsFor(ctx.author);
+    const user = missingPermissions(userPermissions, command.userPermissions);
+
+    if (user.length) {
+      await ctx.reply({
+        content: `You need the following permission${plural(user)} to run that command: **${user.join(", ")}**`
+      });
+
+      return false;
+    }
+
+    return true;
   }
 
   closestCommand(msg, cmd) {
@@ -107,9 +124,7 @@ class MessageCreate extends Event {
     if (minDistance > 2) return;
 
     const match = arr[minIndex];
-    return msg.channel.send(
-      `${EMOJIS.QUESTION_MARK} Did you mean \`${match}\`?`
-    );
+    return msg.channel.send(`${EMOJIS.QUESTION_MARK} Did you mean \`${match}\`?`);
   }
 }
 
