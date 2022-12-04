@@ -51,54 +51,18 @@ class Utils {
       .join(", ");
   }
 
-  // Deep search an embed if it contains a given string.
-  static embedContains(embed, str) {
-    str = str.toLowerCase();
-
-    if (embed.title && embed.title.toLowerCase().includes(str)) return true;
-    if (embed.description && embed.description.toLowerCase().includes(str))
-      return true;
-    if (
-      embed.footer &&
-      embed.footer.text &&
-      embed.footer.text.toLowerCase().includes(str)
-    )
-      return true;
-    if (
-      embed.author &&
-      embed.author.name &&
-      embed.author.name.toLowerCase().includes(str)
-    )
-      return true;
-
-    if (embed.fields && embed.fields.length) {
-      for (const field of embed.fields) {
-        if (field.name && field.name.toLowerCase().includes(str)) return true;
-        if (field.value && field.value.toLowerCase().includes(str)) return true;
-      }
-    }
-
-    return false;
-  }
-
   // Tries to find an image from a message.
   static getImage(msg) {
     // First see if we have an attachment.
-    const attach = msg.attachments.filter(
-      (attach) => attach.url && attach.width && attach.height
-    );
+    const attach = msg.attachments.filter(attach => attach.url && attach.width && attach.height);
     if (attach.size) return attach.first().url;
 
     // Next see if we have an embed with an image.
-    const imageEmbeds = msg.embeds.filter(
-      (embed) => embed.image && embed.image.url
-    );
+    const imageEmbeds = msg.embeds.filter(embed => embed.image && embed.image.url);
     if (imageEmbeds.length) return imageEmbeds[0].image.url;
 
     // Finally see if there is an image url.
-    const urlEmbeds = msg.embeds.filter(
-      (embed) => embed.type === "image" && embed.url
-    );
+    const urlEmbeds = msg.embeds.filter(embed => embed.type === "image" && embed.url);
     if (urlEmbeds.length) return urlEmbeds[0].url;
 
     // Found nothing.
