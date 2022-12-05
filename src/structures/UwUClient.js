@@ -1,11 +1,16 @@
-const { Client, EmbedBuilder, GatewayIntentBits, Partials } = require("discord.js");
+const {
+  Client,
+  EmbedBuilder,
+  GatewayIntentBits,
+  Partials,
+} = require("discord.js");
 const { COLOR } = require("../utils/constants.js");
 const { MongoClient } = require("mongodb");
 const Logger = require("../utils/log.js");
 const CommandStore = require("./CommandStore.js");
 const EventStore = require("./EventStore.js");
 const Settings = require("./Settings.js");
-const sfhema = require("../utils/schema.js");
+const schema = require("../utils/schema.js");
 
 class UwUClient extends Client {
   constructor() {
@@ -27,7 +32,7 @@ class UwUClient extends Client {
     this.db = null;
     this.dbClient = null;
     this.settings = {
-      guilds: new Settings(this, "guilds", schema.guilds)
+      guilds: new Settings(this, "guilds", schema.guilds),
     };
 
     this.once("ready", () => {
@@ -92,7 +97,7 @@ class UwUClient extends Client {
   async connectDatabase() {
     this.dbClient = await MongoClient.connect(process.env.MONGODB, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
 
     this.log.info("Connected to MongoDB");
