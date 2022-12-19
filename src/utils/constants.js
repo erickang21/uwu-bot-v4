@@ -4,7 +4,9 @@ module.exports = {
   COLOR: 0x05a2fc,
   EMOJIS: {
     X: "❌",
+    ERROR: "<:error:573935938691137541>",
     POWERCUBE: "<:powercube:783783098163658783>",
+    PUNCH: " <a:UwUKick:824274118312460298>",
     TROPHY: "<:trustedDBB:559115961421266965>",
     TROPHY_2: "<:Trophy:645620279439130639>",
     INVITE: "<:invite:849404519937867809>",

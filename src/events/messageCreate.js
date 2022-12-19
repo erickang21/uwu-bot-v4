@@ -96,7 +96,7 @@ class MessageCreate extends Event {
 
     if (user.length) {
       await ctx.reply({
-        content: `You need the following permission${plural(user)} to run that command: **${user.join(", ")}**`
+        content: `You need the following permission(s) to run that command: **${user.join(", ")}**`
       });
 
       return false;
