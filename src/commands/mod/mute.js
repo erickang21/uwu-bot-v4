@@ -46,7 +46,8 @@ class Mute extends Command {
       muteReason += "No reason provided."
     }
 
-    await member.timeout(options.getInteger("time") * 60 * 1000 || null, muteReason);
+    // the equivalent of an infinite mute would be 1 week
+    await member.timeout(options.getInteger("time") * 60 * 1000 || 7 * 24 * 60 * 60 * 1000, muteReason);
     return ctx.reply(`**${member.user.tag}** was muted. ${EMOJIS.PUNCH}`);
   }
 }

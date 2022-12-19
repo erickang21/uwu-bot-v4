@@ -4,6 +4,9 @@ module.exports = {
   COLOR: 0x05a2fc,
   EMOJIS: {
     X: "❌",
+    CHECKMARK: "<a:checkmark:522530578860605442>",
+    ADMIN: "<:adminDBB:559115961408552962>",
+    RIGHTARROW: "<:join:725705319732477983>",
     ERROR: "<:error:573935938691137541>",
     POWERCUBE: "<:powercube:783783098163658783>",
     PUNCH: " <a:UwUKick:824274118312460298>",
