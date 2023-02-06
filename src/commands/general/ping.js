@@ -3,7 +3,7 @@ const Command = require("../../structures/Command.js");
 class Ping extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Pong! Checks Bot latency.",
+      description: "Pong! Checks bot latency.",
     });
   }
 
