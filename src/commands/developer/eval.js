@@ -43,8 +43,9 @@ class Eval extends Command {
       if (output.length < 1950) {
         return ctx.reply(`<:downvote:577978089502670848> **Input:**\n\`\`\`js\n${code}\n\`\`\`\n\n<:upvote:577978089531768832> **Output:**\n\`\`\`js\n${output}\n\`\`\``);
       } else {
-        await ctx.channel.send(`<:downvote:577978089502670848> **Input:**\n\`\`\`js\n${code}\n\`\`\``, { files: 
-          [new AttachmentBuilder(Buffer.from(output)).setName('output.txt')] 
+        await ctx.channel.send({ 
+          content: `<:downvote:577978089502670848> **Input:**\n\`\`\`js\n${code}\n\`\`\``,
+          files: [new AttachmentBuilder(Buffer.from(output)).setName('output.txt')] 
         })
       }
     } catch (error) {
