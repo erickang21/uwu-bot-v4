@@ -2,6 +2,7 @@ const Command = require("../../structures/Command.js");
 const { inspect } = require("util");
 const { getCodeBlock } = require("../../utils/utils.js");
 const { request } = require("undici");
+const { AttachmentBuilder } = require("discord.js");
 
 class Eval extends Command {
   constructor(...args) {
@@ -40,22 +41,11 @@ class Eval extends Command {
       output = output.replace(filter, "[TOKEN]");
       output = clean(output);
       if (output.length < 1950) {
-        return ctx.reply(`\`\`\`js\n${output}\n\`\`\``);
+        return ctx.reply(`<:downvote:577978089502670848> **Input:**\n\`\`\`js\n${code}\n\`\`\`\n\n<:upvote:577978089531768832> **Output:**\n\`\`\`js\n${output}\n\`\`\``);
       } else {
-        try {
-          const { key } = await request("https://hastebin.com/documents", {
-            method: "POST",
-            body: output,
-          }).then(({ body }) => body.json());
-
-          return ctx.reply(
-            `Output was to long so it was uploaded to hastebin https://hastebin.com/${key}.js `
-          );
-        } catch (error) {
-          return ctx.reply(
-            `I tried to upload the output to hastebin but encountered this error ${error.name}:${error.message}`
-          );
-        }
+        await ctx.channel.send(`<:downvote:577978089502670848> **Input:**\n\`\`\`js\n${code}\n\`\`\``, { files: 
+          [new AttachmentBuilder(Buffer.from(output)).setName('output.txt')] 
+        })
       }
     } catch (error) {
       return ctx.reply(`Error: \`\`\`js\n${error}\`\`\``);
