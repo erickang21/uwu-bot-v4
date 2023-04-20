@@ -116,6 +116,105 @@ class UwUClient extends Client {
     const { TOKEN, TOKEN_DEV } = process.env;
     return super.login(this.dev ? TOKEN_DEV : TOKEN);
   }
+
+  async getGuildCount() {
+    let guilds;
+    if(this.shard) {
+      const guildsPerShard = await this.shard.fetchClientValues("guilds.cache.size");
+      // hopefully i used reduce correctly, been a while
+      guilds = guildsPerShard.reduce((acc, guild) => acc + guild, 0);
+    } else {
+      guilds = this.client.guilds.cache.size;
+    }
+    return guilds;
+  }
+
+  // USER EXTENSIONS (rework)
+  getUserSettings(id) {
+    return this.client.settings.users.getDefaults(id);
+  }
+
+  userUpdate(id, obj) {
+    return this.client.settings.users.update(id, obj)
+  }
+
+  syncUserSettings(id) {
+    return this.client.settings.users.sync(id)
+  }
+
+  syncUserSettingsCache(id) {
+    if(!this.client.settings.users.cache.has(id)) return this.client.syncUserSettings(id);
+  }
+
+  async givePokePoints(id, amount) {
+    const pokepoints = parseInt(this.client.getUserSettings(id).pokepoints) + parseInt(amount);
+
+    // Guard against overflow.
+    if(pokepoints >= Number.MAX_SAFE_INTEGER) return false;
+
+    // Validate against any accidents.
+    if(isNaN(pokepoints)) throw new Error("Cannot give NaN points to member.");
+
+    return this.client.userUpdate(id, { pokepoints });
+  }
+
+  // CHANNEL EXTENSIONS (rework)
+  getChannelReadable(channel) {
+    return channel.permissionsFor(channel.guild.me).has("VIEW_CHANNEL")
+  }
+
+  getChannelPostable(channel) {
+    return this.getChannelReadable(channel) && channel.permissionsFor(channel.guild.me).has("SEND_MESSAGES");
+  }
+  
+  // GUILDMEMBER EXTENSIONS (rework)
+
+  memberUpdate(id, guildId, obj) {
+    return this.client.settings.members.update(`${guildId}.${id}`, obj) 
+  }
+
+  getMemberSettings(id, guildId) {
+    const formatId = `${guildId}.${id}`;
+    return this.client.settings.members.getDefaults(formatId);
+  }
+
+  getMemberPoints(id, guildId) {
+    return parseInt(this.client.getMemberSettings(id, guildId).points)
+  }
+
+  getMemberLevel(id, guildId) {
+    return parseInt(this.client.getMemberSettings(id, guildId).level)
+  }
+
+  syncMemberSettings(id, guildId) {
+    return this.client.settings.members.sync(`${guildId}.${id}`);
+  }
+
+  syncMemberSettingsCache() {
+    if(!this.client.settings.members.cache.has(`${guildId}.${id}`)) return this.client.syncMemberSettings();
+  }
+
+  async giveMemberPoints(id, guildId, amount) {
+    const points = parseInt(this.getMemberPoints(id, guildId)) + parseInt(amount);
+
+    // Guard against overflow.
+    if(points >= Number.MAX_SAFE_INTEGER) return false;
+
+    // Validate against any accidents.
+    if(isNaN(points)) throw new Error("Cannot give NaN points to member.");
+
+    return this.client.memberUpdate(id, guildId, { points });
+  }
+
+  // GUILD SETTINGS
+  async getGuildSettings(id) {
+    return this.client.settings.guilds.getDefaults(id);
+  }
+
+  async guildUpdate(id, obj={}) {
+    return this.client.settings.guilds.update(id, obj);
+  }
 }
+
 
 module.exports = UwUClient;

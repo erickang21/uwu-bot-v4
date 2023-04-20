@@ -19,6 +19,7 @@ async function main() {
     if (
       command.modes.includes("slash") &&
       command.enabled &&
+      !command.nsfw &&
       !command.devOnly
     ) {
       body.push(command.getSlashCommandData().toJSON());
