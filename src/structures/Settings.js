@@ -34,7 +34,6 @@ class Settings {
     return this.cache.get(id) || this.defaults;
   }
 
-
   /**
    * Updates settings for the table this settings instance manages.
    * The input is safe for upserts. If the document does not exist it inserts it.
@@ -50,13 +49,13 @@ class Settings {
       throw new Error("Expected an object.");
     }
 
-    const { value } = await this.db.collection(this.collection).findOneAndUpdate({ id }, { $set: obj }, {
+    const { value } = await this.db.collection(this.collection).findOneAndUpdate({ _id: id }, { $set: obj }, {
       upsert: true,
-      returnOriginal: false,
+      returnNewDocument: true,
       projection: { _id: 0 }
     });
-
-    this.cache.set(id, mergeDefault(this.defaults, value));
+    console.log(JSON.stringify(value));
+    this.cache.set(id, mergeDefault(this.defaults, obj));
     return value;
   }
 
@@ -67,7 +66,7 @@ class Settings {
    * @returns {Object} The newly fetched data from the database.
    */
   async sync(id) {
-    const doc = await this.db.collection(this.collection).findOne({ id }, {
+    const doc = await this.db.collection(this.collection).findOne({ _id: id }, {
       projection: { _id: 0 }
     });
 

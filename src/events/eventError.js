@@ -3,7 +3,7 @@ const Event = require("../structures/Event.js");
 class EventError extends Event {
   async run(event, err) {
     this.client.log.error(err);
-
+    console.log(err.stack);
     const report = (client) => {
       const channel = client.channels.cache.get("513368885144190986");
       if (!channel) return;

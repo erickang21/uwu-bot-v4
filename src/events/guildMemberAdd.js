@@ -3,11 +3,15 @@ const { MessageEmbed } = require("discord.js");
 
 class GuildMemberAdd extends Event {
   async run(member) {
-    if (member.guild.settings.welcome) {
-      if (member.guild.settings.welcome.channel) {
-        const chan = member.guild.channels.cache.get(member.guild.settings.welcome.channel);
+    console.log("event triggered")
+    this.client.syncGuildSettingsCache();
+    const settings = await this.client.getGuildSettings(member.guild.id);
+    if (settings.welcome) {
+      if (settings.welcome.channel) {
+        const chan = member.guild.channels.cache.get(settings.welcome.channel);
         if (chan) {
-          let message = member.guild.settings.welcome.message;
+          console.log("found channel")
+          let message = settings.welcome.message;
           message = message
             .replace(/{name}/g, member.user.username)
             .replace(/{mention}/g, `<@${member.id}>`)
@@ -17,12 +21,12 @@ class GuildMemberAdd extends Event {
         }
       }
     }
-    if (member.guild.settings.autorole) {
-      const role = member.guild.roles.cache.find((e) => e.id === member.guild.settings.autorole);
+    if (settings.autorole) {
+      const role = member.guild.roles.cache.find((e) => e.id === settings.autorole);
       if (role) await member.roles.add(role);
     }
-    if (member.guild.settings.modlog) {
-      const chan = member.guild.channels.cache.get(member.guild.settings.modlog);
+    if (settings.modlog) {
+      const chan = member.guild.channels.cache.get(settings.modlog);
       if (chan) {
         const embed = new MessageEmbed()
           .setColor(0x0ee335)

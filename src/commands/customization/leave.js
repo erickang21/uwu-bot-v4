@@ -1,4 +1,5 @@
 const Command = require("../../structures/Command.js");
+const { EMOJIS } = require("../../utils/constants.js");
 
 class Leave extends Command {
   constructor(...args) {
@@ -18,10 +19,12 @@ class Leave extends Command {
     });
   }
   
-  async run(ctx, [option, channel, ...message]) {
+  async run(ctx, options) {
+    this.client.syncGuildSettingsCache(ctx.guild.id);
     const guildSettings = await this.client.getGuildSettings(ctx.guild.id)
-    if (option) option = option.toLowerCase();
+    let option = ctx.rawArgs.split(" ")[0];
     
+    if (option) option = option.toLowerCase();
     else {
       if (!guildSettings.leave) return ctx.reply("The leave message for this server is **disabled.**");
       else if (!guildSettings.leave.channel) return ctx.reply("The leave message for this server is **disabled.**");
@@ -31,16 +34,21 @@ class Leave extends Command {
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply("Baka! You need the `Manage Server` permissions to change the leave message.");
     if (option === "on") {
-      channel = await this.verifyChannel(ctx, channel)
-      message = message.join(" ")
-      if (!message.length) return ctx.reply("You did not provide a leave message.")
-      ctx.guild.update({ leave: { channel: channel.id, message: message } });
-      ctx.reply(`The leave message for this server has successfully been updated. ${this.client.constants.checkmark}`)
+      const args = ctx.rawArgs.split(" ");
+      let channelstr = args[1];
+      if (!channelstr) return ctx.reply("You did not provide a channel.");
+      let channel = ctx.guild.channels.cache.get(channelstr.replace("<#", "").replace(">", ""));
+      if (!channel) return ctx.reply("You did not provide a channel.");
+      args.splice(0, 2);
+      let message = args.join(" ");
+      if (!message || !message.length) return ctx.reply("You did not provide a leave message.");
+      this.client.guildUpdate(ctx.guild.id, { leave: { channel: channel.id, message: message } });
+      ctx.reply(`The leave message for this server has successfully been updated. ${EMOJIS.CHECKMARK}`)
     } else if (option === "off") {
       if (!guildSettings.leave) return ctx.reply("The leave message for this server is already off!");
       if (!guildSettings.leave.channel) return ctx.reply("The leave message for this server is already off!");
       else {
-        ctx.guild.update({ leave: { channel: null, message: null } });
+        this.client.guildUpdate({ leave: {} });
         return ctx.reply(`The leave messages for this server have been disabled.`)
       }
     } else {

@@ -4,7 +4,7 @@
 module.exports = {
   guilds: {
     prefix: "uwu ",
-    welcome: { channel: null, message: null },
+    welcome: {},
     leave: {},
     autorole: {},
     store: [],
