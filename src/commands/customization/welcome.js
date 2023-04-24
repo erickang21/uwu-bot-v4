@@ -17,6 +17,7 @@ class Welcome extends Command {
         "{members} for current member count.",
         "{server} for server name."
       ].join("\n"),
+      /*
       options: [
         {
           name: "option",
@@ -34,14 +35,15 @@ class Welcome extends Command {
           type: "str"
         }
       ],
+      */
     });
   }
   
   async run(ctx, options) {
     const guildSettings = await this.client.getGuildSettings(ctx.guild.id)
-    let option = "";
-    let channel;
-    if (options.getString("option")) option = option.toLowerCase();
+    let option = ctx.rawArgs.split(" ")[0];
+    
+    if (option) option = option.toLowerCase();
     else {
       if (!guildSettings.welcome) return ctx.reply("The welcome message for this server is **disabled.**");
       else if (!guildSettings.welcome.channel) return ctx.reply("The welcome message for this server is **disabled.**");
@@ -51,10 +53,13 @@ class Welcome extends Command {
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply("Baka! You need the `Manage Server` permissions to change the welcome message.");
     if (option === "on") {
-      channel = options.getChannel("channel");
-      message = options.getString("message");
-      if (!message.length) return ctx.reply("You did not provide a welcome message.")
-      this.client.guildUpdate({ welcome: { channel: channel.id, message: message } });
+      let channelstr = ctx.rawArgs.split(" ")[1];
+      if (!channelstr) return ctx.reply("You did not provide a channel.");
+      let channel = ctx.guild.channels.cache.get(channelstr.replace("<#", "").replace(">", ""));
+      if (!channel) return ctx.reply("You did not provide a channel.");
+      let message = ctx.rawArgs.split(" ").splice(0, 2).join(" ");
+      if (!message || !message.length) return ctx.reply("You did not provide a welcome message.");
+      this.client.guildUpdate(ctx.guild.id, { welcome: { channel: channel.id, message: message } });
       ctx.reply(`The welcome message for this server has successfully been updated. ${EMOJIS.CHECKMARK}`)
     } else if (option === "off") {
       if (!guildSettings.welcome) return ctx.reply("The welcome message for this server is already off!");

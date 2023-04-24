@@ -30,6 +30,11 @@ class Settings {
     return this.client.db;
   }
 
+  getDefaults(id) {
+    return this.cache.get(id) || this.defaults;
+  }
+
+
   /**
    * Updates settings for the table this settings instance manages.
    * The input is safe for upserts. If the document does not exist it inserts it.
