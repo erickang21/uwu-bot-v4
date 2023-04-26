@@ -4,6 +4,7 @@ const { MessageEmbed } = require("discord.js");
 class GuildMemberAdd extends Event {
   async run(member) {
     const settings = await this.client.syncGuildSettingsCache(member.guild.id);
+    if (!settings) return;
     if (settings.welcome) {
       if (settings.welcome.channel) {
         const chan = member.guild.channels.cache.get(settings.welcome.channel);
