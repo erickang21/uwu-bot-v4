@@ -29,7 +29,6 @@ class GuildMemberAdd extends Event {
           .setTitle("Member Joined")
           .setColor(0x0ee335)
           .setDescription(`<:join:725705319732477983> ${member.user.tag} joined.`)
-          .setFooter("Joined at")
           .setTimestamp(member.joinedTimestamp)
         chan.send({ embeds: [embed] })
       } 

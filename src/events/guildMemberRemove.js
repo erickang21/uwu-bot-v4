@@ -8,7 +8,7 @@ class GuildMemberRemove extends Event {
     
 
     const settings = await this.client.syncGuildSettingsCache(member.guild.id);
-    await settings.members.delete(`${member.guild.id}.${member.id}`).catch(() => null);
+    //await settings.members.delete(`${member.guild.id}.${member.id}`).catch(() => null);
 
     if (settings.leave) {
       if (settings.leave.channel) {
@@ -31,7 +31,6 @@ class GuildMemberRemove extends Event {
           .setTitle("Member left")
           .setColor(0xed1405)
           .setDescription(`<:leave:725705319598260224> **${member.user.tag}** left.`)
-          .setFooter("Left at")
           .setTimestamp(Date.now())
         chan.send({ embeds: [embed] })
       } 
