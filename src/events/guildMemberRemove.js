@@ -5,9 +5,11 @@ class GuildMemberRemove extends Event {
   async run(member) {
     if(!member.guild.available) return;
 
-    await this.client.settings.members.delete(`${member.guild.id}.${member.id}`).catch(() => null);
+    
 
     const settings = await this.client.syncGuildSettingsCache(member.guild.id);
+    await settings.members.delete(`${member.guild.id}.${member.id}`).catch(() => null);
+
     if (settings.leave) {
       if (settings.leave.channel) {
         const chan = member.guild.channels.cache.get(settings.leave.channel);

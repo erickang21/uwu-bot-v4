@@ -34,6 +34,8 @@ class UwUClient extends Client {
     this.dbClient = null;
     this.settings = {
       guilds: new Settings(this, "guilds", schema.guilds),
+      members: new Settings(this, "members", schema.members),
+      users: new Settings(this, "users", schema.users)
     };
 
     this.once("ready", () => {
