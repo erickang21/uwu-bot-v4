@@ -25,12 +25,13 @@ class GuildMemberAdd extends Event {
     if (settings.modlog) {
       const chan = member.guild.channels.cache.get(settings.modlog);
       if (chan) {
-        const embed = new MessageEmbed()
+        const embed = this.client.embed()
+          .setTitle("Member Joined")
           .setColor(0x0ee335)
           .setDescription(`<:join:725705319732477983> ${member.user.tag} joined.`)
           .setFooter("Joined at")
           .setTimestamp(member.joinedTimestamp)
-        chan.send({ embed })
+        chan.send({ embeds: [embed] })
       } 
     }
   }

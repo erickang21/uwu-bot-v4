@@ -25,12 +25,13 @@ class GuildMemberRemove extends Event {
     if (settings.modlog) {
       const chan = member.guild.channels.cache.get(settings.modlog);
       if (chan) {
-        const embed = new MessageEmbed()
+        const embed = this.client.embed()
+          .setTitle("Member left")
           .setColor(0xed1405)
           .setDescription(`<:leave:725705319598260224> **${member.user.tag}** left.`)
           .setFooter("Left at")
           .setTimestamp(Date.now())
-        chan.send({ embed })
+        chan.send({ embeds: [embed] })
       } 
     }
   }
