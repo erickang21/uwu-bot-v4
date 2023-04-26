@@ -20,6 +20,7 @@ class UwUClient extends Client {
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers
       ],
       allowedMentions: { parse: ["users"] },
       partials: [Partials.Channel],
@@ -186,12 +187,12 @@ class UwUClient extends Client {
     return parseInt(this.getMemberSettings(id, guildId).level)
   }
 
-  syncMemberSettings(id, guildId) {
-    return this.settings.members.sync(`${guildId}.${id}`);
+  async syncMemberSettings(id, guildId) {
+    return await this.settings.members.sync(`${guildId}.${id}`);
   }
 
-  syncMemberSettingsCache() {
-    if(!this.settings.members.cache.has(`${guildId}.${id}`)) return this.syncMemberSettings();
+  async syncMemberSettingsCache() {
+    if(!this.settings.members.cache.has(`${guildId}.${id}`)) return await this.syncMemberSettings();
   }
 
   async giveMemberPoints(id, guildId, amount) {
@@ -215,8 +216,8 @@ class UwUClient extends Client {
     return this.settings.guilds.update(id, obj);
   }
 
-  syncGuildSettingsCache(id) {
-    if(!this.settings.guilds.cache.has(id)) return this.settings.guilds.sync(id);
+  async syncGuildSettingsCache(id) {
+    return await this.settings.guilds.sync(id);
   }
 }
 

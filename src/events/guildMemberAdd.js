@@ -3,19 +3,16 @@ const { MessageEmbed } = require("discord.js");
 
 class GuildMemberAdd extends Event {
   async run(member) {
-    console.log("event triggered")
-    this.client.syncGuildSettingsCache();
-    const settings = await this.client.getGuildSettings(member.guild.id);
+    const settings = await this.client.syncGuildSettingsCache(member.guild.id);
     if (settings.welcome) {
       if (settings.welcome.channel) {
         const chan = member.guild.channels.cache.get(settings.welcome.channel);
         if (chan) {
-          console.log("found channel")
           let message = settings.welcome.message;
           message = message
             .replace(/{name}/g, member.user.username)
             .replace(/{mention}/g, `<@${member.id}>`)
-            .replace(/{members}/g, `<@${member.guild.memberCount}>`)
+            .replace(/{members}/g, `${member.guild.memberCount}`)
             .replace(/{server}/g, member.guild.name);
           chan.send(message);
         }
