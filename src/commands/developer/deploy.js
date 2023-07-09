@@ -17,6 +17,7 @@ class Deploy extends Command {
         if (
           command.modes.includes("slash") &&
           command.enabled &&
+          !command.nsfw &&
           !command.devOnly
         ) {
           body.push(command.getSlashCommandData().toJSON());
