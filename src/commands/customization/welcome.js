@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { EMOJIS } = require("../../utils/constants.js");
+const emojis = require("../../structures/Emojis");
 
 class Welcome extends Command {
   constructor(...args) {
@@ -32,24 +32,24 @@ class Welcome extends Command {
     }
 
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
-      return ctx.reply("Baka! You need the `Manage Server` permissions to change the welcome message.");
+      return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change the welcome message. ${emojis.failure}`);
     if (option === "on") {
       const args = ctx.rawArgs.split(" ");
       let channelstr = args[1];
-      if (!channelstr) return ctx.reply("You did not provide a channel.");
+      if (!channelstr) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
       let channel = ctx.guild.channels.cache.get(channelstr.replace("<#", "").replace(">", ""));
-      if (!channel) return ctx.reply("You did not provide a channel.");
+      if (!channel) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
       args.splice(0, 2);
       let message = args.join(" ");
       if (!message || !message.length) return ctx.reply("You did not provide a welcome message.");
       this.client.guildUpdate(ctx.guild.id, { welcome: { channel: channel.id, message: message } });
-      ctx.reply(`The welcome message for this server has successfully been updated. ${EMOJIS.CHECKMARK}`)
+      ctx.reply(`The welcome message for this server has successfully been updated. ${emojis.success}`)
     } else if (option === "off") {
       if (!guildSettings.welcome) return ctx.reply("The welcome message for this server is already off!");
       if (!guildSettings.welcome.channel) return ctx.reply("The welcome message for this server is already off!");
       else {
         this.client.guildUpdate({ welcome: {} });
-        return ctx.reply(`The welcome messages for this server have been disabled.`)
+        return ctx.reply(`The welcome messages for this server have been disabled. ${emojis.success}`)
       }
     } else {
       return ctx.reply("Invalid usage of command. Use `uwu help welcome` for details.")
