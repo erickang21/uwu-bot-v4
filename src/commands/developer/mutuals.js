@@ -40,7 +40,9 @@ class Mutuals extends Command {
     }
 
     const mutualGuildsList = await this.client.shard.broadcastEval(findMembers, { context: { userId } });
+    console.log(mutualGuildsList);
     for (const guildList of mutualGuildsList) {
+      console.log("check", guildList);
       for (const mutualGuild of guildList) {
         servers += `- **${mutualGuild.name}** (ID: ${mutualGuild.id}) | Members: ${mutualGuild.memberCount}\n`;
       }
