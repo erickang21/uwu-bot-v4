@@ -40,7 +40,7 @@ class UwUClient extends Client {
         modlog: null
       },
       users: {
-        level: 0,
+        level: 1,
         exp: 0,
         multiplier: 1
       }
