@@ -1,4 +1,5 @@
 const Command = require("../../structures/Command.js");
+const emojis = require("../../structures/Emojis");
 
 class Mutuals extends Command {
   constructor(...args) {
@@ -40,10 +41,11 @@ class Mutuals extends Command {
     const mutualGuildsList = await this.client.shard.broadcastEval(findMembers);
     for (const guildList of mutualGuildsList) {
       for (const mutualGuild of guildList) {
-        servers += `- **${mutualGuild.name}** (ID ${mutualGuild.id}) | Members: ${mutualGuild.memberCount}\n`;
+        servers += `- **${mutualGuild.name}** (ID: ${mutualGuild.id}) | Members: ${mutualGuild.memberCount}\n`;
       }
     }
-
+    
+    servers += `\n${emojis.sparkles} Duration: ${Date.now() - ctx.createdTimestamp} ms`;
     const embed = this.client
     .embed(user)
     .setTitle(`Mutual Servers`)
