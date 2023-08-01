@@ -41,7 +41,8 @@ class UwUClient extends Client {
       },
       users: {
         level: 0,
-        exp: 0
+        exp: 0,
+        multiplier: 1
       }
     }
     this.settings = {

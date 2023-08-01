@@ -51,7 +51,7 @@ class MessageCreate extends Event {
     if (this.client.userMessageCount[message.author.id] >= 25) {
       const data = await this.client.syncUserSettings(message.author.id);
       let breakpoint = 100 * (data.level / 5) + 25 * data.level;
-      data.exp += 25;
+      data.exp += 25 * data.multiplier;
       while (data.exp >= breakpoint) {
         data.level += 1;
         data.exp -= breakpoint;
@@ -109,7 +109,7 @@ class MessageCreate extends Event {
     if (this.client.userCommandCount[message.author.id] >= 5) {
       const data = await this.client.syncUserSettings(message.author.id);
       let breakpoint = 100 * (data.level / 5) + 25 * data.level;
-      data.exp += 25;
+      data.exp += 25 * data.multiplier;
       while (data.exp >= breakpoint) {
         data.level += 1;
         data.exp -= breakpoint;
