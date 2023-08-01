@@ -30,8 +30,8 @@ class Mutuals extends Command {
     let servers = '';
     
     let findMembers = async (client) => {
-      client.guilds.cache.filter((guild) => {
-        guild.members.fetch(userId)
+      client.guilds.cache.filter((guild, context) => {
+        guild.members.fetch(context.userId)
           .then((res) => {
             if (res) return true;
             else return false;

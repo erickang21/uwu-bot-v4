@@ -54,7 +54,6 @@ class Settings {
       returnNewDocument: true,
       projection: { _id: 0 }
     });
-    console.log(JSON.stringify(value));
     this.cache.set(id, mergeDefault(this.defaults, obj));
     return value;
   }
