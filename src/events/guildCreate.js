@@ -7,7 +7,7 @@ class GuildCreate extends Event {
 
     // send to server upon joining
 
-    onsole.log("Attempting to prepare the welcome message!")
+    console.log("Attempting to prepare the welcome message!")
     const joinChannel = guild.channels.cache.find((c) => c.type === "text" &&  c.permissionsFor(guild.me).has("VIEW_CHANNEL") && c.permissionsFor(guild.me).has("SEND_MESSAGES") && c.permissionsFor(guild.me).has("EMBED_LINKS"));
     if (!joinChannel) return;
     const embed = new MessageEmbed()
