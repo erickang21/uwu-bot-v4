@@ -32,6 +32,14 @@ class UwUClient extends Client {
     this.events = new EventStore(this);
     this.db = null;
     this.dbClient = null;
+    this.dbSchema = {
+      guilds: {
+        autorole: null,
+        welcome: null,
+        leave: null,
+        modlog: null
+      }
+    }
     this.settings = {
       guilds: new Settings(this, "guilds", schema.guilds),
       members: new Settings(this, "members", schema.members),
@@ -219,7 +227,13 @@ class UwUClient extends Client {
   }
 
   async syncGuildSettingsCache(id) {
-    return await this.settings.guilds.sync(id);
+    const res = await this.settings.guilds.sync(id);
+    if (res) {
+      return res;
+    } else {
+      await this.guildUpdate(id, this.dbSchema.guilds);
+      return this.dbSchema.guilds;
+    }
   }
 }
 
