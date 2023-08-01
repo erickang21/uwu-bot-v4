@@ -39,9 +39,9 @@ class Warn extends Command {
       .setTitle(`You have received a warning. ${emojis.error}`)
       .setDescription(
         ` 
-${EMOJIS.POWERCUBE} **Server:** ${ctx.guild.name}
-${EMOJIS.ADMIN} **Warned by:** ${ctx.author.tag}
-${EMOJIS.RIGHTARROW} **Reason:** ${reason}
+${emojis.shiningarrow} **Server:** ${ctx.guild.name}
+${emojis.shiningarrow} **Warned by:** ${ctx.author.tag}
+${emojis.shiningarrow} **Reason:** ${reason}
                 `
       );
 

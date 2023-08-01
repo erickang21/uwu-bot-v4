@@ -21,6 +21,7 @@ class Mutuals extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user");
+    const userId = user.id;
     const msg = await ctx.reply({
       content: `Searching all servers... ${emojis.loading}`,
       fetchReply: true,
@@ -30,7 +31,7 @@ class Mutuals extends Command {
     
     let findMembers = async (client) => {
       client.guilds.cache.filter((guild) => {
-        guild.members.fetch(user.id)
+        guild.members.fetch(userId)
           .then((res) => {
             if (res) return true;
             else return false;
@@ -38,7 +39,7 @@ class Mutuals extends Command {
       });
     }
 
-    const mutualGuildsList = await this.client.shard.broadcastEval(findMembers);
+    const mutualGuildsList = await this.client.shard.broadcastEval(findMembers, { userId });
     for (const guildList of mutualGuildsList) {
       for (const mutualGuild of guildList) {
         servers += `- **${mutualGuild.name}** (ID: ${mutualGuild.id}) | Members: ${mutualGuild.memberCount}\n`;

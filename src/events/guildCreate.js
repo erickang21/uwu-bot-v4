@@ -10,7 +10,7 @@ class GuildCreate extends Event {
     console.log("Attempting to prepare the welcome message!")
     const joinChannel = guild.channels.cache.find((c) => c.type === "text" &&  c.permissionsFor(guild.me).has("VIEW_CHANNEL") && c.permissionsFor(guild.me).has("SEND_MESSAGES") && c.permissionsFor(guild.me).has("EMBED_LINKS"));
     if (!joinChannel) return;
-    const embed = new MessageEmbed()
+    const embed = this.client.embed()
       .setTitle("uwu bot is here!")
       .setColor(0xcb14e3)
       .setDescription(`Thank you for choosing **uwu bot!** ${emojis.love}

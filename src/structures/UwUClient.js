@@ -60,14 +60,6 @@ class UwUClient extends Client {
     }
   }
 
-  async getGuildCount() {
-    if (this.shard) {
-      const count = await this.shard.fetchClientValues("guilds.cache.size");
-      return count.reduce((acc, guild) => acc + guild, 0);
-    } else {
-      return this.guilds.cache.size;
-    }
-  }
 
   async setActivity() {
     const guilds = await this.getGuildCount();
@@ -201,7 +193,7 @@ class UwUClient extends Client {
     return await this.settings.members.sync(`${guildId}.${id}`);
   }
 
-  async syncMemberSettingsCache() {
+  async syncMemberSettingsCache(id, guildId) {
     if(!this.settings.members.cache.has(`${guildId}.${id}`)) return await this.syncMemberSettings();
   }
 
