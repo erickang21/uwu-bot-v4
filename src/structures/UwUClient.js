@@ -38,6 +38,10 @@ class UwUClient extends Client {
         welcome: null,
         leave: null,
         modlog: null
+      },
+      users: {
+        level: 0,
+        exp: 0
       }
     }
     this.settings = {
@@ -45,6 +49,8 @@ class UwUClient extends Client {
       members: new Settings(this, "members", schema.members),
       users: new Settings(this, "users", schema.users)
     };
+    this.userMessageCount = {};
+    this.userCommandCount = {};
 
     this.once("ready", () => {
       this.emit("uwuReady");
@@ -137,12 +143,18 @@ class UwUClient extends Client {
     return this.client.settings.users.getDefaults(id);
   }
 
-  userUpdate(id, obj) {
-    return this.settings.users.update(id, obj)
+  async userUpdate(id, obj) {
+    return this.settings.users.update(id, obj);
   }
 
-  syncUserSettings(id) {
-    return this.settings.users.sync(id)
+  async syncUserSettings(id) {
+    const res = await this.settings.users.sync(id);
+    if (res) {
+      return res;
+    } else {
+      await this.userUpdate(id, this.dbSchema.users);
+      return this.dbSchema.users;
+    }
   }
 
   syncUserSettingsCache(id) {

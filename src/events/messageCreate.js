@@ -30,6 +30,37 @@ class MessageCreate extends Event {
     const prefix = settings.prefix;
     const regex = new RegExp(`^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`);
     const match = message.content.match(regex);
+    
+    // Update message count
+    if (!this.client.userMessageCount[message.author.id]) this.client.userMessageCount[message.author.id] = 1;
+    else this.client.userMessageCount[message.author.id] += 1;
+
+    /*
+    Leveling System: 100*(x / 5) + 25 * x (increment xp on each level and make it spike at each 5 levels)
+    Lv 1: 25
+    Lv 2: 50
+    Lv 3: 75
+    Lv 4: 100
+    Lv 5: 225
+    Lv 10: 450
+    Lv 15: 675
+    */
+    
+    // Remain in cache and only request DB upon every 25 messages.
+    // Level up by 1 xp/message
+    if (this.client.userMessageCount[message.author.id] >= 25) {
+      const data = await this.client.syncUserSettings(message.author.id);
+      let breakpoint = 100 * (data.level / 5) + 25 * data.level;
+      data.exp += 25;
+      while (data.exp >= breakpoint) {
+        data.level += 1;
+        data.exp -= breakpoint;
+        breakpoint = 100 * (data.level / 5) + 25 * data.level;
+      }
+      this.client.userMessageCount[message.author.id] = 0;
+      await this.client.userUpdate(message.author.id, data);
+    }
+    
 
     if (!match) return;
 
@@ -70,6 +101,23 @@ class MessageCreate extends Event {
 
     if (!(await this.checkPermissions(ctx, command))) return;
 
+    // When command is successfully executable, add XP: 5/command
+    if (!this.client.userCommandCount[message.author.id]) this.client.userCommandCount[message.author.id] = 1;
+    else this.client.userCommandCount[message.author.id] += 1;
+    // Remain in cache and only request DB upon every 5 commands.
+    // Level up by 5 xp/command
+    if (this.client.userCommandCount[message.author.id] >= 5) {
+      const data = await this.client.syncUserSettings(message.author.id);
+      let breakpoint = 100 * (data.level / 5) + 25 * data.level;
+      data.exp += 25;
+      while (data.exp >= breakpoint) {
+        data.level += 1;
+        data.exp -= breakpoint;
+        breakpoint = 100 * (data.level / 5) + 25 * data.level;
+      }
+      this.client.userCommandCount[message.author.id] = 0;
+      await this.client.userUpdate(message.author.id, data);
+    }
     return command.execute(ctx);
   }
 

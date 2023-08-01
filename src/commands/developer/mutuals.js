@@ -22,14 +22,9 @@ class Mutuals extends Command {
   async run(ctx, options) {
     const user = options.getUser("user");
     const userId = user.id;
-    const msg = await ctx.reply({
-      content: `Searching all servers... ${emojis.loading}`,
-      fetchReply: true,
-    });
-
     let servers = '';
     
-    let findMembers = async (client, context) => {
+    let findMembers = (client, context) => {
       return client.guilds.cache.filter((guild) => {
         guild.members.fetch(context.userId)
           .then((res) => {
@@ -50,9 +45,9 @@ class Mutuals extends Command {
     
     servers += `\n${emojis.sparkles} Duration: ${Date.now() - ctx.createdTimestamp} ms`;
     const embed = this.client
-    .embed(user)
-    .setTitle(`Mutual Servers`)
-    .setDescription(servers);
+      .embed(user)
+      .setTitle(`Mutual Servers`)
+      .setDescription(servers);
 
     return ctx.editReply({
       embeds: [ embed ],
