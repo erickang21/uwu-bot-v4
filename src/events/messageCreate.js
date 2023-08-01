@@ -50,12 +50,12 @@ class MessageCreate extends Event {
     // Level up by 1 xp/message
     if (this.client.userMessageCount[message.author.id] >= 25) {
       const data = await this.client.syncUserSettings(message.author.id);
-      let breakpoint = 100 * (data.level / 5) + 25 * data.level;
+      let breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
       data.exp += 25 * data.multiplier;
       while (data.exp >= breakpoint) {
         data.level += 1;
         data.exp -= breakpoint;
-        breakpoint = 100 * (data.level / 5) + 25 * data.level;
+        breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
       }
       this.client.userMessageCount[message.author.id] = 0;
       await this.client.userUpdate(message.author.id, data);
