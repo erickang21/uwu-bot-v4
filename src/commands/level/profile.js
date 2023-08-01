@@ -18,7 +18,7 @@ class Profile extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const userData = this.client.syncUserSettings(user.id);
+    const userData = await this.client.syncUserSettings(user.id);
     let breakpoint = 100 * Math.floor(userData.level / 5) + 25 * userData.level;
     const embed = this.client.embed(user)
       .setTitle("Your Profile")
