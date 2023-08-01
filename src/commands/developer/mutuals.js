@@ -39,7 +39,7 @@ class Mutuals extends Command {
       });
     }
 
-    const mutualGuildsList = await this.client.shard.broadcastEval(findMembers, { userId });
+    const mutualGuildsList = await this.client.shard.broadcastEval(findMembers, { context: { userId } });
     for (const guildList of mutualGuildsList) {
       for (const mutualGuild of guildList) {
         servers += `- **${mutualGuild.name}** (ID: ${mutualGuild.id}) | Members: ${mutualGuild.memberCount}\n`;
