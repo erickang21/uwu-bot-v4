@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { EMOJIS } = require("../../utils/constants.js");
+const emojis = require("../../structures/Emojis");
 
 class Mute extends Command {
   constructor(...args) {
@@ -36,7 +36,7 @@ class Mute extends Command {
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you mute yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you mute me?");
-    if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't mute this user. ${EMOJIS.ERROR}`);
+    if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't mute this user. ${emojis.error}`);
     
     let muteReason = ctx.author.id + ":";
 
@@ -48,7 +48,7 @@ class Mute extends Command {
 
     // the equivalent of an infinite mute would be 1 week
     await member.timeout(options.getInteger("time") * 60 * 1000 || 7 * 24 * 60 * 60 * 1000, muteReason);
-    return ctx.reply(`**${member.user.tag}** was muted. ${EMOJIS.PUNCH}`);
+    return ctx.reply(`**${member.user.tag}** was muted. ${emojis.mute}`);
   }
 }
 

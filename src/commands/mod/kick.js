@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { EMOJIS } = require("../../utils/constants.js");
+const emojis = require("../../structures/Emojis");
 
 class Kick extends Command {
   constructor(...args) {
@@ -30,8 +30,8 @@ class Kick extends Command {
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you kick yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you kick me?");
-    if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't kick this user. ${EMOJIS.ERROR}`);
-    if(!member.kickable) return ctx.reply(`I can't kick this user! ${EMOJIS.ERROR}`);
+    if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't kick this user. ${emojis.error}`);
+    if(!member.kickable) return ctx.reply(`I can't kick this user! ${emojis.error}`);
     
     let kickReason = ctx.author.id + ":";
 
@@ -42,7 +42,7 @@ class Kick extends Command {
     }
     
     await member.kick(kickReason);
-    return ctx.reply(`**${member.user.tag}** was kicked. ${EMOJIS.PUNCH}`);
+    return ctx.reply(`**${member.user.tag}** was kicked. ${emojis.kick}`);
   }
 }
 

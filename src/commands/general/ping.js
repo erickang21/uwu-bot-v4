@@ -1,4 +1,5 @@
 const Command = require("../../structures/Command.js");
+const emojis = require("../../structures/Emojis");
 
 class Ping extends Command {
   constructor(...args) {
@@ -9,7 +10,7 @@ class Ping extends Command {
 
   async run(ctx) {
     const msg = await ctx.reply({
-      content: "Ping?",
+      content: `Ping? ${emojis.loading}`,
       fetchReply: true,
     });
 
@@ -17,7 +18,7 @@ class Ping extends Command {
     const latency = this.client.ws.ping;
 
     return ctx.editReply({
-      content: `Pong! That took **${took} ms**. The API Latency is **${latency} ms**`,
+      content: `Pong! That took **${took} ms**. The API Latency is **${latency} ms.** ${emojis.dancing}`,
     });
   }
 }

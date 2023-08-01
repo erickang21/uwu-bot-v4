@@ -1,4 +1,6 @@
 const Command = require("../../structures/Command.js");
+const emojis = require("../../structures/Emojis");
+
 const { MessageEmbed } = require("discord.js");
 class Purge extends Command {
   constructor(...args) {
@@ -18,9 +20,9 @@ class Purge extends Command {
 
   async run(ctx, [limit, filter = null]) {
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
-      return ctx.reply("Baka! You need the `Manage Messages` permissions to purge messages.");
+      return ctx.reply(`Baka! You need the \`Manage Messages\` permissions to purge messages. ${emojis.failure}`);
     limit = this.verifyInt(limit);
-    if (limit > 100) return ctx.reply("You cannot purge more than 100 messages at a time.")
+    if (limit > 100) return ctx.reply(`You cannot purge more than 100 messages at a time. ${emojis.failure}`)
     let messages = await ctx.channel.messages.fetch({ limit: 100 });
 
     if(filter) {
@@ -32,17 +34,17 @@ class Purge extends Command {
     messages = messages.array().slice(0, limit + 1);
     ctx.channel.bulkDelete(messages)
       .then(async () => {
-        const reply = await ctx.reply(`${messages.length - 1} messages were deleted. ${this.client.constants.checkmark}`);
+        const reply = await ctx.reply(`${messages.length - 1} messages were deleted. ${emojis.success}`);
         reply.delete({ timeout: 5000 });
       })
       .catch(() => {
         const embed = new MessageEmbed() // Generic Fail Message
-        .setTitle("An error occurred! <a:Anger:849398410426974269>")
+        .setTitle(`An error occurred! ${emojis.error}`)
         .setDescription(`The messages were not successfully purged. 
         
 This could be due to the following reasons:
-<:arrow:849398611888570369> The bot does not have the **Manage Messages** permission.
-<:arrow:849398611888570369> One or more messages within the last **${limit}** messages are more than 14 days old.`)
+${emojis.shiningarrow} The bot does not have the **Manage Messages** permission.
+${emojis.shiningarrow} One or more messages within the last **${limit}** messages are more than 14 days old.`)
         .setTimestamp()
         .setColor(0xf01d0e);
         ctx.reply({ embed })

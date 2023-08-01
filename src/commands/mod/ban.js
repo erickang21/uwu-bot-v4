@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { EMOJIS } = require("../../utils/constants.js");
+const emojis = require("../../structures/Emojis");
 
 class Ban extends Command {
   constructor(...args) {
@@ -30,8 +30,8 @@ class Ban extends Command {
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you ban yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you ban me?");
-    if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't ban this user. ${EMOJIS.ERROR}`);
-    if(!member.bannable) return ctx.reply(`I can't ban this user! ${EMOJIS.ERROR}`);
+    if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't ban this user. ${emojis.error}`);
+    if(!member.bannable) return ctx.reply(`I can't ban this user! ${emojis.error}`);
     
     const data = { deleteMessageSeconds: 60 * 60 * 24 * 7 };
     let banReason = ctx.author.id + ":";
@@ -43,7 +43,7 @@ class Ban extends Command {
     }
     data.reason = banReason;
     await member.ban(data);
-    return ctx.reply(`**${member.user.tag}** was banned. ${EMOJIS.BONK}`);
+    return ctx.reply(`**${member.user.tag}** was banned. ${emojis.ban}`);
   }
 }
 

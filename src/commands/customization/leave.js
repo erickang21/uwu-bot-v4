@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { EMOJIS } = require("../../utils/constants.js");
+const emojis = require("../../structures/Emojis");
 
 class Leave extends Command {
   constructor(...args) {
@@ -32,24 +32,24 @@ class Leave extends Command {
     }
 
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
-      return ctx.reply("Baka! You need the `Manage Server` permissions to change the leave message.");
+      return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change the leave message. ${emojis.failure}`);
     if (option === "on") {
       const args = ctx.rawArgs.split(" ");
       let channelstr = args[1];
-      if (!channelstr) return ctx.reply("You did not provide a channel.");
+      if (!channelstr) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
       let channel = ctx.guild.channels.cache.get(channelstr.replace("<#", "").replace(">", ""));
-      if (!channel) return ctx.reply("You did not provide a channel.");
+      if (!channel) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
       args.splice(0, 2);
       let message = args.join(" ");
-      if (!message || !message.length) return ctx.reply("You did not provide a leave message.");
+      if (!message || !message.length) return ctx.reply(`You did not provide a leave message. ${emojis.failure}`);
       this.client.guildUpdate(ctx.guild.id, { leave: { channel: channel.id, message: message } });
-      ctx.reply(`The leave message for this server has successfully been updated. ${EMOJIS.CHECKMARK}`)
+      ctx.reply(`The leave message for this server has successfully been updated. ${emojis.success}`)
     } else if (option === "off") {
       if (!guildSettings.leave) return ctx.reply("The leave message for this server is already off!");
       if (!guildSettings.leave.channel) return ctx.reply("The leave message for this server is already off!");
       else {
         this.client.guildUpdate({ leave: {} });
-        return ctx.reply(`The leave messages for this server have been disabled.`)
+        return ctx.reply(`The leave messages for this server have been disabled. ${emojis.success}`)
       }
     } else {
       return ctx.reply("Invalid usage of command. Use `uwu help leave` for details.")

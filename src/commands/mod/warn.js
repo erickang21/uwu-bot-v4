@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { EMOJIS } = require("../../utils/constants.js");
+const emojis = require("../../structures/Emojis");
 
 class Warn extends Command {
   constructor(...args) {
@@ -36,7 +36,7 @@ class Warn extends Command {
     if(user.id === ctx.guild.ownerID) return ctx.reply("Baka! You can't warn the owner.");
     const embed = this.client
       .embed(this.client.user)
-      .setTitle(`You have received a warning. ${EMOJIS.ERROR}`)
+      .setTitle(`You have received a warning. ${emojis.error}`)
       .setDescription(
         ` 
 ${EMOJIS.POWERCUBE} **Server:** ${ctx.guild.name}
@@ -47,9 +47,9 @@ ${EMOJIS.RIGHTARROW} **Reason:** ${reason}
 
     try {
       await user.send({ embeds: [ embed ] });
-      return ctx.reply(`A warning message has been sent to **${user.tag}**. ${EMOJIS.CHECKMARK}`);
+      return ctx.reply(`A warning message has been sent to **${user.tag}**. ${emojis.success}`);
     } catch(err) {
-      return ctx.reply(`A warning message could not be sent. The user may have blocked the bot or disabled DMs. ${EMOJIS.ERROR}`);
+      return ctx.reply(`A warning message could not be sent. The user may have blocked the bot or disabled DMs. ${emojis.failure}`);
     }
   }
 }

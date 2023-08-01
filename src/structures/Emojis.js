@@ -6,5 +6,9 @@ module.exports = {
   pet: "<a:pet:1135715916869537892>",
   shiningarrow: "<a:shiningarrow:1135715918303989911>",
   racing: "<a:zoom:1135715930249384086>",
-  dancing: "<a:dancing:1135715908938113194>"
+  dancing: "<a:dancing:1135715908938113194>",
+  loading: "<a:loading:1135715915485433969>",
+  mute: "<:mute:1135747712407568424>",
+  unmute: "<:unmute:1135747713850425344>",
+  ban: "<:ban:1135747709219901441>"
 };
