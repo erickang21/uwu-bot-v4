@@ -22,6 +22,7 @@ class MessageCreate extends Event {
   }
 
   async run(message) {
+    return this.client.commands.handler.handleMessage(message);
     if (!message.content || message.author.bot) return;
     if (message.channel.partial) await message.channel.fetch();
 
@@ -31,7 +32,7 @@ class MessageCreate extends Event {
     const prefix = settings.prefix;
     const regex = new RegExp(`^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`);
     const match = message.content.match(regex);
-    
+
     // Update message count
     if (!this.client.userMessageCount[message.author.id]) this.client.userMessageCount[message.author.id] = 1;
     else this.client.userMessageCount[message.author.id] += 1;
@@ -46,7 +47,7 @@ class MessageCreate extends Event {
     Lv 10: 450
     Lv 15: 675
     */
-    
+
     // Remain in cache and only request DB upon every 25 messages.
     // Level up by 1 xp/message
     if (this.client.userMessageCount[message.author.id] >= 25) {
@@ -75,7 +76,7 @@ class MessageCreate extends Event {
       this.client.userMessageCount[message.author.id] = 0;
       await this.client.userUpdate(message.author.id, data);
     }
-    
+
 
     if (!match) return;
 
