@@ -20,7 +20,7 @@ class GuildCreate extends Event {
           .setThumbnail(context.iconURL)
           .addFields({
             name: "Owner",
-            value: owner?.tag ?? "No Owner Information",
+            value: context.ownerUsername ?? "No Owner Information",
             inline: true,
           })
           .addFields({
@@ -34,7 +34,7 @@ class GuildCreate extends Event {
       }
     }
 
-    await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild, emojis, iconURL: guild.iconURL() } });
+    await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild, emojis, iconURL: guild.iconURL(), ownerUsername: owner?.tag } });
 
     log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
     await this.client.setActivity();
