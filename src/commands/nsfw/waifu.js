@@ -4,16 +4,17 @@ const { request } = require("undici");
 class Waifu extends Command {
   constructor(...args) {
     super(...args, {
-      description: "For those who believe in waifu supremacy.",
+      description: "[NSFW] Get a spicy pic of an anime waifu.",
       usage: "waifu",
+      nsfw: true
     });
   }
 
   async run(ctx) {
-    const { url } = await request("https://nekos.life/api/v2/img/waifu").then(
+    const { url } = await request("https://api.waifu.pics/nsfw/waifu").then(
       ({ body }) => body.json()
     );
-    const embed = this.client.embed(ctx.author).setTitle(`Waifu`).setImage(url);
+    const embed = this.client.embed(ctx.author).setTitle(`Waifu :eggplant:`).setImage(url);
     return ctx.reply({ embeds: [embed] });
   }
 }

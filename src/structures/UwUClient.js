@@ -12,6 +12,7 @@ const EventStore = require("./EventStore.js");
 const Settings = require("./Settings.js");
 const schema = require("../utils/schema.js");
 const topgg = require("@top-gg/sdk");
+const { request } = require('undici')
 
 class UwUClient extends Client {
   constructor() {
@@ -89,6 +90,32 @@ class UwUClient extends Client {
       return setPresence(this, { guilds });
     }
   }
+
+    postStats() {
+      const server_count = this.guilds.cache.size; 
+      if (server_count === this.lastStats) return;
+      return request(`https://top.gg/api/bots/${this.user.id}/stats`, {
+        method: 'POST',
+        body: JSON.stringify({
+            server_count,
+            shard_id: this.client.shard?.ids[0] ?? 0,
+            shard_count: this.client.shard?.count ?? 1,
+          }),
+        headers: {
+          Authorization: process.env.TOPGG_API,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(({ statusCode }) => {
+          if (statusCode !== 200) {
+            this.log.warn(`[ERROR] Top.gg returned status code ${statusCode}`);
+          } else {
+            this.log.info(`[INFO] Posted Top.gg stats | server_count = ${server_count} | shard = ${this.client.shard?.ids[0]}`);
+            this.lastStats = server_count;
+          }
+        })
+        .catch(err => this.log.error(`Error posting DBL stats: ${err}`));
+    }
 
   /**
    * Embed template.
