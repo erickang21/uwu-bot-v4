@@ -44,8 +44,7 @@ class Stats extends Command {
           value: `${guildCount}`,
           inline: true
         },
-        { name: `Users ${EMOJIS.INVITE}`, value: `${totalUsers}` },
-          inline: true
+        { name: `Users ${EMOJIS.INVITE}`, value: `${totalUsers}` , inline: true },
         {
           name: `Average Users/Server ${EMOJIS.EARLY_SUPPORTER}`,
           value: `${Math.floor(totalUsers / guildCount)}`,
