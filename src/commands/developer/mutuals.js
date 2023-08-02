@@ -13,14 +13,13 @@ class Mutuals extends Command {
           name: "user",
           description: "The user to check.",
           type: "user",
-          required: true,
         },
       ],
     });
   }
 
   async getGuild(guildId) {
-    const shardEntries = await this.client.shard.broadcastEval((client) => client.guilds.cache.get(guildId));
+    const shardEntries = await this.client.shard.broadcastEval((client, context) => client.guilds.cache.get(context.guildId), { context: { guildId } });
     return shardEntries.filter((entry) => !!entry)[0];
   }
 
