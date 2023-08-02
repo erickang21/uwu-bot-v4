@@ -20,5 +20,5 @@ module.exports = {
   xp: "<:xp:1136079143784689755>",
   thumbsup: "<:thumbsup:1136108024650543205>",
   pointup: "<:pointup:1136126766684049589>",
-  headpat: ""
+  profileicon_blank: "<:invisible:1136302181310533643>"
 };

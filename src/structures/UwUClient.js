@@ -47,7 +47,7 @@ class UwUClient extends Client {
         dailyCooldown: 0,
         icons: [],
         notify: false,
-        guilds: []
+        guilds: [],
       }
     }
     this.settings = {

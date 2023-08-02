@@ -11,11 +11,9 @@ class GuildCreate extends Event {
     const joinChannel = guild.channels.cache.find((c) => c.type === "text" &&  c.permissionsFor(guild.me).has("VIEW_CHANNEL") && c.permissionsFor(guild.me).has("SEND_MESSAGES") && c.permissionsFor(guild.me).has("EMBED_LINKS"));
     if (!joinChannel) return;
     const embed = this.client.embed()
-      .setTitle("uwu bot is here!")
+      .setTitle(`Thank you for choosing **uwu bot!** ${emojis.love}`)
       .setColor(0xcb14e3)
-      .setDescription(`Thank you for choosing **uwu bot!** ${emojis.love}
-
-Look at you, someone with actual taste, choosing the right Discord bot to make your server infinitely better. 
+      .setDescription(`Look at you, someone with actual taste, choosing the right Discord bot to make your server infinitely better. 
 
 Let's get this party started! Keep in mind: 
 ${emojis.smug} The default prefix is \`uwu\`. Change this with \`uwu prefix\`!
@@ -30,7 +28,7 @@ Let's rock! ${emojis.dancing}
     `)
     .setFooter(this.client.user.tag, this.client.user.displayAvatarURL({ size: 32 }));
   console.log("Attempting to send the welcome message!");
-  joinChannel.send({ embed })
+  joinChannel.send({ embeds: [embed] })
     .then(() => console.log(`Welcome message logged! | ${guild.name} | Shard ${guild.shard.id + 1}`))
     .catch(() => console.log(`Welcome message failed to log. | ${guild.name} | Shard ${guild.shard.id + 1}`));
 
@@ -42,36 +40,30 @@ Let's rock! ${emojis.dancing}
 
     log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
     await this.client.setActivity();
-
-    const report = async (client) => {
-      const channel = client.channels.cache.get("559511019190353920");
-      if (!channel) return;
-
-      const embed = client
-        .embed()
-        .setTitle("uwu bot joined a new server!")
-        .setDescription("${guild.name}")
-        .setThumbnail(guild.iconURL())
-        .addFields({
-          name: "Owner",
-          value: owner?.tag ?? "No Owner Information",
-          inline: true,
-        })
-        .addFields({
-          name: "Member Count",
-          value: guild.memberCount.toString(),
-          inline: true,
-        })
-        .setFooter({ text: guild.id });
-
-      await channel.send({ embeds: [embed] });
-    };
-
-    if (this.client.shard) {
-      return this.client.shard.broadcastEval(report);
-    } else {
-      return report(this.client);
+    const shardEntries = await this.client.shard.broadcastEval((client) => client.channels.cache.get("559511019190353920"));
+    const logChannel = shardEntries.filter((entry) => !!entry)[0];
+    if (!logChannel) {
+      console.log("[WARNING] Join/Leave log channel is missing.");
+      return;
     }
+    const logEmbed = this.client.embed()
+      .setTitle("uwu bot joined a new server!")
+      .setDescription(`${guild.name}`)
+      .setThumbnail(guild.iconURL())
+      .addFields({
+        name: "Owner",
+        value: owner?.tag ?? "No Owner Information",
+        inline: true,
+      })
+      .addFields({
+        name: "Member Count",
+        value: guild.memberCount.toString(),
+        inline: true,
+      })
+      .setFooter({ text: guild.id });
+
+    await logChannel.send({ embeds: [logEmbed] });
+    
   }
 }
 

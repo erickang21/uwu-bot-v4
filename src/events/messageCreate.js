@@ -66,7 +66,7 @@ class MessageCreate extends Event {
         if (data.notify) {
           let desc = `${emojis.level} **Level:** ${data.level - 1} ${emojis.shiningarrow} ${data.level}\n${emojis.xp} **XP until next level:** ${data.exp}/${breakpoint}`;
           if (data.level % 5 === 0) desc += `\n\n**You also got:**\n:unlock: New profile icon slot!`
-          const embed = this.client.embed(ctx.author)
+          const embed = this.client.embed(message.author)
             .setTitle(`You leveled up! ${emojis.thumbsup}`)
             .setDescription(desc);
           ctx.author.send({ embeds: [embed]});
@@ -138,7 +138,7 @@ class MessageCreate extends Event {
         if (data.notify) {
           let desc = `${emojis.level} **Level:** ${data.level - 1} ${emojis.shiningarrow} ${data.level}\n${emojis.xp} **XP until next level:** ${data.exp}/${breakpoint}`;
           if (data.level % 5 === 0) desc += `\n\n**You also got:**\n:unlock: New profile icon slot!`
-          const embed = this.client.embed(ctx.author)
+          const embed = this.client.embed(message.author)
             .setTitle(`You leveled up! ${emojis.thumbsup}`)
             .setDescription(desc);
           ctx.author.send({ embeds: [embed]});

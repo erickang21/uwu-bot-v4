@@ -37,33 +37,41 @@ class Stats extends Command {
           value: `**${ctx.guild.shard.id + 1}** of **${
             this.client.shard.count
           }**`,
+          inline: true
         },
         {
           name: `Servers ${EMOJIS.TROPHY}`,
           value: `${guildCount}`,
+          inline: true
         },
         { name: `Users ${EMOJIS.INVITE}`, value: `${totalUsers}` },
+          inline: true
         {
           name: `Average Users/Server ${EMOJIS.EARLY_SUPPORTER}`,
           value: `${Math.floor(totalUsers / guildCount)}`,
+          inline: true
         },
-        { name: `Uptime ${EMOJIS.ON_MY_WAY}`, value: uptime },
-        { name: `Memory ${EMOJIS.EQ}`, value: getBytes(memUsage) },
+        { name: `Uptime ${EMOJIS.ON_MY_WAY}`, value: uptime, inline: true },
+        { name: `Memory ${EMOJIS.EQ}`, value: getBytes(memUsage), inline: true },
         {
           name: `Commands ${EMOJIS.TROPHY_2}`,
           value: `${this.store.size}`,
+          inline: true
         },
         {
           name: `Commands Run (since uptime) ${EMOJIS.CHART_UP}`,
           value: `${this.store.ran}`,
+          inline: true
         },
         {
           name: `Node.js Version ${EMOJIS.NODEJS}`,
           value: process.version,
+          inline: true
         },
         {
           name: `Discord.js Version ${EMOJIS.DISCORD}`,
           value: `v${version}`,
+          inline: true
         },
         {
           name: "Bot Links",
@@ -71,6 +79,7 @@ class Stats extends Command {
             `${EMOJIS.DBL} [Top.gg Page](https://top.gg/bot/520682706896683009)`,
             `${EMOJIS.DOCS} [Documentation](https://docs.uwubot.tk)`,
           ].join("\n"),
+          inline: true
         },
         {
           name: "Socials",
@@ -81,8 +90,9 @@ class Stats extends Command {
             `${EMOJIS.TWITCH} [itzbananauwu](https://www.twitch.tv/itzbananauwu)`,
             `${EMOJIS.GITHUB} [erickang21](https://github.com/itzbananauwu)`,
           ].join("\n"),
+          inline: true
         },
-        { name: `Developers ${EMOJIS.CODE}`, value: devList.join("\n") }
+        { name: `Developers ${EMOJIS.CODE}`, value: devList.join("\n"), inline: true }
       );
 
     return ctx.reply({ embeds: [embed] });
