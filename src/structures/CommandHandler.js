@@ -72,7 +72,7 @@ class CommandHandler {
           const embed = this.client.embed(message.author)
             .setTitle(`You leveled up! ${emojis.thumbsup}`)
             .setDescription(desc);
-          ctx.author.send({ embeds: [embed]});
+          message.author.send({ embeds: [embed]});
         }
       }
       this.client.userMessageCount[message.author.id] = 0;
