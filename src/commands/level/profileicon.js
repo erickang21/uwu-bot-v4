@@ -5,9 +5,9 @@ class Profileicons extends Command {
   constructor(...args) {
     super(...args, {
       description: "Edit your lineup of profile icons!",
-      usage: "profileicons [set] [position] [icon_key]",
+      usage: "profileicon [set] [position] [icon_key]",
       guildOnly: true,
-      aliases: ["setwelcome"],
+      aliases: ["profileicons"],
       extendedHelp: [
         "Use on to turn the message on and include arguments after, or use off to turn it off without any arguments after.",
         "#channel is a channel mention of where you want welcome messages to be sent.",
@@ -58,7 +58,7 @@ class Profileicons extends Command {
       icons += `:lock:`;
       const embed = this.client.embed(ctx.author)
         .setTitle("Profile Icons")
-        .setDescription(`**Your Icons:**\n${icons}\n\n${emojis.level} \n\n:closed_lock_with_key: Unlock the next profile icon slot at level **${slotCount * 5}**.\n\nNeed some help figuring out this command? Run \`uwu profileicon help\`.`)
+        .setDescription(`**Your Icons:**\n${icons}\n\n:closed_lock_with_key: Unlock the next profile icon slot at level **${slotCount * 5}**.\n\nNeed some help figuring out this command? Run \`uwu profileicon help\`.`)
         .setThumbnail("https://cdn.discordapp.com/attachments/520734295112024064/1136078616661348472/849417442471706684.gif");
       return ctx.reply({ embeds: [embed] });
     }
