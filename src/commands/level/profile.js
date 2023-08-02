@@ -22,7 +22,7 @@ class Profile extends Command {
     let breakpoint = 100 * Math.floor(userData.level / 5) + 25 * userData.level;
     const embed = this.client.embed(user)
       .setTitle(user.id === ctx.author.id ? "Your Profile" : `Profile: ${user.username}`)
-      .setDescription(`${emojis.level} **Level:** ${userData.level}\n${emojis.xp} **XP until next level:** ${userData.exp}/${breakpoint}${userData.multiplier > 1 ? `\n\n${emojis.sparkles} You currently have a **${userData.multiplier}x** multiplier active!` : ""}${ctx.guild.id === "372526440324923393" ? `\n\n${emojis.pet} You're currently in **banana's hideout ♡**, which means you'll get a **x3 multiplier** for messages and commands used here!` : `\n\n${emojis.pointup} HELPFUL TIP: Chat more in **banana's hideout ♡** to skyrocket your EXP gain! You'll gain a **x3 multiplier** while you chat there.`}`)
+      .setDescription(`${emojis.level} **Level:** ${userData.level}\n${emojis.xp} **XP until next level:** ${userData.exp}/${breakpoint}${userData.multiplier > 1 ? `\n\n${emojis.sparkles} You currently have a **${userData.multiplier}x** multiplier active!` : ""}${ctx.guild.id === "372526440324923393" ? `\n\n${emojis.pet} You're currently in **banana's hideout ♡**, which means you'll get a **x3 multiplier** for messages and commands used here!` : `\n\n${emojis.pointup} HELPFUL TIP: Chat more in [**banana's hideout ♡**](https://discord.gg/vCMEmNJ) to skyrocket your EXP gain! You'll gain a **x3 multiplier** while you chat there.`}`)
       .setThumbnail("https://cdn.discordapp.com/attachments/520734295112024064/1136078616661348472/849417442471706684.gif");
 
     return ctx.reply({ embeds: [embed] });
