@@ -3,6 +3,7 @@ const CommandContext = require("../structures/CommandContext.js");
 const { distance } = require("fastest-levenshtein");
 const { escapeRegex, missingPermissions, plural } = require("../utils/utils.js");
 const { EMOJIS } = require("../utils/constants.js");
+const emojis = require("../structures/Emojis");
 
 // eslint-disable-next-line quotes
 const quotes = ['"', "'", "“”", "‘’"];
@@ -56,6 +57,14 @@ class MessageCreate extends Event {
         data.level += 1;
         data.exp -= breakpoint;
         breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
+        if (data.notify) {
+          let desc = `${emojis.level} **Level:** ${data.level - 1} ${emojis.shiningarrow} ${data.level}\n${emojis.xp} **XP until next level:** ${data.exp}/${breakpoint}`;
+          if (data.level % 5 === 0) desc += `\n\n**You also got:**\n:unlock: New profile icon slot!`
+          const embed = this.client.embed(ctx.author)
+            .setTitle(`You leveled up! ${emojis.thumbsup}`)
+            .setDescription(desc);
+          ctx.author.send({ embeds: [embed]});
+        }
       }
       this.client.userMessageCount[message.author.id] = 0;
       await this.client.userUpdate(message.author.id, data);
@@ -114,6 +123,14 @@ class MessageCreate extends Event {
         data.level += 1;
         data.exp -= breakpoint;
         breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
+        if (data.notify) {
+          let desc = `${emojis.level} **Level:** ${data.level - 1} ${emojis.shiningarrow} ${data.level}\n${emojis.xp} **XP until next level:** ${data.exp}/${breakpoint}`;
+          if (data.level % 5 === 0) desc += `\n\n**You also got:**\n:unlock: New profile icon slot!`
+          const embed = this.client.embed(ctx.author)
+            .setTitle(`You leveled up! ${emojis.thumbsup}`)
+            .setDescription(desc);
+          ctx.author.send({ embeds: [embed]});
+        }
       }
       this.client.userCommandCount[message.author.id] = 0;
       await this.client.userUpdate(message.author.id, data);

@@ -22,7 +22,7 @@ class Profile extends Command {
     let breakpoint = 100 * Math.floor(userData.level / 5) + 25 * userData.level;
     const embed = this.client.embed(user)
       .setTitle("Your Profile")
-      .setDescription(`${emojis.level} **Level:** ${userData.level}\n${emojis.xp} **XP until next level:** ${userData.exp}/${breakpoint}`)
+      .setDescription(`${emojis.level} **Level:** ${userData.level}\n${emojis.xp} **XP until next level:** ${userData.exp}/${breakpoint}${userData.multiplier > 1 ? `\n\n${emojis.sparkles} You currently have a **${userData.multiplier}x** multiplier active!` : ""}`)
       .setThumbnail("https://cdn.discordapp.com/attachments/520734295112024064/1136078616661348472/849417442471706684.gif");
 
     return ctx.reply({ embeds: [embed] });

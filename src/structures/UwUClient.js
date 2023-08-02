@@ -11,6 +11,7 @@ const CommandStore = require("./CommandStore.js");
 const EventStore = require("./EventStore.js");
 const Settings = require("./Settings.js");
 const schema = require("../utils/schema.js");
+const topgg = require("@top-gg/sdk");
 
 class UwUClient extends Client {
   constructor() {
@@ -42,7 +43,10 @@ class UwUClient extends Client {
       users: {
         level: 1,
         exp: 0,
-        multiplier: 1
+        multiplier: 1,
+        dailyCooldown: 0,
+        icons: [],
+        notify: false
       }
     }
     this.settings = {
@@ -52,7 +56,7 @@ class UwUClient extends Client {
     };
     this.userMessageCount = {};
     this.userCommandCount = {};
-
+    this.topgg = new topgg.Api(process.env.TOPGG_API);
     this.once("ready", () => {
       this.emit("uwuReady");
     });
