@@ -28,7 +28,7 @@ class Daily extends Command {
     }
     const voted = await this.client.topgg.hasVoted(ctx.author.id);
     if (!voted) {
-      const embed = this.client.embed(ctx.author.id)
+      const embed = this.client.embed(ctx.author)
         .setTitle(`You need to upvote for uwu bot to claim your daily rewards! ${emojis.mute}`)
         .setDescription(`With an upvote, you'll gain 200 ${emojis.xp} instantly and double your XP income from all sources for the next 24 hours!   
 
