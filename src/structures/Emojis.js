@@ -18,5 +18,7 @@ module.exports = {
   smug: "<:02smug:1135751312919777280>",
   level: "<:powercube:1136079141356179606>",
   xp: "<:xp:1136079143784689755>",
-  thumbsup: "<:thumbsup:1136108024650543205>"
+  thumbsup: "<:thumbsup:1136108024650543205>",
+  pointup: "<:pointup:1136126766684049589>",
+  headpat: ""
 };

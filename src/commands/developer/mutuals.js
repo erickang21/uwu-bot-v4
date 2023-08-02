@@ -19,37 +19,31 @@ class Mutuals extends Command {
     });
   }
 
-  async run(ctx, options) {
-    const user = options.getUser("user");
-    const userId = user.id;
-    let servers = '';
-    
-    let findMembers = (client, context) => {
-      return client.guilds.cache.filter((guild) => {
-        guild.members.fetch(context.userId)
-          .then((res) => {
-            if (res) return true;
-            else return false;
-          });
-      });
-    }
+  async getGuild(guildId) {
+    const shardEntries = await this.client.shard.broadcastEval((client) => client.guilds.cache.get(guildId));
+    return shardEntries.filter((entry) => !!entry)[0];
+  }
 
-    const mutualGuildsList = await this.client.shard.broadcastEval(findMembers, { context: { userId } });
-    console.log(mutualGuildsList);
-    for (const guildList of mutualGuildsList) {
-      console.log("check", guildList);
-      for (const mutualGuild of guildList) {
-        servers += `- **${mutualGuild.name}** (ID: ${mutualGuild.id}) | Members: ${mutualGuild.memberCount}\n`;
-      }
+  async run(ctx, options) {
+    const user = options.getUser("user") || ctx.author;
+    let servers = '';
+    const userData = await this.client.syncUserSettings(user.id);
+    if (!userData.guilds) {
+      userData.guilds = [];
+      await this.client.userUpdate(ctx.author.id, userData);
+    }
+    for (const guildId of userData.guilds) {
+      const currentGuild = await this.getGuild(guildId);
+      servers += `- **${currentGuild.name}** (ID: ${currentGuild.id}) | Members: ${currentGuild.memberCount}\n`;
     }
     
     servers += `\n${emojis.sparkles} Duration: ${Date.now() - ctx.createdTimestamp} ms`;
     const embed = this.client
       .embed(user)
-      .setTitle(`Mutual Servers`)
+      .setTitle(`Mutual Servers: ${user}`)
       .setDescription(servers);
 
-    return ctx.editReply({
+    return ctx.reply({
       embeds: [ embed ],
     });
   }
