@@ -14,10 +14,10 @@ class GuildDelete extends Event {
     const sendLoggedMessage = async (client, context) => {
       const logChannel = await client.channels.fetch("559511019190353920");
       if (logChannel) {
-        const logEmbed = this.client.embed()
-          .setTitle(`uwu bot left a server. ${emojis.leave}`)
+        const logEmbed = client.embed()
+          .setTitle(`uwu bot left a server. ${context.emojis.leave}`)
           .setDescription(`${context.guild.name}`)
-          .setThumbnail(context.guild.iconURL())
+          .setThumbnail(context.iconURL)
           .addFields({
             name: "Owner",
             value: owner?.tag ?? "No Owner Information",
@@ -35,7 +35,7 @@ class GuildDelete extends Event {
       }
     }
 
-    await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild } });
+    await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild, emojis, iconURL: guild.iconURL() } });
 
     log.info(`[GuildCreate] uwu bot LEFT a server: ${guild.name}`);
     await this.client.setActivity();    
