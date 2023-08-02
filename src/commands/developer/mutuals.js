@@ -39,7 +39,7 @@ class Mutuals extends Command {
     servers += `\n${emojis.sparkles} Duration: ${Date.now() - ctx.createdTimestamp} ms`;
     const embed = this.client
       .embed(user)
-      .setTitle(`Mutual Servers: ${user}`)
+      .setTitle(`Mutual Servers: ${user.username}`)
       .setDescription(servers);
 
     return ctx.reply({
