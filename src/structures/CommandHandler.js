@@ -2,7 +2,6 @@ const CommandContext = require('./CommandContext.js');
 const { distance } = require('fastest-levenshtein');
 const { plural, missingPermissions, getDuration, random, escapeRegex } = require('../utils/utils.js');
 const RateLimiter = require('./RateLimiter.js');
-const { cooldown } = require('../utils/responses.js');
 const { EMOJIS } = require("../utils/constants.js");
 const emojis = require("../structures/Emojis.js");
 
@@ -229,9 +228,7 @@ class CommandHandler {
     if (pass) return true;
 
     const duration = getDuration(remaining);
-    const content = random(cooldown[command.bucket])
-      .replace(/{{user}}/g, ctx.displayName)
-      .replace(/{{time}}/g, duration);
+    const content = `You baka! This command is still on cooldown. You better wait another **${duration}** before asking again! ${emojis.ban}`;
 
     await ctx.reply({ content, ephemeral: true });
     return false;
