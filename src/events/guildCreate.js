@@ -11,36 +11,38 @@ class GuildCreate extends Event {
 
     const { log } = this.client;
 
+    const sendLoggedMessage = async (client, context) => {
+      const logChannel = await client.channels.fetch("559511019190353920");
+      if (logChannel) {
+        const logEmbed = this.client.embed()
+          .setTitle(`uwu bot joined a server! ${emojis.join}`)
+          .setDescription(`${context.guild.name}`)
+          .setThumbnail(context.guild.iconURL())
+          .addFields({
+            name: "Owner",
+            value: owner?.tag ?? "No Owner Information",
+            inline: true,
+          })
+          .addFields({
+            name: "Member Count",
+            value: context.guild.memberCount.toString(),
+            inline: true,
+          })
+          .setFooter({ text: context.guild.id })
+          .setColor(0x00ff04);
+        await logChannel.send({ embeds: [logEmbed] });
+      }
+    }
+
+    await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild } });
+
     log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
     await this.client.setActivity();
-    const shardEntries = await this.client.shard.broadcastEval((client) => client.channels.cache.get("559511019190353920"));
-    const logChannel = shardEntries.filter((entry) => !!entry)[0];
-    if (!logChannel) {
-      console.log("[WARNING] Join/Leave log channel is missing.");
-      return;
-    }
-    const logEmbed = this.client.embed()
-      .setTitle("uwu bot joined a new server!")
-      .setDescription(`${guild.name}`)
-      .setThumbnail(guild.iconURL())
-      .addFields({
-        name: "Owner",
-        value: owner?.tag ?? "No Owner Information",
-        inline: true,
-      })
-      .addFields({
-        name: "Member Count",
-        value: guild.memberCount.toString(),
-        inline: true,
-      })
-      .setFooter({ text: guild.id });
-
-    await logChannel.send({ embeds: [logEmbed] });
 
     // send to server upon joining
     const botGuildMember = await guild.members.fetch(this.client.user.id);
     console.log("Attempting to prepare the welcome message!");
-    const joinChannel = guild.channels.cache.find((c) => c.type === "text" &&  c.permissionsFor(botGuildMember).has("VIEW_CHANNEL") && c.permissionsFor(botGuildMember).has("SEND_MESSAGES") && c.permissionsFor(botGuildMember).has("EMBED_LINKS"));
+    const joinChannel = guild.channels.cache.find((c) => c.type === 0 && c.permissionsFor(botGuildMember).has("VIEW_CHANNEL") && c.permissionsFor(botGuildMember).has("SEND_MESSAGES") && c.permissionsFor(botGuildMember).has("EMBED_LINKS"));
     if (!joinChannel) return;
     const embed = this.client.embed()
       .setTitle(`Thank you for choosing **uwu bot!** ${emojis.love}`)

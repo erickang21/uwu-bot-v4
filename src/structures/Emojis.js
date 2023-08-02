@@ -20,5 +20,7 @@ module.exports = {
   xp: "<:xp:1136079143784689755>",
   thumbsup: "<:thumbsup:1136108024650543205>",
   pointup: "<:pointup:1136126766684049589>",
-  profileicon_blank: "<:invisible:1136302181310533643>"
+  profileicon_blank: "<:invisible:1136302181310533643>",
+  join: "<:join:1136348278976434277>",
+  leave: "<:leave:1136348279609757827>"
 };
