@@ -41,6 +41,7 @@ class Profileicons extends Command {
       userData.icons = [];
       await this.client.userUpdate(ctx.author.id, userData);
     }
+    const slotCount = Math.ceil(userData.level / 5);
     let option = ctx.rawArgs.split(" ")[0];
     
     if (option) option = option.toLowerCase();
@@ -51,13 +52,13 @@ class Profileicons extends Command {
         icons += `${icon} `;
         iconCount++;
       }
-      for (let i = iconCount; i < Math.floor(userData.level / 5); i++) {
+      for (let i = iconCount; i < Math.ceil(userData.level / 5); i++) {
         icons += `${emojis.profileicon_blank} `;
       }
       icons += `:lock:`;
       const embed = this.client.embed(ctx.author)
         .setTitle("Profile Icons")
-        .setDescription(`**Your Icons:**\n${icons}\n\n${emojis.level} \n\n:closed_lock_with_key: Unlock the next profile icon slot at level **${Math.ceil(userData.level / 5)}**.\n\nNeed some help figuring out this command? Run \`uwu profileicon help\`.`)
+        .setDescription(`**Your Icons:**\n${icons}\n\n${emojis.level} \n\n:closed_lock_with_key: Unlock the next profile icon slot at level **${slotCount * 5}**.\n\nNeed some help figuring out this command? Run \`uwu profileicon help\`.`)
         .setThumbnail("https://cdn.discordapp.com/attachments/520734295112024064/1136078616661348472/849417442471706684.gif");
       return ctx.reply({ embeds: [embed] });
     }
@@ -69,7 +70,7 @@ class Profileicons extends Command {
       if (isNaN(index)) {
         return ctx.reply(`Invalid index provided! For more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);
       } else if (userData.level < (index - 1) * 5) {
-        return ctx.reply(`You haven't unlocked this icon slot! You can only edit ${Math.floor(userData.level / 5) === 0 ? `slot **1**.` : `slots **1-${Math.ceil(userData.level / 5)}**.`}\n\nFor more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);
+        return ctx.reply(`You haven't unlocked this icon slot! You can only edit ${Math.floor(userData.level / 5) === 0 ? `slot **1**.` : `slots **1-${slotCount}**.`}\n\nFor more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);
       }
       let iconKey = args[2];
       if (!Object.keys(iconKeys).includes(iconKey)) {
@@ -84,7 +85,7 @@ class Profileicons extends Command {
       if (isNaN(index)) {
         return ctx.reply(`Invalid index provided! For more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);
       } else if (userData.level < (index - 1) * 5) {
-        return ctx.reply(`You haven't unlocked this icon slot! You can only edit ${Math.floor(userData.level / 5) === 0 ? `slot **1**.` : `slots **1-${Math.floor(userData.level / 5)}**.`}\n\nFor more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);
+        return ctx.reply(`You haven't unlocked this icon slot! You can only edit ${Math.floor(userData.level / 5) === 0 ? `slot **1**.` : `slots **1-${slotCount}**.`}\n\nFor more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);
       }
       if (!userData.icons[index]?.length) {
         return ctx.reply(`The icon at slot **${index}** is already blank.\n\nFor more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`)
@@ -102,7 +103,6 @@ class Profileicons extends Command {
         .setDescription(iconList)
       return ctx.reply({ embeds: [embed] });
     } else if (option === "help") {
-      const slotCount = Math.ceil(userData.level / 5);
       const embed = this.client.embed(ctx.author)
       .setTitle(`Profile Icon System`)
       .setDescription(`Spice up your profile with customized icons!
