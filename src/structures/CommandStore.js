@@ -1,11 +1,13 @@
 const Store = require("./Store.js");
 const { DEVS } = require("../utils/constants.js");
+const CommandHandler = require("./CommandHandler.js");
 
 class CommandStore extends Store {
   constructor(client) {
     super(client, "commands");
 
     this.aliases = new Map();
+    this.handler = new CommandHandler(client);
     this.ran = 0;
   }
 

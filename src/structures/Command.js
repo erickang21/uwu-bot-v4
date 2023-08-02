@@ -14,6 +14,7 @@ class Command extends Base {
     this.devOnly = options.devOnly ?? false;
     this.aliases = options.aliases ?? [];
     this.cooldown = options.cooldown ?? 0;
+    this.bucket = options.bucket ?? 'user';
     this.nsfw = options.nsfw ?? false;
     this.category =
       options.category ?? toProperCase(basename(file.dir)) ?? "General";
