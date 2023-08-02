@@ -3,6 +3,7 @@ const { toProperCase } = require("../utils/utils.js");
 const { basename } = require("node:path");
 const Base = require("./Base.js");
 const CommandOptions = require("./CommandOptions.js");
+const emojis = require("../structures/Emojis");
 
 class Command extends Base {
   constructor(client, store, file, options = {}) {
@@ -175,23 +176,23 @@ class Command extends Base {
   async verifyChannel(msg, channel, required = false) {
     // if (!channel && defaultToCurrent) return msg.channel;
     if (!channel && required) {
-      throw "You need to mention a channel or provide an ID.";
+      throw `You need to mention a channel or provide an ID. ${emojis.failure}`;
     } else if (!channel) {
       return;
     }
 
     const match = /^(?:<#)?(\d{17,19})>?$/.exec(channel);
-    if (!match) throw "Invalid channel, must be a mention or an ID.";
+    if (!match) throw `Invalid channel, must be a mention or an ID. ${emojis.failure}`;
 
     const chan = await this.client.channels.fetch(match[1]).catch(() => null);
-    if (!chan) throw msg.language.get("CHANNEL_NOT_FOUND");
+    if (!chan) throw `Couldn't find this channel. Ensure the channel mentioned is valid and visible to me! ${emojis.failure}`;
 
     return chan;
   }
 
   verifyRole(msg, rolename, required = false) {
     if (!rolename && !required) return null;
-    if (!rolename) throw "Baka! You must provide a role name or ID.";
+    if (!rolename) throw `Baka! You must provide a role name or ID. ${emojis.failure}`;
     rolename = rolename.toLowerCase();
 
     // We check by ID or name. Nobody mentions roles for an argument.
@@ -199,7 +200,7 @@ class Command extends Base {
       (role) => role.id === rolename || role.name.toLowerCase() === rolename
     );
 
-    if (!role) throw msg.language.get("ROLE_NOT_FOUND");
+    if (!role) throw `Couldn't find this role. Ensure the name or ID provided is valid. ${emojis.failure}`
 
     return role;
   }
