@@ -10,7 +10,7 @@ class CommandContext {
     this.interaction = interaction;
     this.lastReply = null;
 
-    if (message) {
+    if (message && command) {
       this.content = content;
       this.prefixLength = prefixLength;
       this.flags = flags;

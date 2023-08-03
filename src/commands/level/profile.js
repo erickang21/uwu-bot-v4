@@ -24,14 +24,10 @@ class Profile extends Command {
       await this.client.userUpdate(ctx.author.id, userData);
     }
     let icons = '';
-    let iconCount = 0;
-    for (const icon of userData.icons) {
-      icons += `${icon} `;
-      iconCount++;
-    }
-    for (let i = iconCount; i < Math.ceil((userData.level + 1) / 5); i++) {
-      icons += `${emojis.profileicon_blank} `;
-    }
+    const slotCount = Math.ceil((userData.level + 1) / 5);
+      for (let i = 0; i < slotCount; i++) {
+        icons += userData.icons[i] ? `${userData.icons[i]} ` : `${emojis.profileicon_blank} `;
+      }
     icons += `:lock:`;
     let breakpoint = 100 * Math.floor(userData.level / 5) + 25 * userData.level;
     const embed = this.client.embed(user)

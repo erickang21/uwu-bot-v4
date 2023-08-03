@@ -47,14 +47,10 @@ class Profileicons extends Command {
     if (option) option = option.toLowerCase();
     else {
       let icons = '';
-      let iconCount = 0;
-      for (const icon of userData.icons) {
-        icons += `${icon} `;
-        iconCount++;
+      for (let i = 0; i < slotCount; i++) {
+        icons += userData.icons[i] ? `${userData.icons[i]} ` : `${emojis.profileicon_blank} `;
       }
-      for (let i = iconCount; i < Math.ceil((userData.level + 1) / 5); i++) {
-        icons += `${emojis.profileicon_blank} `;
-      }
+
       icons += `:lock:`;
       const embed = this.client.embed(ctx.author)
         .setTitle("Profile Icons")

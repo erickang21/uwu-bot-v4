@@ -20,6 +20,8 @@ class Help extends Command {
   async run(ctx, options) {
     const command = options.getString("command");
     const map = {}; // Map<Category, Array<Command.Name>>
+    const userData = await this.client.syncUserSettings(ctx.author.id);
+    const breakpoint = 100 * Math.floor(userData.level / 5) + 25 * userData.level;
 
     for (const command of this.store.values()) {
       // Check for hidden commands first so if all commands in a category is hidden we won't even show the category.
@@ -39,8 +41,9 @@ class Help extends Command {
       if (!cmd) {
         if (categories.includes(toProperCase(command))) {
           const embed = this.client
-            .embed(this.client.user)
+            .embed()
             .setTitle(`${toProperCase(command)} Commands`)
+            .setFooter({ text: `${ctx.author.username} | Level ${userData.level} (${userData.exp}/${breakpoint} XP)`, iconURL: ctx.author.displayAvatarURL({ size: 32, extension: 'png' }) })
             .setDescription(
               `${map[toProperCase(command)].join(
                 ", "
@@ -63,9 +66,8 @@ class Help extends Command {
 
         // TODO: database stuff later.
         const prefix = "uwu ";
-
-        const embed = this.client
-          .embed(this.client.user)
+        
+        const embed = this.client.embed()
           .setTitle(`Help - ${cmd.name}`)
           .setDescription(
             [
@@ -80,18 +82,22 @@ class Help extends Command {
               `**Usage:** ${prefix}${cmd.usage}`,
               `**Extended Help:** ${cmd.extendedHelp}`,
             ].join("\n")
-          );
+          )
+          .setFooter({ text: `${ctx.author.username} | Level ${userData.level} (${userData.exp}/${breakpoint} XP)`, iconURL: ctx.author.displayAvatarURL({ size: 32, extension: 'png' }) });
 
         return ctx.reply({ embeds: [embed] });
       }
     }
 
     const embed = this.client
-      .embed(this.client.user)
-      .setTitle("Help - Commands").setDescription(stripIndents`**__Commands__**
+      .embed()
+      .setTitle("Help - Commands").setDescription(stripIndents`Want to check out what's poppin' in **v5 of uwu bot?** Read all the update notes by running \`uwu updates\`!
+      
+      **__Commands__**
         Run \`uwu help <category>\` to view all commands in the category, or click the given links to see detailed documentation.
         Run \`uwu help <command>\`to get details of that command.      
-      `);
+      `)
+      .setFooter({ text: `${ctx.author.username} | Level ${userData.level} (${userData.exp}/${breakpoint} XP)`, iconURL: ctx.author.displayAvatarURL({ size: 32, extension: 'png' }) })
 
     // Sort the categories alphabetically.
     const keys = Object.keys(map).sort();
