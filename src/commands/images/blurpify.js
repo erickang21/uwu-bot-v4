@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
+const axios = require("axios");
 
 class Blurpify extends Command {
   constructor(...args) {
@@ -19,11 +19,7 @@ class Blurpify extends Command {
   // Image Based
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const res = await request(`https://nekobot.xyz/api/imagegen?type=blurpify&image=${user.displayAvatarURL({ size: 1024, extension: "png", dynamic: true })}`)
-      .then(({body}) => {
-        console.log(body);
-        body.json()
-      });
+    const res = await axios.get(`https://nekobot.xyz/api/imagegen?type=blurpify&image=${user.displayAvatarURL({ size: 1024, extension: "png", dynamic: true })}`)
     if (!res.success) return ctx.reply("An unexpected error occurred with the API.");
     const embed = this.client.embed(user)
       .setTitle("Blurpify")

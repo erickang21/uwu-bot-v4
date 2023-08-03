@@ -58,6 +58,7 @@ class UwUClient extends Client {
     };
     this.userMessageCount = {};
     this.userCommandCount = {};
+    this.commandStats = {};
     this.topgg = new topgg.Api(process.env.TOPGG_API);
     this.once("ready", () => {
       this.emit("uwuReady");

@@ -111,6 +111,9 @@ class CommandHandler {
     if (!(await this.runChecks(ctx, command))) return;
 
     await this.handleXP(ctx);
+
+    if (!this.client.commandStats[command]) this.client.commandStats[command] = 1;
+    else this.client.commandStats[command] += 1;
     return command.execute(ctx);
   }
 
@@ -129,6 +132,8 @@ class CommandHandler {
     const ctx = new CommandContext(command, { interaction });
     if (!(await this.runChecks(ctx, command))) return;
     await this.handleXP(ctx);
+    if (!this.client.commandStats[command]) this.client.commandStats[command] = 1;
+    else this.client.commandStats[command] += 1;
     return command.execute(ctx);
   }
 
@@ -170,7 +175,7 @@ class CommandHandler {
 
     if (missing.length) {
       await ctx.reply({
-        content: `I need the following permission${plural(missing)} to run that command: **${missing.join(', ')}**`
+        content: `I need the following permission(s) to run that command: **${missing.join(', ')}**`
       });
 
       return false;
@@ -184,7 +189,7 @@ class CommandHandler {
 
     if (user.length) {
       await ctx.reply({
-        content: `You need the following permission${plural(user)} to run that command: **${user.join(', ')}**`
+        content: `You need the following permission(s) to run that command: **${user.join(', ')}**`
       });
 
       return false;
