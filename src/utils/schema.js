@@ -3,11 +3,22 @@
 // with a default value.
 module.exports = {
   guilds: {
-    prefix: "uwu ",
-    welcome: {},
-    leave: {},
-    autorole: {},
-    store: [],
-    cc: {}
+    autorole: null,
+    welcome: null,
+    leave: null,
+    modlog: null,
+    prefix: null
   },
+  users: {
+    level: 1,
+    exp: 0,
+    multiplier: 1,
+    dailyCooldown: 0,
+    icons: [],
+    notify: false,
+    guilds: [],
+  },
+  members: {
+
+  }
 };

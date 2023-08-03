@@ -11,7 +11,7 @@ class Autorole extends Command {
     });
   }
   
-  async run(ctx, options) {
+  async run(ctx) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
     let option = ctx.rawArgs.split(" ")[0];
     if (option) option = option.toLowerCase();
@@ -27,7 +27,7 @@ class Autorole extends Command {
       return ctx.reply(`Baka! You need the \`Manage Roles\` permissions to change the autorole. ${emojis.failure}`);
     if (option === "on") {
       role = await this.verifyRole(ctx, role)
-      this.client.guildUpdate({ autorole: role.id });
+      this.client.guildUpdate(ctx.guild.id, { autorole: role.id });
       ctx.reply(`The autorole for this server has successfully been updated. ${emojis.success}`)
     } else if (option === "off") {
       if (!guildSettings.autorole) return ctx.reply("The autorole for this server is already off!");

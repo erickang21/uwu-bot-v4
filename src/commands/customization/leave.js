@@ -19,7 +19,7 @@ class Leave extends Command {
     });
   }
   
-  async run(ctx, options) {
+  async run(ctx) {
     
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
     let option = ctx.rawArgs.split(" ")[0];
@@ -48,7 +48,7 @@ class Leave extends Command {
       if (!guildSettings.leave) return ctx.reply("The leave message for this server is already off!");
       if (!guildSettings.leave.channel) return ctx.reply("The leave message for this server is already off!");
       else {
-        this.client.guildUpdate({ leave: {} });
+        this.client.guildUpdate(ctx.guild.id, { leave: {} });
         return ctx.reply(`The leave messages for this server have been disabled. ${emojis.success}`)
       }
     } else {

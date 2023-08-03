@@ -255,12 +255,12 @@ class UwUClient extends Client {
   }
 
   // GUILD SETTINGS
-  async getGuildSettings(id) {
+  getGuildSettings(id) {
     return this.settings.guilds.getDefaults(id);
   }
 
   async guildUpdate(id, obj={}) {
-    return this.settings.guilds.update(id, obj);
+    return await this.settings.guilds.update(id, obj);
   }
 
   async syncGuildSettingsCache(id) {

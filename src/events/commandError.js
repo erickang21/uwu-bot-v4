@@ -1,5 +1,6 @@
 const Event = require("../structures/Event.js");
 const { EMOJIS } = require("../utils/constants.js");
+const emojis = require("../structures/Emojis");
 
 class CommandError extends Event {
   async run(ctx, err) {
@@ -38,39 +39,38 @@ class CommandError extends Event {
             this.client
               .embed(ctx.author)
               .setDescription(
-                `${EMOJIS.X} **Whoops! Running \`\`${ctx.command.name}\`\` went wrong and the issue has been reported. In the meantime you can join my [support server](https://discord.gg/vCMEmNJ), give them error code \`\`${errorId}\`\`**`
+                `${emojis.error} NANI?! An error has occurred while running \`\`${ctx.command.name}\`\`. \n\nPlease join [uwu bot official server](https://discord.gg/vCMEmNJ and give the developers the error code: \`\`${errorId}\`\`.`
               ),
           ],
         })
         .catch(() => null);
     }
 
-    const report = (client) => {
-      const channel = client.channels.cache.get("867791409008607276");
+    const report = async (client, context) => {
+      const channel = await client.channels.fetch("513368885144190986");
       if (!channel) return;
 
-      const embed = client
-        .embed(ctx.author)
+      const embed = client.embed()
         .setTitle("Command Error")
         .setDescription(
-          `An Error occured in command: ${ctx.command.name}\n\`\`\`js\n${
+          `An error occurred with command: **${context.cmdName}**\n\`\`\`js\n${
             err.stack || err
           }\`\`\``
         )
         .setFields([
           {
             name: "Error ID",
-            value: `\`\`${errorId}\`\``,
+            value: `\`\`${context.errorId}\`\``,
             inline: true,
           },
           {
             name: "User ID",
-            value: `\`\`${ctx.author.id}\`\``,
+            value: `\`\`${context.userId}\`\``,
             inline: true,
           },
           {
             name: "Guild",
-            value: ctx.guild ? ctx.guild.name : "DM",
+            value: context.guildName,
             inline: true,
           },
         ])
@@ -81,7 +81,7 @@ class CommandError extends Event {
 
     if (!ctx.dev) {
       if (this.client.shard) {
-        return this.client.shard.broadcastEval(report);
+        return this.client.shard.broadcastEval(report, { context: { errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name }});
       } else {
         return report(this.client);
       }

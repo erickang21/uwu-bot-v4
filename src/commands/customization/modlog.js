@@ -11,7 +11,7 @@ class Modlog extends Command {
     });
   }
   
-  async run(ctx, options) {
+  async run(ctx) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
     let option = ctx.rawArgs.split(" ")[0];
     

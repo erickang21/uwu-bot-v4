@@ -30,8 +30,8 @@ class CommandHandler {
     if (message.channel.partial) await message.channel.fetch();
 
     const { user } = this.client;
-    const settings = this.client.settings.guilds.get(message.guild?.id);
-    const prefix = settings.prefix;
+    const settings = this.client.getGuildSettings(message.guild?.id);
+    const prefix = settings.prefix || "uwu ";
     const regex = new RegExp(`^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`);
     const match = message.content.match(regex);
 

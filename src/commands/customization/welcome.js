@@ -20,7 +20,7 @@ class Welcome extends Command {
     });
   }
   
-  async run(ctx, options) {
+  async run(ctx) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
     let option = ctx.rawArgs.split(" ")[0];
     
@@ -48,7 +48,7 @@ class Welcome extends Command {
       if (!guildSettings.welcome) return ctx.reply("The welcome message for this server is already off!");
       if (!guildSettings.welcome.channel) return ctx.reply("The welcome message for this server is already off!");
       else {
-        this.client.guildUpdate({ welcome: {} });
+        this.client.guildUpdate(ctx.guild.id, { welcome: {} });
         return ctx.reply(`The welcome messages for this server have been disabled. ${emojis.success}`)
       }
     } else {
