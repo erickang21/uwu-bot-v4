@@ -21,7 +21,7 @@ class Genshin extends Command {
   }
 
   async run(ctx, options) {
-    const blacklistedCharacters = [];
+    const blacklistedCharacters = ['klee', 'qiqi', 'sayu', 'diona', 'nahida'];
     const characterName = options.getString("character");
     const data = await request(
       `https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=${characterName.toLowerCase().replaceAll(" ", "_")}_(genshin_impact)%20genshin_impact%20-loli%20rating:explicit`
