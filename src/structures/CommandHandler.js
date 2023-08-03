@@ -54,6 +54,9 @@ class CommandHandler {
     // Level up by 1 xp/message
     if (this.client.userMessageCount[message.author.id] >= 25) {
       const data = await this.client.syncUserSettings(message.author.id);
+      if (Date.now() > data.dailyCooldown) { // if it's been 24 hours, reset the multiplier
+        data.multiplier = 1; 
+      }
       let breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
       if (message.guild.id === "372526440324923393") {
         data.exp += 25 * data.multiplier * 3;
@@ -195,6 +198,9 @@ class CommandHandler {
     // Level up by 5 xp/command
     if (this.client.userCommandCount[ctx.author.id] >= 5) {
       const data = await this.client.syncUserSettings(ctx.author.id);
+      if (Date.now() > data.dailyCooldown) { // if it's been 24 hours, reset the multiplier
+        data.multiplier = 1; 
+      }
       let breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
       if (ctx.guild.id === "372526440324923393") {
         data.exp += 25 * data.multiplier * 3;
