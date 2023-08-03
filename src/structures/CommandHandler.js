@@ -64,9 +64,9 @@ class CommandHandler {
         data.exp += 25 * data.multiplier;
       }
       if (!data.guilds) data.guilds = [];
-      if (!data.guilds.includes(ctx.guild.id)) {
-        data.guilds.push(ctx.guild.id);
-        console.log(`ghot user ${ctx.author.username} (id: ${ctx.author.id}) in ${ctx.guild.name} (id: ${ctx.guild.id})`)
+      if (!data.guilds.includes(message.guild.id)) {
+        data.guilds.push(message.guild.id);
+        console.log(`ghot user ${message.author.username} (id: ${message.author.id}) in ${message.guild.name} (id: ${message.guild.id})`)
       }
       while (data.exp >= breakpoint) {
         data.level += 1;
@@ -93,7 +93,7 @@ class CommandHandler {
 
     // A mention only.
     if (!rawContent) {
-      return message.channel.send(`${EMOJIS.WAVE} Hi there! Run \`\`@uwu bot help\`\` to see all I can do or browse the slash commands by typing \`\`/\`\``);
+      return message.channel.send(`${emojis.wave} Hey there, senpai~ Did you forget how to use me? Run \`\`${prefix}help\`\` to see all my commands, or browse the slash commands by typing \`\`/\`\``);
     }
 
     const { content, flags } = this.getFlags(rawContent);
