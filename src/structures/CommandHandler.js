@@ -1,6 +1,6 @@
 const CommandContext = require('./CommandContext.js');
 const { distance } = require('fastest-levenshtein');
-const { plural, missingPermissions, getDuration, escapeRegex } = require('../utils/utils.js');
+const { missingPermissions, getDuration, escapeRegex } = require('../utils/utils.js');
 const RateLimiter = require('./RateLimiter.js');
 const { EMOJIS } = require("../utils/constants.js");
 const emojis = require("../structures/Emojis.js");
@@ -112,8 +112,8 @@ class CommandHandler {
 
     await this.handleXP(ctx);
 
-    if (!this.client.commandStats[command]) this.client.commandStats[command] = 1;
-    else this.client.commandStats[command] += 1;
+    if (!this.client.commandStats[command.name]) this.client.commandStats[command.name] = 1;
+    else this.client.commandStats[command.name] += 1;
     return command.execute(ctx);
   }
 
@@ -132,8 +132,8 @@ class CommandHandler {
     const ctx = new CommandContext(command, { interaction });
     if (!(await this.runChecks(ctx, command))) return;
     await this.handleXP(ctx);
-    if (!this.client.commandStats[command]) this.client.commandStats[command] = 1;
-    else this.client.commandStats[command] += 1;
+    if (!this.client.commandStats[command.name]) this.client.commandStats[command.name] = 1;
+    else this.client.commandStats[command.name] += 1;
     return command.execute(ctx);
   }
 
