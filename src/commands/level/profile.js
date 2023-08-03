@@ -29,7 +29,7 @@ class Profile extends Command {
       icons += `${icon} `;
       iconCount++;
     }
-    for (let i = iconCount; i < Math.ceil(userData.level / 5); i++) {
+    for (let i = iconCount; i < Math.ceil((userData.level + 1) / 5); i++) {
       icons += `${emojis.profileicon_blank} `;
     }
     icons += `:lock:`;

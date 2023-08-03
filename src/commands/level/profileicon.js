@@ -41,7 +41,7 @@ class Profileicons extends Command {
       userData.icons = [];
       await this.client.userUpdate(ctx.author.id, userData);
     }
-    const slotCount = Math.ceil(userData.level / 5);
+    const slotCount = Math.ceil((userData.level + 1) / 5);
     let option = ctx.rawArgs.split(" ")[0];
     
     if (option) option = option.toLowerCase();
@@ -52,7 +52,7 @@ class Profileicons extends Command {
         icons += `${icon} `;
         iconCount++;
       }
-      for (let i = iconCount; i < Math.ceil(userData.level / 5); i++) {
+      for (let i = iconCount; i < Math.ceil((userData.level + 1) / 5); i++) {
         icons += `${emojis.profileicon_blank} `;
       }
       icons += `:lock:`;
