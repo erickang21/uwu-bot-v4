@@ -11,17 +11,24 @@ class Purge extends Command {
       options: [
         {
           name: "limit",
-          description: "The user you want to bully.",
+          description: "The amount of messages you want to delete.",
           type: "integer",
+          required: true
         },
+        {
+          name: "filter",
+          description: "The types of messages that should be deleted. Valid arguments are: [link|invite|bots|you|me|upload|@user]",
+          type: "string",
+        }
       ],
     });
   }
 
-  async run(ctx, [limit, filter = null]) {
+  async run(ctx, options) {
+    const limit = options.getInteger("limit");
+    const filter = options.getString("filter");
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply(`Baka! You need the \`Manage Messages\` permissions to purge messages. ${emojis.failure}`);
-    limit = this.verifyInt(limit);
     if (limit > 100) return ctx.reply(`You cannot purge more than 100 messages at a time. ${emojis.failure}`)
     let messages = await ctx.channel.messages.fetch({ limit: 100 });
 
