@@ -143,7 +143,7 @@ class UwUClient extends Client {
     });
 
     this.log.info("Connected to MongoDB");
-    this.db = this.dbClient.db();
+    this.db = this.dbClient.db("test");
 
     for (const [name, settings] of Object.entries(this.settings)) {
       await settings.init();
@@ -190,8 +190,8 @@ class UwUClient extends Client {
     }
   }
 
-  syncUserSettingsCache(id) {
-    if(!this.settings.users.cache.has(id)) return this.syncUserSettings(id);
+  async syncUserSettingsCache(id) {
+    if(!this.settings.users.cache.has(id)) return await this.syncUserSettings(id);
   }
 
   async givePokePoints(id, amount) {

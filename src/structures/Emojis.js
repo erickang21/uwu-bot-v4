@@ -22,5 +22,6 @@ module.exports = {
   pointup: "<:pointup:1136126766684049589>",
   profileicon_blank: "<:invisible:1136302181310533643>",
   join: "<:join:1136348278976434277>",
-  leave: "<:leave:1136348279609757827>"
+  leave: "<:leave:1136348279609757827>",
+  wave: "<:wave:1136701430032515082>"
 };

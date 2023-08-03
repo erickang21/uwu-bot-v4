@@ -1,6 +1,6 @@
 const CommandContext = require('./CommandContext.js');
 const { distance } = require('fastest-levenshtein');
-const { plural, missingPermissions, getDuration, random, escapeRegex } = require('../utils/utils.js');
+const { plural, missingPermissions, getDuration, escapeRegex } = require('../utils/utils.js');
 const RateLimiter = require('./RateLimiter.js');
 const { EMOJIS } = require("../utils/constants.js");
 const emojis = require("../structures/Emojis.js");
@@ -64,7 +64,10 @@ class CommandHandler {
         data.exp += 25 * data.multiplier;
       }
       if (!data.guilds) data.guilds = [];
-      if (!data.guilds.includes(message.guild.id)) data.guilds.push(message.guild.id);
+      if (!data.guilds.includes(ctx.guild.id)) {
+        data.guilds.push(ctx.guild.id);
+        console.log(`ghot user ${ctx.author.username} (id: ${ctx.author.id}) in ${ctx.guild.name} (id: ${ctx.guild.id})`)
+      }
       while (data.exp >= breakpoint) {
         data.level += 1;
         data.exp -= breakpoint;
@@ -198,6 +201,11 @@ class CommandHandler {
     // Level up by 5 xp/command
     if (this.client.userCommandCount[ctx.author.id] >= 5) {
       const data = await this.client.syncUserSettings(ctx.author.id);
+      if (!data.guilds) data.guilds = [];
+      if (!data.guilds.includes(ctx.guild.id)) {
+        data.guilds.push(ctx.guild.id);
+        console.log(`got user ${ctx.author.username} (id: ${ctx.author.id}) in ${ctx.guild.name} (id: ${ctx.guild.id})`)
+      }
       if (Date.now() > data.dailyCooldown) { // if it's been 24 hours, reset the multiplier
         data.multiplier = 1; 
       }
@@ -211,8 +219,6 @@ class CommandHandler {
       while (data.exp >= breakpoint) {
         data.level += 1;
         data.exp -= breakpoint;
-        if (!data.guilds) data.guilds = [];
-        if (!data.guilds.includes(ctx.guild.id)) data.guilds.push(ctx.guild.id);
         breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
         if (data.notify) {
           let desc = `${emojis.level} **Level:** ${data.level - 1} ${emojis.shiningarrow} ${data.level}\n${emojis.xp} **XP until next level:** ${data.exp}/${breakpoint}`;
