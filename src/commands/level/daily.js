@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Daily extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Instantly receive 200 XP and double your XP generation for the next 24 hours! Requires vote on top.gg.",
+      description: "Claim juicy rewards for voting on top.gg!",
       aliases: ["dailyreward"],
     });
   }

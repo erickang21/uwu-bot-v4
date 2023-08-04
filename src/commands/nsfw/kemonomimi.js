@@ -13,7 +13,7 @@ class Kemonomimi extends Command {
 
   async run(ctx) {
     const data = await request(
-      "https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=solo%kemonomimi%20-loli%20rating:explicit"
+      "https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=solo%20kemonomimi%20-loli%20rating:explicit"
     ).then(({ body }) => body.json());
     const urls = data.post.map((entry) => entry.file_url)
     const embed = this.client

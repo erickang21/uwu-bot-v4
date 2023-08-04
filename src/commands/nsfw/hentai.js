@@ -12,7 +12,7 @@ class Hentai extends Command {
       options: [
         {
           name: "tags",
-          description: "Some tags to narrow down the genre.",
+          description: "Some tags to narrow down the genre. If adding multiple tags, separate with comma (,)",
           type: "string",
         },
       ],
@@ -20,7 +20,7 @@ class Hentai extends Command {
   }
 
   async run(ctx, options) {
-    const tags = options.getString(tags);
+    const tags = options.getString("tags");
     if (!tags?.length) {
       const data = await request(
         "https://api.waifu.im/search/?included_tags=hentai&gif=true"
