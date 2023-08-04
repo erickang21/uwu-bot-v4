@@ -51,7 +51,7 @@ class CommandError extends Event {
       if (!channel) return;
 
       const embed = client.embed()
-        .setTitle(`Command Error ${emojis.failure}`)
+        .setTitle(`Command Error ${context.emojis.failure}`)
         .setDescription(
           `An error occurred with command: **${context.cmdName}**\n\`\`\`js\n${
             context.err
@@ -81,7 +81,7 @@ class CommandError extends Event {
 
     if (!this.client.dev) {
       if (this.client.shard) {
-        return this.client.shard.broadcastEval(report, { context: { errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
+        return this.client.shard.broadcastEval(report, { context: { emojis, errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
       } else {
         return report(this.client);
       }
