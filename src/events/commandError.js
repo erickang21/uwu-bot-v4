@@ -39,7 +39,7 @@ class CommandError extends Event {
             this.client
               .embed(ctx.author)
               .setDescription(
-                `${emojis.error} NANI?! An error has occurred while running \`\`${ctx.command.name}\`\`. \n\nPlease join [uwu bot official server](https://discord.gg/vCMEmNJ and give the developers the error code: \`\`${errorId}\`\`.`
+                `${emojis.error} NANI?! An error has occurred while running \`\`${ctx.command.name}\`\`. \n\nPlease join [uwu bot official server](https://discord.gg/vCMEmNJ) and give the developers this error code: \`\`${errorId}\`\`.`
               ),
           ],
         })
@@ -51,10 +51,10 @@ class CommandError extends Event {
       if (!channel) return;
 
       const embed = client.embed()
-        .setTitle("Command Error")
+        .setTitle(`Command Error ${emojis.failure}`)
         .setDescription(
           `An error occurred with command: **${context.cmdName}**\n\`\`\`js\n${
-            context.err.stack || context.err
+            context.err
           }\`\`\``
         )
         .setFields([
@@ -81,7 +81,7 @@ class CommandError extends Event {
 
     if (!this.client.dev) {
       if (this.client.shard) {
-        return this.client.shard.broadcastEval(report, { context: { errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name, err }});
+        return this.client.shard.broadcastEval(report, { context: { errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name, err: err.stack || err }});
       } else {
         return report(this.client);
       }
