@@ -62,7 +62,10 @@ Not AS interesting, but still worthwhile to mention.
 - Restored functionality to slash commands (they were temporarily disabled due to a bug)
 - General improvements to reliability (we promise the bot to have almost perfect uptime!)
 
-
+**__JUST ADDED (Aug 4, 2023): BUG HOTFIXES!__**
+- Fixed issues that caused certain NSFW commands to stop working.
+- Added yaoi command.
+- Shortened command descriptions.
         `
       );
     return ctx.reply({ embeds: [embed] });
