@@ -54,7 +54,7 @@ class CommandError extends Event {
         .setTitle("Command Error")
         .setDescription(
           `An error occurred with command: **${context.cmdName}**\n\`\`\`js\n${
-            err.stack || err
+            context.err.stack || context.err
           }\`\`\``
         )
         .setFields([
@@ -81,7 +81,7 @@ class CommandError extends Event {
 
     if (!ctx.dev) {
       if (this.client.shard) {
-        return this.client.shard.broadcastEval(report, { context: { errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name }});
+        return this.client.shard.broadcastEval(report, { context: { errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name, err }});
       } else {
         return report(this.client);
       }

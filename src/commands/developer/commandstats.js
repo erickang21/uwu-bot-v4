@@ -19,6 +19,7 @@ class Commandstats extends Command {
 
   async run(ctx, options) {
     const amount = options.getInteger("amount");
+    const lifetimeCmdStats = this.client.syncCommandSettings("1");
     const cmdstats = await this.client.shard.broadcastEval((client) => client.commandStats).then((x) => x.reduce((a, b) => a.concat(b), []));
     let totalcmdstats = {};
     for (const shard of cmdstats) {
@@ -28,12 +29,13 @@ class Commandstats extends Command {
       }
     }
     
+    const lifetimeCmds = Object.entries(lifetimeCmdStats).sort((x, y) => x[1] < y[1] ? 1 : -1);
     const cmds = Object.entries(totalcmdstats).sort((x, y) => x[1] < y[1] ? 1 : -1);
-    let description = "";
+    let description = `${amount ? `Showing **${amount}**/${Object.keys(totalcmdstats).length} commands\n\n` : ""}[Command Name]: [Lifetime Uses] | [Uses Since Last Restart]\n\n`;
     let index = 0;
-    for (const entry of cmds.slice(0, amount)) {
+    for (const entry of lifetimeCmds.slice(0, amount)) {
       index++;
-      description += `**(${index}) ${entry[0]}:** ${entry[1]}\n`     
+      description += `**(${index}) ${entry[0]}:** ${entry[1]} | ${totalcmdstats[entry[0]]}\n`     
     }
 
     const embed = this.client.embed(this.client.user)

@@ -64,6 +64,7 @@ Not AS interesting, but still worthwhile to mention.
 
 **__JUST ADDED (Aug 4, 2023): BUG HOTFIXES!__**
 - Fixed issues that caused certain NSFW commands to stop working.
+- Fixed an issue that caused the \`fuck\` command to not work.
 - Added yaoi command.
 - Shortened command descriptions.
         `

@@ -54,11 +54,14 @@ class UwUClient extends Client {
     this.settings = {
       guilds: new Settings(this, "guilds", schema.guilds),
       members: new Settings(this, "members", schema.members),
-      users: new Settings(this, "users", schema.users)
+      users: new Settings(this, "users", schema.users),
+      commands: new Settings(this, "commands", schema.commands)
     };
     this.userMessageCount = {};
     this.userCommandCount = {};
     this.commandStats = {};
+    this.lifetimeCommandStats = {};
+    this.totalCommandUses = 0;
     this.topgg = new topgg.Api(process.env.TOPGG_API);
     this.once("ready", () => {
       this.emit("uwuReady");
@@ -170,6 +173,25 @@ class UwUClient extends Client {
       guilds = this.client.guilds.cache.size;
     }
     return guilds;
+  }
+
+  // COMMAND EXTENSIONS
+  getCommandSettings(id) {
+    return this.client.settings.commands.getDefaults(id);
+  }
+  
+  async commandUpdate(id, obj) {
+    return this.settings.commands.update(id, obj);
+  }
+
+  async syncCommandSettings(id) {
+    const res = await this.settings.users.sync(id);
+    if (res) {
+      return res;
+    } else {
+      await this.commandUpdate(id, schema.commands);
+      return schema.commands;
+    }
   }
 
   // USER EXTENSIONS (rework)

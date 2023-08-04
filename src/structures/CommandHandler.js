@@ -111,9 +111,7 @@ class CommandHandler {
     if (!(await this.runChecks(ctx, command))) return;
 
     await this.handleXP(ctx);
-
-    if (!this.client.commandStats[command.name]) this.client.commandStats[command.name] = 1;
-    else this.client.commandStats[command.name] += 1;
+    await this.trackCmdStats(ctx, command);
     return command.execute(ctx);
   }
 
@@ -132,8 +130,7 @@ class CommandHandler {
     const ctx = new CommandContext(command, { interaction });
     if (!(await this.runChecks(ctx, command))) return;
     await this.handleXP(ctx);
-    if (!this.client.commandStats[command.name]) this.client.commandStats[command.name] = 1;
-    else this.client.commandStats[command.name] += 1;
+    await this.trackCmdStats(ctx, command);
     return command.execute(ctx);
   }
 
@@ -237,6 +234,27 @@ class CommandHandler {
 
       this.client.userCommandCount[ctx.author.id] = 0;
       await this.client.userUpdate(ctx.author.id, data);
+    }
+  }
+
+  async trackCmdStats(ctx, command) {
+    if (ctx.author.id === "304737539846045696") return; // ignore commands from owner; often needs to spam commands for testing.
+    // update stats for last login
+    if (!this.client.commandStats[command.name]) this.client.commandStats[command.name] = 1;
+    else this.client.commandStats[command.name] += 1;
+    this.client.totalCommandUses += 1;
+    // update lifetime stats
+    if (!this.client.lifetimeCommandStats[command.name]) this.client.lifetimeCommandStats[command.name] = 1;
+    else this.client.lifetimeCommandStats[command.name] += 1;
+    if (this.client.totalCommandUses >= 25) { // avoid excessive DB writes.
+      const cmdData = await this.client.syncCommandSettings("1");
+      for (const cmdName of Object.keys(this.client.lifetimeCommandStats)) {
+        if (!cmdData[cmdName]) cmdData[cmdName] = this.client.lifetimeCommandStats[command.name];
+        else cmdData[cmdName] += this.client.lifetimeCommandStats[command.name];
+        this.client.lifetimeCommandStats[command.name] = 0;
+      }
+      await this.client.commandUpdate("1", cmdData);
+      this.client.totalCommandUses = 0;
     }
   }
 

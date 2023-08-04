@@ -20,5 +20,8 @@ module.exports = {
   },
   members: {
 
+  },
+  commands: {
+    
   }
 };
