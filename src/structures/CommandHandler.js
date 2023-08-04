@@ -243,19 +243,30 @@ class CommandHandler {
     if (!this.client.commandStats[command.name]) this.client.commandStats[command.name] = 1;
     else this.client.commandStats[command.name] += 1;
     this.client.totalCommandUses += 1;
+    
     // update lifetime stats
     if (!this.client.lifetimeCommandStats[command.name]) this.client.lifetimeCommandStats[command.name] = 1;
     else this.client.lifetimeCommandStats[command.name] += 1;
-    if (this.client.totalCommandUses >= 25) { // avoid excessive DB writes.
+    const totalUses = await this.client.shard.broadcastEval((client) => client.totalCommandUses).then((x) => x.reduce((a, b) => a + b));
+    if (totalUses >= 25) { // avoid excessive DB writes.
       const cmdData = await this.client.syncCommandSettings("1");
-      for (const cmdName of Object.keys(this.client.lifetimeCommandStats)) {
-        if (!cmdData[cmdName]) cmdData[cmdName] = this.client.lifetimeCommandStats[command.name];
-        else cmdData[cmdName] += this.client.lifetimeCommandStats[command.name];
-        this.client.lifetimeCommandStats[command.name] = 0;
+      let totalLifetimeCmdStats = {};
+      const lifetimeStatsList = await this.client.shard.broadcastEval((client) => client.lifetimeCommandStats).then((x) => x.reduce((a, b) => a.concat(b), []));
+      for (const shard of lifetimeStatsList) {
+        for (const cmd of Object.keys(shard)) {
+          if (!Object.keys(totalLifetimeCmdStats).includes(cmd)) totalLifetimeCmdStats[cmd] = shard[cmd];
+          else totalLifetimeCmdStats[cmd] += shard[cmd];
+        }
       }
+      for (const cmdName of Object.keys(totalLifetimeCmdStats)) {
+        if (!cmdData[cmdName]) cmdData[cmdName] = totalLifetimeCmdStats[command.name];
+        else cmdData[cmdName] += totalLifetimeCmdStats[command.name];
+      }
+      await this.client.shard.broadcastEval((client) => client.lifetimeCommandStats = {});
       await this.client.commandUpdate("1", cmdData);
-      this.client.totalCommandUses = 0;
+      await this.client.shard.broadcastEval((client) => client.totalCommandUses = 0);
     }
+    
   }
 
   async checkCooldown(ctx, command) {

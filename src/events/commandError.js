@@ -15,7 +15,7 @@ class CommandError extends Event {
     const errorId =
       Date.now().toString(36) + Math.random().toString(36).substring(100);
 
-    if (ctx.dev) {
+    if (this.client.dev) {
       await ctx
         .reply({
           embeds: [
@@ -79,7 +79,7 @@ class CommandError extends Event {
       return channel.send({ embeds: [embed] }).catch(() => null);
     };
 
-    if (!ctx.dev) {
+    if (!this.client.dev) {
       if (this.client.shard) {
         return this.client.shard.broadcastEval(report, { context: { errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name, err }});
       } else {
