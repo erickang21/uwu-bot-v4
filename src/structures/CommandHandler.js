@@ -25,6 +25,11 @@ class CommandHandler {
     return { content, flags };
   }
 
+  async getGuild(guildId) {
+    const shardEntries = await this.client.shard.broadcastEval((client, context) => client.guilds.cache.get(context.guildId), { context: { guildId } });
+    return shardEntries.filter((entry) => !!entry)[0];
+  }
+
   async handleMessage(message) {
     if (!message.content || message.author.bot) return;
     if (message.channel.partial) await message.channel.fetch();
@@ -65,8 +70,13 @@ class CommandHandler {
       }
       if (!data.guilds) data.guilds = [];
       if (!data.guilds.includes(message.guild.id)) {
-        data.guilds.push(message.guild.id);
-        console.log(`ghot user ${message.author.username} (id: ${message.author.id}) in ${message.guild.name} (id: ${message.guild.id})`)
+        // check to make sure they're actually in the server
+        const matchedGuild = await this.getGuild(message.guild.id);
+        const matchedUser = await matchedGuild.members.fetch(message.author.id);
+        if (matchedUser) {
+          data.guilds.push(message.guild.id);
+          console.log(`ghot user ${message.author.username} (id: ${message.author.id}) in ${message.guild.name} (id: ${message.guild.id})`)
+        }
       }
       while (data.exp >= breakpoint) {
         data.level += 1;
@@ -205,8 +215,13 @@ class CommandHandler {
       const data = await this.client.syncUserSettings(ctx.author.id);
       if (!data.guilds) data.guilds = [];
       if (!data.guilds.includes(ctx.guild.id)) {
-        data.guilds.push(ctx.guild.id);
-        console.log(`got user ${ctx.author.username} (id: ${ctx.author.id}) in ${ctx.guild.name} (id: ${ctx.guild.id})`)
+        // check to make sure they're actually in the server
+        const matchedGuild = await this.getGuild(ctx.guild.id);
+        const matchedUser = await matchedGuild.members.fetch(ctx.author.id);
+        if (matchedUser) {
+          data.guilds.push(ctx.guild.id);
+          console.log(`got user ${ctx.author.username} (id: ${ctx.author.id}) in ${ctx.guild.name} (id: ${ctx.guild.id})`)
+        }
       }
       if (Date.now() > data.dailyCooldown) { // if it's been 24 hours, reset the multiplier
         data.multiplier = 1; 

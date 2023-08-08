@@ -9,6 +9,16 @@ class Updates extends Command {
     });
   }
 
+  /*
+  Mini version update: v5.1
+  __**Command Statistics Buffs**__
+  I could go into a lot of boring dev talk, but TLDR: we're trying to understand you better! 
+  - We're significantly improving command usage statistics. This means that we'll know what to focus on when providing future version updates!
+  - We're also trying to understand which categories are used most frequently.
+  MORE & MORE (link to the twice song) Nsfw commands!
+  - NEW COMMANDS: furry, tentacles, yaoi. 
+  */
+
   async run(ctx) {
     const embed = this.client
       .embed(this.client.user)

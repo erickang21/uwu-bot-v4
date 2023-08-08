@@ -15,6 +15,7 @@ class Blowjob extends Command {
           type: "user",
         },
       ],
+      nsfw: true
     });
   }
 

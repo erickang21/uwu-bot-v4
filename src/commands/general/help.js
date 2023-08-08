@@ -38,6 +38,12 @@ class Help extends Command {
     if (command) {
       const cmd = this.store.get(command);
 
+      /*
+      To be added when docs are added back
+      \n\n**Documentation:** https://docs.uwubot.tk/modules/${command
+                .toLowerCase()
+                .replace(/ /g, "-")}
+      */
       if (!cmd) {
         if (categories.includes(toProperCase(command))) {
           const embed = this.client
@@ -47,9 +53,7 @@ class Help extends Command {
             .setDescription(
               `${map[toProperCase(command)].join(
                 ", "
-              )}\n\n**Documentation:** https://docs.uwubot.tk/modules/${command
-                .toLowerCase()
-                .replace(/ /g, "-")}`
+              )}`
             );
           return ctx.reply({ embeds: [embed] });
         } else {
@@ -102,12 +106,16 @@ class Help extends Command {
     // Sort the categories alphabetically.
     const keys = Object.keys(map).sort();
 
+    /*
+    To be added when docs comes back:
+    \n[More Info](https://docs.uwubot.tk/modules/${category
+          .toLowerCase()
+          .replace(/ /g, "-")})
+    */
     for (const category of keys) {
       embed.addFields({
         name: category,
-        value: `\`uwu help ${category.toLowerCase()}\`\n[More Info](https://docs.uwubot.tk/modules/${category
-          .toLowerCase()
-          .replace(/ /g, "-")})`,
+        value: `\`uwu help ${category.toLowerCase()}\``,
         inline: true,
       });
     }

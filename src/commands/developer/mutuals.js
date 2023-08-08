@@ -27,9 +27,8 @@ class Mutuals extends Command {
     const user = options.getUser("user") || ctx.author;
     let servers = '';
     const userData = await this.client.syncUserSettings(user.id);
-    if (!userData.guilds) {
-      userData.guilds = [];
-      await this.client.userUpdate(ctx.author.id, userData);
+    if (!userData.guilds) { 
+      return ctx.reply(`I have not detected any servers that I share with this user. In order to be detected, the user must have been active in the server recently. ${emojis.error}`);
     }
     for (const guildId of userData.guilds) {
       const currentGuild = await this.getGuild(guildId);
