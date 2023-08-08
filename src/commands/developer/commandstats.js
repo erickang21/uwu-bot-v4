@@ -37,11 +37,13 @@ class Commandstats extends Command {
     for (const entry of lifetimeCmds.slice(0, amount)) {
       const category = this.client.commands.get(entry[0]).category;
       if (!categoryUses[category]) {
+        categoryUses[category] = entry[1];
+      } else {
         categoryUses[category] += entry[1];
-        totalUses += entry[1];
       }
+      totalUses += entry[1];
       index++;
-      description += `**(${index}) ${entry[0]}:** ${entry[1]} | ${totalcmdstats[entry[0]]}\n`     
+      description += `**(${index}) ${entry[0]}:** ${entry[1]} | ${totalcmdstats[entry[0]] ?? '0'}\n`     
     }
     description += `\n**__Lifetime Command Usage (By Category)__**\n\n`;
     for (const cat of Object.keys(categoryUses)) {
