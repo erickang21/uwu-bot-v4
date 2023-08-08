@@ -32,8 +32,11 @@ class Mutuals extends Command {
     }
     for (const guildId of userData.guilds) {
       const currentGuild = await this.getGuild(guildId);
-      servers += `- **${currentGuild.name}** (ID: ${currentGuild.id}) | Members: ${currentGuild.memberCount}\n`;
+      if (currentGuild) {
+        servers += `- **${currentGuild.name}** (ID: ${currentGuild.id}) | Members: ${currentGuild.memberCount}\n`;
+      }
     }
+      
     
     servers += `\n${emojis.sparkles} Duration: ${Date.now() - ctx.createdTimestamp} ms`;
     const embed = this.client

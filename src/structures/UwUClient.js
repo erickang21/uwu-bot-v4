@@ -185,7 +185,7 @@ class UwUClient extends Client {
   }
 
   async syncCommandSettings(id) {
-    const res = await this.settings.users.sync(id);
+    const res = await this.settings.commands.sync(id);
     if (res) {
       return res;
     } else {
