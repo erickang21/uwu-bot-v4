@@ -25,9 +25,16 @@ class CommandHandler {
     return { content, flags };
   }
 
-  async getGuild(guildId) {
-    const shardEntries = await this.client.shard.broadcastEval((client, context) => client.guilds.cache.get(context.guildId), { context: { guildId } });
-    return shardEntries.filter((entry) => !!entry)[0];
+  async isMemberInGuild(guildId, memberId) {
+    const findMember = async (client, context) => {
+      const guild = client.guilds.cache.get(context.guildId);
+      if (guild) {
+        const memberMatch = await guild.members.fetch(context.memberId);
+        return !!memberMatch;
+      }
+    }
+    const results = await this.client.shard.broadcastEval(findMember, { context: { guildId, memberId } });
+    return results.includes(true);
   }
 
   async handleMessage(message) {
@@ -71,9 +78,8 @@ class CommandHandler {
       if (!data.guilds) data.guilds = [];
       if (!data.guilds.includes(message.guild.id)) {
         // check to make sure they're actually in the server
-        const matchedGuild = await this.getGuild(message.guild.id);
-        const matchedUser = await matchedGuild.members.fetch(message.author.id);
-        if (matchedUser) {
+        const inGuild = await this.isMemberInGuild(message.guild.id, message.author.id);
+        if (inGuild) {
           data.guilds.push(message.guild.id);
           console.log(`ghot user ${message.author.username} (id: ${message.author.id}) in ${message.guild.name} (id: ${message.guild.id})`)
         }
@@ -216,9 +222,8 @@ class CommandHandler {
       if (!data.guilds) data.guilds = [];
       if (!data.guilds.includes(ctx.guild.id)) {
         // check to make sure they're actually in the server
-        const matchedGuild = await this.getGuild(ctx.guild.id);
-        const matchedUser = await matchedGuild.members.fetch(ctx.author.id);
-        if (matchedUser) {
+        const inGuild = await this.isMemberInGuild(ctx.guild.id, ctx.author.id);
+        if (inGuild) {
           data.guilds.push(ctx.guild.id);
           console.log(`got user ${ctx.author.username} (id: ${ctx.author.id}) in ${ctx.guild.name} (id: ${ctx.guild.id})`)
         }
