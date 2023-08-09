@@ -7,12 +7,12 @@ class Eightball extends Command {
       description: "ask the magic 8ball a question!",
       aliases: ["8ball"],
       usage: "8ball <question>",
-      options: {
+      options: [{
         name: "question",
         description: "the question to ask the magic 8ball",
         type: "string",
         required: true,
-      },
+      }],
     });
   }
 
