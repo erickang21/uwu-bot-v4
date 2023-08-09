@@ -1,4 +1,5 @@
 const Command = require("../../structures/Command.js");
+const emojis = require("../../structures/Emojis");
 
 class Mimic extends Command {
   constructor(...args) {
@@ -24,6 +25,7 @@ class Mimic extends Command {
   }
 
   async run(ctx, options) {
+    if (!ctx.message) return ctx.reply(`This command is not supported on slash commands. Please run it using \`uwu mimic <user> <text>\`. ${emojis.error}`);
     const member = await ctx.guild.members.fetch(options.getUser("user").id);
     const text = options.getString("text");
     await ctx.message.delete();

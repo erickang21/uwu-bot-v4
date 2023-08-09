@@ -24,5 +24,10 @@ module.exports = {
   profileicon_blank: "<:invisible:1136302181310533643>",
   join: "<:join:1136348278976434277>",
   leave: "<:leave:1136348279609757827>",
-  wave: "<:wave:1136701430032515082>"
+  wave: "<:wave:1136701430032515082>",
+  ship5: "<:KeqingHeart:1137094812949037056>",
+  ship4: "<:BlushYes:994711648164139120>",
+  ship3: "<:LaceShrug:724400899497394227>",
+  ship2: "<:thonk:1137096737891291247>",
+  ship1: "<:AiriDead:1137096733877338182>"
 };
