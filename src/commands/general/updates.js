@@ -64,14 +64,14 @@ The fun category is coming back soon. To kick it off, I've added a crowd favorit
 - NEW COMMAND: 8ball, to ask a question about your fate.
 - NEW COMMAND: rate, where you can rate anyone at anything. (eg. \`uwu rate @banana weeb\`)
 - NEW COMMAND: ship, where you can find out how much two users are meant for each other.
-      
+
 __**Improving Descriptions**__
 We get it. Discord bots can be overwhelming. That's why I made careful changes to all the command and argument descriptions to make them consistent across the board.
 - Descriptions of anime commands are made to be more fun and silly.
 - Descriptions of customization, general, level, and mod commands will clearly describe what it's doing.
 - Descriptions of NSFW commands will define fandom terminology, especially less known ones.
 - Usage strings have fixed syntax now: <argument> represents a REQUIRED argument, [argument] represents an OPTIONAL argument. 
-      
+
 __**Command Statistics Buffs**__
 I could go into a lot of boring dev talk, but TLDR: we're trying to understand you better! 
 - We're significantly improving command usage statistics. This means that we'll know what to focus on when providing future version updates!
