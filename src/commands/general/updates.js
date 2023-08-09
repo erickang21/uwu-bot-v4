@@ -10,12 +10,27 @@ class Updates extends Command {
 
   /*
   Mini version update: v5.1
+  __**NSFW Command Improvements!**__
+  We definitely heard the suggestions. [MORE & MORE](https://www.youtube.com/watch?v=mH0_XpSHkZo) 18+ commands!
+  - NEW COMMANDS: furry, tentacles, bdsm, yaoi
+  - Fixed an issue where blowjob would sometimes not work
+  
+  __**Time for some FUN!**__
+  The fun category is coming back soon. To kick it off, I've added a crowd favorite!
+  - NEW COMMAND: mimic, where you can pretend to be someone else and send something as them.
+
+  __**Improving descriptions.**__
+  We get it. Discord bots can be overwhelming. That's why I made careful changes to all the command and argument descriptions to make them consistent across the board.
+  
+  - Descriptions of anime commands are made to be more fun and silly.
+  - Descriptions of customization, general, level, and mod commands will clearly describe what it's doing.
+  - Descriptions of NSFW commands will define lesser known terms for people.
+  - Usage strings have fixed syntax now: <argument> represents a REQUIRED argument, [argument] represents an OPTIONAL argument. 
+
   __**Command Statistics Buffs**__
   I could go into a lot of boring dev talk, but TLDR: we're trying to understand you better! 
   - We're significantly improving command usage statistics. This means that we'll know what to focus on when providing future version updates!
   - We're also trying to understand which categories are used most frequently.
-  MORE & MORE (link to the twice song) Nsfw commands!
-  - NEW COMMANDS: furry, tentacles, bdsm, yaoi
   */
 
   async run(ctx) {

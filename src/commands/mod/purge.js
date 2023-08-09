@@ -17,7 +17,7 @@ class Purge extends Command {
         },
         {
           name: "filter",
-          description: "the types of messages that should be deleted. valid arguments are: [link|invite|bots|you|me|upload|@user]",
+          description: "filter for purging: [link|invite|bots|you|me|upload|@user]",
           type: "string",
         }
       ],
