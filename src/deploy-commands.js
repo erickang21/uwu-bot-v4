@@ -6,7 +6,7 @@ const { TOKEN_DEV, TOKEN, DEV, CLIENT_ID } = process.env;
 
 const rest = new REST({ version: "10" }).setToken(DEV ? TOKEN_DEV : TOKEN);
 
-const UwUClient = require("./src/structures/UwUClient");
+const UwUClient = require("./structures/UwUClient");
 
 // Create a client but do not log in, just for loading commands.
 const client = new UwUClient();
