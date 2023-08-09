@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Bite extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Bite someone else.",
+      description: "annoyed at someone? bite them! unless they're into that...",
       usage: "bite [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to bite.",
+          description: "the user you want to bite",
           type: "user",
         },
       ],

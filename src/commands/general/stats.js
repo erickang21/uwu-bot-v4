@@ -6,7 +6,7 @@ const { getBytes, getDuration } = require("../../utils/utils.js");
 class Stats extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Shows invite information for uwu bot.",
+      description: "shows relevant statistics for uwu bot!",
       aliases: ["info"],
     });
   }

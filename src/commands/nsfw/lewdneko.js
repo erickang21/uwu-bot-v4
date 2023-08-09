@@ -4,14 +4,13 @@ const { request } = require("undici");
 class Lewdneko extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Lewdneko.",
+      description: "lewdneko: lewd images of nekos (similar to catgirls)",
       usage: "lewdneko",
       nsfw: true,
     });
   }
 
-  async run(ctx, options) {
-    const user = options.getUser("user") || ctx.author;
+  async run(ctx) {
     const { url } = await request("https://api.waifu.pics/nsfw/neko").then(
       ({ body }) => body.json()
     );
@@ -19,10 +18,6 @@ class Lewdneko extends Command {
       .embed(ctx.author)
       .setTitle("Lewd Neko :eggplant:")
       .setImage(url);
-    if (user.id !== ctx.author.id)
-      embed.setTitle(
-        `**${ctx.author.username}** is fucking **${user.username}**! :eggplant:`
-      );
     return ctx.reply({ embeds: [embed] });
   }
 }

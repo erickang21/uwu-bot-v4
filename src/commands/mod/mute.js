@@ -13,18 +13,18 @@ class Mute extends Command {
       options: [
         {
           name: "member",
-          description: "The user you want to mute.",
-          type: "member",
+          description: "the user you want to mute.",
+          type: "user",
           required: true
         },
         {
             name: "time",
-            description: "(Optional) The amount of time in minutes to mute this user for. Enter 0 for indefinite muting.",
+            description: "(optional) the amount of time in minutes to mute this user for (leave blank for indefinite time)",
             type: "integer"
         },
         {
             name: "reason",
-            description: "(Optional) The reason for this action.",
+            description: "(optional) reason for this action",
             type: "string"
         }
       ],
@@ -32,7 +32,7 @@ class Mute extends Command {
   }
 
   async run(ctx, options) {
-    const member = options.getMember("member");
+    const member = await ctx.guild.members.fetch(options.getUser("member"));
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you mute yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you mute me?");

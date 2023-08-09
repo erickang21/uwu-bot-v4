@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Highfive extends Command {
   constructor(...args) {
     super(...args, {
-      description: "High-five someone else.",
+      description: "send someone a high-five!",
       usage: "highfive [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to high-five.",
+          description: "the user you want to high-five",
           type: "user",
         },
       ],

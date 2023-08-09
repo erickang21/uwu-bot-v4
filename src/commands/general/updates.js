@@ -1,10 +1,9 @@
 const Command = require("../../structures/Command.js");
-const emojis = require("../../structures/Emojis");
 
 class Updates extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Shows invite information for uwu bot.",
+      description: "shows the latest patch notes for uwu bot. find the TWICE references :)",
       aliases: ["updateinfo", "update", "versioninfo"]
     });
   }

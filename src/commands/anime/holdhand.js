@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Holdhand extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Hold hands with someone else!",
+      description: "hold hands with that special someone...",
       usage: "holdhand [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to hold hands with.",
+          description: "the user you want to hold hands with",
           type: "user",
         },
       ],

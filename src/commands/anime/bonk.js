@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Bonk extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Bonk someone else.",
+      description: "hate someone? bonk them.",
       usage: "bonk [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to bonk.",
+          description: "the user you want to bonk",
           type: "user",
         },
       ],

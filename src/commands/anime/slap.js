@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Slap extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Slap someone else.",
+      description: "friend being stupid? slap some sense into them.",
       usage: "slap [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to slap.",
+          description: "the user you want to slap",
           type: "user",
         },
       ],

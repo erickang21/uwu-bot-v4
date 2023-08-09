@@ -6,18 +6,18 @@ class Purge extends Command {
   constructor(...args) {
     super(...args, {
       guildOnly: true,
-      description: "Purges a certain amount of messages.",
+      description: "purges a certain amount of messages.",
       usage: "purge [limit=50] [link|invite|bots|you|me|upload|@user]",
       options: [
         {
           name: "limit",
-          description: "The amount of messages you want to delete.",
+          description: "the amount of messages you want to delete.",
           type: "integer",
           required: true
         },
         {
           name: "filter",
-          description: "The types of messages that should be deleted. Valid arguments are: [link|invite|bots|you|me|upload|@user]",
+          description: "the types of messages that should be deleted. valid arguments are: [link|invite|bots|you|me|upload|@user]",
           type: "string",
         }
       ],

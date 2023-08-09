@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Owoify extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Make your text more kawaii..",
-      usage: "kiss [text]",
+      description: "need help being cute? this will translate for you!",
+      usage: "owoify <text>",
       options: [
         {
           name: "text",
-          description: "The text you want to transform.",
+          description: "the text to owoify",
           type: "string",
           required: true,
         },

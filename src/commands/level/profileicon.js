@@ -4,8 +4,8 @@ const emojis = require("../../structures/Emojis");
 class Profileicons extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Edit your lineup of profile icons!",
-      usage: "profileicon [set] [position] [icon_key]",
+      description: "edit your lineup of profile icons!",
+      usage: "profileicon <set> <position> <icon_key>",
       guildOnly: true,
       aliases: ["profileicons"],
       extendedHelp: [

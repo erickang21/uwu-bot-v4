@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Levelhelp extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Read about the new leveling system.",
+      description: "read about the new leveling system.",
       aliases: ["helplevel"],
     });
   }

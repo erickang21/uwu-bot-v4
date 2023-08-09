@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Warn extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Sends a DM message as a warning.",
+      description: "sends a dm message as a warning",
       userPermissions: ["ModerateMembers"],
       botPermissions: ["ModerateMembers"],
       guildOnly: true,
@@ -12,13 +12,13 @@ class Warn extends Command {
       options: [
         {
           name: "user",
-          description: "The user you want to unmute.",
+          description: "the user you want to unmute",
           type: "user",
           required: true
         },
         {
           name: "reason",
-          description: "The reason that will be included in the warning message.",
+          description: "(optional) reason for this action",
           type: "string",
           required: true
         }

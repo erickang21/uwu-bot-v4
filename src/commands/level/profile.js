@@ -4,12 +4,12 @@ const emojis = require("../../structures/Emojis");
 class Profile extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Displays your profile and current level.",
+      description: "displays your profile and current level.",
       aliases: ["pr"],
       options: [
         {
           name: "user",
-          description: "(Optional) The user whose profile you want to check.",
+          description: "(optional) the user whose profile you want to check",
           type: "user",
         },
       ],

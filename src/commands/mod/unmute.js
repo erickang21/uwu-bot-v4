@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Unmute extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Removes a timeout restriction from a user.",
+      description: "removes a timeout restriction from a user.",
       userPermissions: ["ModerateMembers"],
       botPermissions: ["ModerateMembers"],
       aliases: ["untimeout"],
@@ -13,8 +13,8 @@ class Unmute extends Command {
       options: [
         {
           name: "member",
-          description: "The user you want to unmute.",
-          type: "member",
+          description: "the user you want to unmute",
+          type: "user",
           required: true
         }
       ],
@@ -22,7 +22,7 @@ class Unmute extends Command {
   }
 
   async run(ctx, options) {
-    const member = options.getMember("member");
+    const member = await ctx.guild.members.fetch(options.getUser("member"));
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you unmute yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you unmute me?");

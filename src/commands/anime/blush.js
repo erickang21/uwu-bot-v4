@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Blush extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Did someone make you blush?",
+      description: "are you getting the feels?",
       usage: "blush [user]",
       options: [
         {
           name: "user",
-          description: "The user that made you blush.",
+          description: "the user that made you blush",
           type: "user",
         },
       ],

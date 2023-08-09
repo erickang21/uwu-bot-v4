@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Ping extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Pong! Checks bot latency.",
+      description: "ping? pong! checks the bot's response time.",
     });
   }
 

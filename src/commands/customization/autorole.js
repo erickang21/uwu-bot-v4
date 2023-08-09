@@ -4,8 +4,8 @@ const emojis = require("../../structures/Emojis");
 class Autorole extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Set a role that is automatically given upon a member joining.",
-      usage: "autorole [on/off] [role name]",
+      description: "control whether all members get a role upon joining.",
+      usage: "autorole <on/off> <role name>",
       guildOnly: true,
       aliases: ["ar"]
     });

@@ -4,7 +4,7 @@ const { request } = require("undici");
 class Neko extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Get a random neko.",
+      description: "get a random picture of a neko!",
       usage: "neko",
     });
   }

@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Lick extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Lick someone else.",
+      description: "lick someone. better be someone clean!",
       usage: "lick [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to lick.",
+          description: "the user you want to lick",
           type: "user",
         },
       ],

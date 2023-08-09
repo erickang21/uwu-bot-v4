@@ -6,13 +6,13 @@ const emojis = require("../../structures/Emojis");
 class Genshin extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Find content for a Genshin character!",
+      description: "find nsfw content of a genshin character.",
       usage: "genshin [character]",
       nsfw: true,
       options: [
         {
           name: "character",
-          description: "The name of the character.",
+          description: "character name (not every character is available here)",
           type: "string",
           required: true,
         },

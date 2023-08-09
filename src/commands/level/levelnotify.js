@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Levelnotify extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Allow the bot to notify you when you've leveled up!",
+      description: "allow the bot to notify you when you've leveled up!",
       usage: "levelnotify [on/off]",
       guildOnly: true,
       aliases: ["lvnotify"]

@@ -4,7 +4,7 @@ const { request } = require("undici");
 class Waifu extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Get a spicy pic of an anime waifu.",
+      description: "get a spicy pic of a waifu.",
       usage: "waifu",
       nsfw: true
     });

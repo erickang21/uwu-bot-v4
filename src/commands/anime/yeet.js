@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Yeet extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Yeet someone else.",
+      description: "get rid of them once and for all! yeet them.",
       usage: "yeet [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to yeet.",
+          description: "the user you want to yeet",
           type: "user",
         },
       ],

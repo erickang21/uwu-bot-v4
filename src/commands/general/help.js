@@ -5,12 +5,12 @@ const { toProperCase } = require("../../utils/utils.js");
 class Help extends Command {
   constructor(...args) {
     super(...args, {
-      description: "View help for commands.",
+      description: "confused? get a list of commands, or how they're used!",
       usage: "help [command]",
       options: [
         {
           name: "command",
-          description: "The command to view help for.",
+          description: "(optional) the command to view details for",
           type: "string",
         },
       ],

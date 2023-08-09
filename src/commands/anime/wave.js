@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Wave extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Wave at someone else.",
+      description: "wave at someone. better wave back!",
       usage: "wave [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to wave at.",
+          description: "the user you want to wave at",
           type: "user",
         },
       ],

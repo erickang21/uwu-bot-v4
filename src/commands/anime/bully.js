@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Bully extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Bully someone else.",
+      description: "go bully someone...maybe choose a short friend...",
       usage: "bully [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to bully.",
+          description: "the user to bully",
           type: "user",
         },
       ],

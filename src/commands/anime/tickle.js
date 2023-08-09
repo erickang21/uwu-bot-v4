@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Tickle extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Tickle someone else.",
+      description: "feeling evil? tickle someone else.",
       usage: "tickle [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to tickle.",
+          description: "the user you want to tickle",
           type: "user",
         },
       ],

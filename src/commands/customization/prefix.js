@@ -4,8 +4,8 @@ const emojis = require("../../structures/Emojis");
 class Prefix extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Give the bot a custom prefix!",
-      usage: "prefix [prefix/off|reset|default]",
+      description: "set/reset a custom prefix for the bot.",
+      usage: "prefix <[prefix]/reset>",
       guildOnly: true,
       aliases: ["setprefix"]
     });

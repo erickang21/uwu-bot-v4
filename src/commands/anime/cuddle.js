@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Cuddle extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Cuddle someone else.",
+      description: "send cuddles for that special someone :)",
       usage: "cuddle [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to cuddle.",
+          description: "the user you want to cuddle",
           type: "user",
         },
       ],

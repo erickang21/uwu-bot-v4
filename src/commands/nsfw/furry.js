@@ -5,16 +5,15 @@ const { request } = require("undici");
 class Furry extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Furry.",
+      description: "furry: characters that have body fur, feathers, or scales",
       usage: "furry",
       nsfw: true,
     });
   }
 
   async run(ctx) {
-    // TODO: Change url
     const data = await request(
-      "https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=solo%20catgirl%20cat_girl%20cat_ears%20-loli%20rating:explicit"
+      "https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=furry%20-loli%20rating:explicit"
     ).then(({ body }) => body.json());
     const urls = data.post.map((entry) => entry.file_url)
     const embed = this.client

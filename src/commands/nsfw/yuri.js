@@ -5,9 +5,10 @@ const utils = require("../../utils/utils.js");
 class Yuri extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Yuri.",
+      description: "yuri: sexual interaction between two or more women",
       usage: "yuri",
       nsfw: true,
+      extendedHelp: "yuri is the sexual interaction between two or more women - it doesn't matter if it's mutual or one-sided.\n\n\"it's one of those days. pass the yuri.\" - someone special <3"
     });
   }
 

@@ -5,8 +5,8 @@ const { request } = require("undici");
 class Futanari extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Futanari.",
-      usage: "Futanari",
+      description: "futanari: female character with male genitalia",
+      usage: "futanari",
       nsfw: true,
     });
   }

@@ -4,8 +4,8 @@ const emojis = require("../../structures/Emojis");
 class Welcome extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Set welcome messages for this server.",
-      usage: "welcome [on/off] [#channel] [message]",
+      description: "set a message to be sent when a user joins your server.",
+      usage: "welcome <on/off> <#channel> <message>",
       guildOnly: true,
       aliases: ["setwelcome"],
       extendedHelp: [

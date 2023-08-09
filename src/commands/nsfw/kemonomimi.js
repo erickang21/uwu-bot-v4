@@ -5,8 +5,8 @@ const { request } = require("undici");
 class Kemonomimi extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Kemonomimi.",
-      usage: "Kemonomimi",
+      description: "kemonomimi: characters with animal ears",
+      usage: "kemonomimi",
       nsfw: true,
     });
   }

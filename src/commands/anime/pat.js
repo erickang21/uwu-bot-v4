@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Pat extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Pat someone else.",
+      description: "send a headpat to someone!",
       usage: "pat [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to pat.",
+          description: "the user you want to pat",
           type: "user",
         },
       ],

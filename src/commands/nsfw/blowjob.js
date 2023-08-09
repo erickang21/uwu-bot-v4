@@ -5,13 +5,13 @@ const utils = require("../../utils/utils.js");
 class Blowjob extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Blowjob.",
+      description: "blowjob: someone uses their mouth to stimulate their partner's penis.",
       aliases: ["bj"],
       usage: "blowjob [user]",
       options: [
         {
           name: "user",
-          description: "The user.",
+          description: "the user you're giving it to",
           type: "user",
         },
       ],

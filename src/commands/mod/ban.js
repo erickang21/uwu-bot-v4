@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Ban extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Bans a user from a server.",
+      description: "bans a user from your server.",
       userPermissions: ["BanMembers"],
       botPermissions: ["BanMembers"],
       guildOnly: true,
@@ -12,13 +12,13 @@ class Ban extends Command {
       options: [
         {
           name: "member",
-          description: "The user you want to kick.",
-          type: "member",
+          description: "the user you want to ban",
+          type: "user",
           required: true
         },
         {
             name: "reason",
-            description: "(Optional) The reason for this action.",
+            description: "(optional) reason for this action",
             type: "string"
         }
       ]
@@ -26,7 +26,7 @@ class Ban extends Command {
   }
 
   async run(ctx, options) {
-    const member = options.getMember("member");
+    const member = await ctx.guild.members.fetch(options.getUser("member").id);
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you ban yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you ban me?");

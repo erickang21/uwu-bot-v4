@@ -4,8 +4,8 @@ const emojis = require("../../structures/Emojis");
 class Modlog extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Set welcome messages for this server.",
-      usage: "modlog [on/off] [#channel]",
+      description: "be notified of any member actions in a private channel.",
+      usage: "modlog <on/off> <#channel>",
       guildOnly: true,
       aliases: ["setmodlog"]
     });

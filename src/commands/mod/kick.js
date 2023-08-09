@@ -4,7 +4,7 @@ const emojis = require("../../structures/Emojis");
 class Kick extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Kicks a user from a server.",
+      description: "kicks a user from your server.",
       userPermissions: ["KickMembers"],
       botPermissions: ["KickMembers"],
       guildOnly: true,
@@ -12,13 +12,13 @@ class Kick extends Command {
       options: [
         {
           name: "member",
-          description: "The user you want to kick.",
-          type: "member",
+          description: "the user you want to kick.",
+          type: "user",
           required: true
         },
         {
             name: "reason",
-            description: "(Optional) The reason for this action.",
+            description: "(optional) reason for this action",
             type: "string"
         }
       ],
@@ -26,7 +26,7 @@ class Kick extends Command {
   }
 
   async run(ctx, options) {
-    const member = options.getMember("member");
+    const member = await ctx.guild.members.fetch(options.getUser("member"));
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you kick yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you kick me?");

@@ -3,7 +3,8 @@ const Command = require("../../structures/Command.js");
 class Invite extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Shows invite information for uwu bot.",
+      description: "get invite information for the bot.",
+      usage: "invite",
     });
   }
 

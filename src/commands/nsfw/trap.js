@@ -4,8 +4,8 @@ const { request } = require("undici");
 class Trap extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Trap.",
-      usage: "tra[",
+      description: "trap: male characters that have the apperance of a female",
+      usage: "trap",
       nsfw: true,
     });
   }

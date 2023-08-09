@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Cringe extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Get a picture of someone cringing because it's relatable.",
+      description: "show that someone made you cringe!",
       usage: "cringe [user]",
       options: [
         {
           name: "user",
-          description: "The user that made you cringe.",
+          description: "the user that made you cringe",
           type: "user",
         },
       ],

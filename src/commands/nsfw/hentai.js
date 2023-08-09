@@ -6,13 +6,13 @@ const emojis = require("../../structures/Emojis");
 class Hentai extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Hentai. Optionally, search for specific genres by adding tags, separated by commas.",
+      description: "hentai - optionally, search for specific genres by adding tags, separated by commas.",
       usage: "hentai",
       nsfw: true,
       options: [
         {
           name: "tags",
-          description: "Some tags to narrow down the genre. If adding multiple tags, separate with comma (,)",
+          description: "desired genres. if a tag has spaces, use underscore (_). if adding multiple tags, separate with comma (,)",
           type: "string",
         },
       ],

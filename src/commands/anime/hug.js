@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Hug extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Hug someone else.",
+      description: "send a hug to someone. ingredients: 100% wholesomeness!",
       usage: "hug [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to hug.",
+          description: "the user you want to hug",
           type: "user",
         },
       ],

@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Poke extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Poke someone!",
+      description: "notice me senpai :o",
       usage: "poke [user]",
       options: [
         {
           name: "user",
-          description: "The user that you want to poke.",
+          description: "the user you want to poke",
           type: "user",
         },
       ],

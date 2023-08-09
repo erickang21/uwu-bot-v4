@@ -4,8 +4,8 @@ const emojis = require("../../structures/Emojis");
 class Leave extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Set leave messages for this server.",
-      usage: "leave [on/off] [#channel] [message]",
+      description: "set a message to be sent when a user leaves your server.",
+      usage: "leave <on/off> <#channel> <message>",
       guildOnly: true,
       aliases: ["setleave"],
       extendedHelp: [

@@ -4,13 +4,13 @@ const { request } = require("undici");
 class Cum extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Cum.",
+      description: "cum: semen and seminal fluid",
       usage: "cum [user]",
       nsfw: true,
       options: [
         {
           name: "user",
-          description: "The user.",
+          description: "the user you're doing it to",
           type: "user",
         },
       ],

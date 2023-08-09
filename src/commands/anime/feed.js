@@ -4,12 +4,12 @@ const { request } = require("undici");
 class Feed extends Command {
   constructor(...args) {
     super(...args, {
-      description: "Feed someone else.",
+      description: "feed someone! kinda adorable...",
       usage: "feed [user]",
       options: [
         {
           name: "user",
-          description: "The user you want to feed.",
+          description: "the user you want to feed",
           type: "user",
         },
       ],

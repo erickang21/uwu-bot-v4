@@ -5,7 +5,7 @@ const utils = require("../../utils/utils.js");
 class Yaoi extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Yaoi.",
+      description: "yaoi: sexual interaction between two or more men",
       usage: "yaoi",
       nsfw: true,
     });

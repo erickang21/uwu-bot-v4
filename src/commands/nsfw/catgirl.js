@@ -5,7 +5,7 @@ const { request } = require("undici");
 class Catgirl extends Command {
   constructor(...args) {
     super(...args, {
-      description: "[NSFW] Catgirl.",
+      description: "catgirl: characters with cat ears (nekomimi) on their head",
       usage: "catgirl",
       nsfw: true,
     });
