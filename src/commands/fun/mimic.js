@@ -30,7 +30,7 @@ class Mimic extends Command {
 
     const webhook = await ctx.channel.createWebhook({
       name: member.nickname || member.user.displayName,
-      avatar: member.avatarURL({ size: 64, extension: "png"}) || member.user.avatarURL({ size: 64, extension: "png"}),
+      avatar: member.avatarURL({ size: 64, extension: "png"}) || member.user.avatarURL({ size: 512, extension: "png"}),
       reason: `uwu bot: mimic command (ran by ${ctx.author.tag})`
     })
     await webhook.send(text);
