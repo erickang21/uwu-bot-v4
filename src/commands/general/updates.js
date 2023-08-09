@@ -15,7 +15,7 @@ class Updates extends Command {
   - We're significantly improving command usage statistics. This means that we'll know what to focus on when providing future version updates!
   - We're also trying to understand which categories are used most frequently.
   MORE & MORE (link to the twice song) Nsfw commands!
-  - NEW COMMANDS: furry, tentacles, yaoi. 
+  - NEW COMMANDS: furry, tentacles, bdsm, yaoi
   */
 
   async run(ctx) {

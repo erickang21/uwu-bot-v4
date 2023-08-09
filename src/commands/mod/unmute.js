@@ -22,7 +22,7 @@ class Unmute extends Command {
   }
 
   async run(ctx, options) {
-    const member = await ctx.guild.members.fetch(options.getUser("member"));
+    const member = await ctx.guild.members.fetch(options.getUser("member").id);
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you unmute yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you unmute me?");
