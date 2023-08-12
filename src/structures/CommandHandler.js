@@ -1,4 +1,5 @@
 const CommandContext = require('./CommandContext.js');
+const { PermissionFlagsBits } = require('discord.js');
 const { distance } = require('fastest-levenshtein');
 const { missingPermissions, getDuration, escapeRegex } = require('../utils/utils.js');
 const RateLimiter = require('./RateLimiter.js');
@@ -103,6 +104,12 @@ class CommandHandler {
 
 
     if (!match) return;
+
+    // Don't run a command if we don't have the most basic permissions.
+    if (!message.channel.permissionsFor(this.client.user).has([
+      PermissionFlagsBits.SendMessages,
+      PermissionFlagsBits.EmbedLinks
+    ])) return;
 
     const prefixLength = match[0].length;
     const rawContent = message.content.slice(prefixLength).trim();
