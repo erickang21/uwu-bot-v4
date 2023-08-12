@@ -30,7 +30,7 @@ class Purge extends Command {
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply(`Baka! You need the \`Manage Messages\` permissions to purge messages. ${emojis.failure}`);
     if (limit > 100) return ctx.reply(`You cannot purge more than 100 messages at a time. ${emojis.failure}`)
-    let messages = await ctx.channel.messages.fetch({ limit: 100 });
+    let messages = await ctx.channel.messages.fetch({ limit });
 
     if(filter) {
       const user = await this.verifyUser(ctx, filter).catch(() => null);
@@ -41,11 +41,10 @@ class Purge extends Command {
     messages = messages.array().slice(0, limit + 1);
     ctx.channel.bulkDelete(messages)
       .then(async () => {
-        const reply = await ctx.reply(`${messages.length - 1} messages were deleted. ${emojis.success}`);
-        reply.delete({ timeout: 5000 });
+        return ctx.reply(`${messages.length - 1} messages were deleted. ${emojis.success}`);
       })
       .catch(() => {
-        const embed = new MessageEmbed() // Generic Fail Message
+        const embed = this.client.embed() // Generic Fail Message
         .setTitle(`An error occurred! ${emojis.error}`)
         .setDescription(`The messages were not successfully purged. 
         
@@ -54,7 +53,7 @@ ${emojis.shiningarrow} The bot does not have the **Manage Messages** permission.
 ${emojis.shiningarrow} One or more messages within the last **${limit}** messages are more than 14 days old.`)
         .setTimestamp()
         .setColor(0xf01d0e);
-        ctx.reply({ embed })
+        return ctx.reply({ embeds: [embed] })
       });
     
   }
