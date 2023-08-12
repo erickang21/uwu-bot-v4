@@ -63,7 +63,7 @@ class Stats extends Command {
           inline: true
         },
         {
-          name: `Node.js Version ${EMOJIS.NODEJS}`,
+          name: `Node.js Version <:nodejs:874673614375497778>`,
           value: process.version,
           inline: true
         },
