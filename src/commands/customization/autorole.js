@@ -7,38 +7,45 @@ class Autorole extends Command {
       description: "control whether all members get a role upon joining.",
       usage: "autorole <on/off> <role name>",
       guildOnly: true,
-      aliases: ["ar"]
+      aliases: ["ar"],
+      userPermissions: ["ManageRoles"],
+      botPermissions: ["ManageRoles"],
+      subcommands: [
+        {
+          name: "on",
+          description: "enables the autorole",
+          options: [
+            {
+              name: "role",
+              description: "role you want to automatically give to members upon joining",
+              type: "role",
+              required: true
+            }
+          ]
+        },
+        {
+          name: "off",
+          description: "disables the autorole"
+        }
+      ],
     });
   }
   
-  async run(ctx) {
+  async run(ctx, options) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    let option = ctx.rawArgs.split(" ")[0];
-    if (option) option = option.toLowerCase();
-    else {
-      if (!guildSettings.autorole) return ctx.reply("The autorole for this server is **disabled.**");
-      else {
-        const role = ctx.guild.roles.cache.find((e) => e.id === guildSettings.autorole)
-        return ctx.reply(`The autorole for this server is **enabled**. The **${role.name}** will be given when a member joins.`)
-      }
-    }
-    let role = ctx.rawArgs.split(" ").splice(0, 1).join(" ");
-    if(!ctx.member.permissions.has("MANAGE_ROLES"))
-      return ctx.reply(`Baka! You need the \`Manage Roles\` permissions to change the autorole. ${emojis.failure}`);
+    const option = options.getSubcommand();
     if (option === "on") {
-      role = await this.verifyRole(ctx, role)
+      const role = options.getRole("role");
+      if (!role) {
+        return ctx.reply(`A valid role is required! ${emojis.failure}`);
+      }
       this.client.guildUpdate(ctx.guild.id, { autorole: role.id });
       ctx.reply(`The autorole for this server has successfully been updated. ${emojis.success}`)
     } else if (option === "off") {
       if (!guildSettings.autorole) return ctx.reply("The autorole for this server is already off!");
-      else {
-        this.client.guildUpdate(ctx.guild.id, { autorole: null });
-        return ctx.reply(`The autorole for this server has been disabled. ${emojis.success}`)
-      }
-    } else {
-      return ctx.reply("Invalid usage of command. Use `uwu help autorole` for details.")
-    }
-  
+      this.client.guildUpdate(ctx.guild.id, { autorole: null });
+      return ctx.reply(`The autorole for this server has been disabled. ${emojis.success}`)
+    } 
   }
 }
 
