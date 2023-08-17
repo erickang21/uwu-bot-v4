@@ -91,20 +91,22 @@ class Command extends Base {
     }
 
     // if there are subcommands, add them
-    for (const sub of this.subcommands) {
-      builder.addSubcommand(subcommand => {
-        subcommand
-          .setName(sub.name)
-          .setDescription(sub.description);
-        for (const subData of sub.options) {
-          builder[`add${toProperCase(subData.type)}Option`]((option) => {
-            option.setName(subData.name);
-            if (subData.description) option.setDescription(subData.description);
-            if (subData.required) option.setRequired(true);
-            if (subData.choices) option.addChoices(...subData.choices);
-          });
-        }
-      })
+    if (this.subcommands) {
+      for (const sub of this.subcommands) {
+        builder.addSubcommand(subcommand => {
+          subcommand
+            .setName(sub.name)
+            .setDescription(sub.description);
+          for (const subData of sub.options) {
+            builder[`add${toProperCase(subData.type)}Option`]((option) => {
+              option.setName(subData.name);
+              if (subData.description) option.setDescription(subData.description);
+              if (subData.required) option.setRequired(true);
+              if (subData.choices) option.addChoices(...subData.choices);
+            });
+          }
+        })
+      }
     }
 
     return builder;
