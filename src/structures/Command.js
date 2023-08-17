@@ -26,6 +26,7 @@ class Command extends Base {
     this.options = options.options ?? [];
     this.delim = options.delim ?? " ";
     this.ephemeral = options.ephemeral ?? false;
+    this.subcommands = options.subcommands ?? [];
 
     this.botPermissions = new PermissionsBitField(
       options.botPermissions ?? []
@@ -91,22 +92,20 @@ class Command extends Base {
     }
 
     // if there are subcommands, add them
-    if (this.subcommands) {
-      for (const sub of this.subcommands) {
-        builder.addSubcommand(subcommand => {
-          subcommand
-            .setName(sub.name)
-            .setDescription(sub.description);
-          for (const subData of sub.options) {
-            builder[`add${toProperCase(subData.type)}Option`]((option) => {
-              option.setName(subData.name);
-              if (subData.description) option.setDescription(subData.description);
-              if (subData.required) option.setRequired(true);
-              if (subData.choices) option.addChoices(...subData.choices);
-            });
-          }
-        })
-      }
+    for (const sub of this.subcommands) {
+      builder.addSubcommand(subcommand => {
+        subcommand
+          .setName(sub.name)
+          .setDescription(sub.description);
+        for (const subData of sub.options) {
+          builder[`add${toProperCase(subData.type)}Option`]((option) => {
+            option.setName(subData.name);
+            if (subData.description) option.setDescription(subData.description);
+            if (subData.required) option.setRequired(true);
+            if (subData.choices) option.addChoices(...subData.choices);
+          });
+        }
+      })
     }
 
     return builder;
