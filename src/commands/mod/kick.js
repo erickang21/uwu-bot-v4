@@ -35,7 +35,7 @@ class Kick extends Command {
     
     let kickReason = ctx.author.id + ":";
 
-    if (options.getString("reason").length > 0) {
+    if (options.getString("reason")?.length) {
       kickReason += options.getString("reason");
     } else {
       kickReason += "No reason provided."

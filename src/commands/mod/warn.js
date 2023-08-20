@@ -41,7 +41,7 @@ class Warn extends Command {
         ` 
 ${emojis.shiningarrow} **Server:** ${ctx.guild.name}
 ${emojis.shiningarrow} **Warned by:** ${ctx.author.tag}
-${emojis.shiningarrow} **Reason:** ${reason}
+${emojis.shiningarrow} **Reason:** ${reason?.length ? reason : "No reason given."}
                 `
       );
 

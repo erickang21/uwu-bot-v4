@@ -1,7 +1,6 @@
 const Command = require("../../structures/Command.js");
 const emojis = require("../../structures/Emojis");
 
-const { MessageEmbed } = require("discord.js");
 class Purge extends Command {
   constructor(...args) {
     super(...args, {
@@ -38,7 +37,6 @@ class Purge extends Command {
       messages = messages.filter(this.getFilter(ctx, type, user));
     }
 
-    messages = messages.array().slice(0, limit + 1);
     ctx.channel.bulkDelete(messages)
       .then(async () => {
         return ctx.reply(`${messages.length - 1} messages were deleted. ${emojis.success}`);

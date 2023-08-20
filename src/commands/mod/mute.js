@@ -40,7 +40,7 @@ class Mute extends Command {
     
     let muteReason = ctx.author.id + ":";
 
-    if (options.getString("reason").length > 0) {
+    if (options.getString("reason")?.length > 0) {
       muteReason += options.getString("reason");
     } else {
       muteReason += "No reason provided."

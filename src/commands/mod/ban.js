@@ -36,7 +36,7 @@ class Ban extends Command {
     const data = { deleteMessageSeconds: 60 * 60 * 24 * 7 };
     let banReason = ctx.author.id + ":";
 
-    if (options.getString("reason").length > 0) {
+    if (options.getString("reason")?.length > 0) {
       banReason += options.getString("reason");
     } else {
       banReason += "No reason provided."
