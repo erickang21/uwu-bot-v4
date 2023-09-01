@@ -22,6 +22,7 @@ class Owoify extends Command {
     const { owo } = await request(
       `https://nekos.life/api/v2/owoify?text=${text}`
     ).then(({ body }) => body.json());
+    if (!owo) return ctx.reply("That didn't work. Try some other text!");
     if (owo.length > 1994) return ctx.reply("Your text is too long!");
     return ctx.reply(owo);
   }

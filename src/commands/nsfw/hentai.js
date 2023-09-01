@@ -22,9 +22,14 @@ class Hentai extends Command {
   async run(ctx, options) {
     const tags = options.getString("tags");
     if (!tags?.length) {
-      const data = await request(
-        "https://api.waifu.im/search/?included_tags=hentai&gif=true"
-      ).then(({ body }) => body.json());
+      let data;
+      try {
+        data = await request(
+          "https://api.waifu.im/search/?included_tags=hentai&gif=true"
+        ).then(({ body }) => body.json());
+      } catch (e) {
+        return ctx.reply(`An error occurred with the image service. ${emojis.failure}`);
+      }
       const embed = this.client
         .embed(ctx.author)
         .setTitle("Hentai :eggplant:")
@@ -32,9 +37,14 @@ class Hentai extends Command {
       return ctx.reply({ embeds: [embed] });
     } else {
       const tagListString = tags.toLowerCase().split(",").join("%20");
-      const data = await request(
-        `https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=${tagListString}%20-loli%20rating:explicit`
-      ).then(({ body }) => body.json());
+      let data;
+      try {
+        data = await request(
+          `https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=${tagListString}%20-loli%20rating:explicit`
+        ).then(({ body }) => body.json());
+      } catch (e) {
+        return ctx.reply(`An error occurred with the image service. ${emojis.failure}`);
+      }
       if (!data.post?.length) return ctx.reply(`No results were found. ${emojis.failure}`);
       const urls = data.post.map((entry) => entry.file_url)
       const embed = this.client

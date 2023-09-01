@@ -1,6 +1,7 @@
 const Command = require("../../structures/Command.js");
 const { request } = require("undici");
 const utils = require("../../utils/utils.js");
+const emojis = require("../../structures/Emojis");
 
 class Blowjob extends Command {
   constructor(...args) {
@@ -21,9 +22,14 @@ class Blowjob extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const data = await request(
-      "https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=blowjob%20oral%20-loli%20rating:explicit"
-    ).then(({ body }) => body.json());
+    let data;
+    try {
+      data = await request(
+        "https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=blowjob%20oral%20-loli%20rating:explicit"
+      ).then(({ body }) => body.json());
+    } catch (e) {
+      return ctx.reply(`An error occurred with the image service. ${emojis.failure}`);
+    }
     const urls = data.post.map((entry) => entry.file_url)
     const embed = this.client
       .embed(ctx.author)

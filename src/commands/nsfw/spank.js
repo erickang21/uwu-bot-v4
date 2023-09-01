@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
 const { request } = require("undici");
+const emojis = require("../../structures/Emojis");
 
 class Spank extends Command {
   constructor(...args) {
@@ -19,9 +20,14 @@ class Spank extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const data = await request(
-      "https://api.waifu.im/search/?included_tags=ass&gif=true"
-    ).then(({ body }) => body.json());
+    let data;
+    try {
+      data = await request(
+        "https://api.waifu.im/search/?included_tags=ass&gif=true"
+      ).then(({ body }) => body.json());
+    } catch (e) {
+      return ctx.reply(`An error occurred with the image service. ${emojis.failure}`);
+    }
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Spank :eggplant:")

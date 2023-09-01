@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
 const { request } = require("undici");
+const emojis = require("../../structures/Emojis");
 
 class Trap extends Command {
   constructor(...args) {
@@ -11,13 +12,18 @@ class Trap extends Command {
   }
 
   async run(ctx) {
-    const { url } = await request("https://api.waifu.pics/nsfw/trap").then(
-      ({ body }) => body.json()
-    );
+    let data;
+    try {
+      data = await request(
+        "https://api.waifu.pics/nsfw/trap"
+      ).then(({ body }) => body.json());
+    } catch (e) {
+      return ctx.reply(`An error occurred with the image service. ${emojis.failure}`);
+    }
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Trap :eggplant:")
-      .setImage(url);
+      .setImage(data.url);
     return ctx.reply({ embeds: [embed] });
   }
 }
