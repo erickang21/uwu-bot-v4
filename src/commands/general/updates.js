@@ -37,6 +37,9 @@ Slap your face (well...profile picture) onto some meme templates! There's 2 type
 - Image-based commands (use your profile picture or tag someone else to use theirs!)
 ---> NEW COMMANDS: beautiful, bobross, delete, fear, painting, patrick, religion, respect, sacred
 
+- Interactive commands (you must mention someone else to be part of this template with you)
+---> NEW COMMANDS: monster, crush
+
 __**A lot of bug fixing!**__
 We've kept our nose close to the error logs, and understand your frustration with errors related to customization commands! We've done a lot of bug squashing!
 - There should no longer be unknown errors.
