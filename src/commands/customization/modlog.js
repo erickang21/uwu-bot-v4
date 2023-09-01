@@ -7,13 +7,25 @@ class Modlog extends Command {
       description: "be notified of any member actions in a private channel.",
       usage: "modlog <on/off> <#channel>",
       guildOnly: true,
-      aliases: ["setmodlog"]
+      aliases: ["setmodlog"],
+      options: [
+        {
+          name: "action",
+          description: "the action to take",
+          type: "string",
+        },
+        {
+          name: "channel",
+          description: "channel to send mod logs in",
+          type: "channel",
+        }
+      ],
     });
   }
   
-  async run(ctx) {
+  async run(ctx, options) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    let option = ctx.rawArgs.split(" ")[0];
+    let option = options.getString("action");
     
     if (option) option = option.toLowerCase();
     else {
@@ -23,11 +35,9 @@ class Modlog extends Command {
 
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change modlogs. ${emojis.failure}`);
+
     if (option === "on") {
-      const args = ctx.rawArgs.split(" ");
-      let channelstr = args[1];
-      if (!channelstr) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
-      let channel = ctx.guild.channels.cache.get(channelstr.replace("<#", "").replace(">", ""));
+      const channel = options.getChannel("channel");
       if (!channel) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
       this.client.guildUpdate(ctx.guild.id, { modlog: channel.id });
       ctx.reply(`The modlog for this server has successfully been enabled. ${emojis.success}`)

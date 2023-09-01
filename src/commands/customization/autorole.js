@@ -10,6 +10,19 @@ class Autorole extends Command {
       aliases: ["ar"],
       userPermissions: ["ManageRoles"],
       botPermissions: ["ManageRoles"],
+      options: [
+        {
+          name: "action",
+          description: "the action to take",
+          type: "string",
+        },
+        {
+          name: "role",
+          description: "role to give to members upon joining",
+          type: "role",
+        }
+      ],
+      /*
       subcommands: [
         {
           name: "on",
@@ -28,12 +41,23 @@ class Autorole extends Command {
           description: "disables the autorole"
         }
       ],
+      */
     });
   }
   
   async run(ctx, options) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    const option = options.getSubcommand();
+    let option = options.getString("action");
+    
+    if (option) option = option.toLowerCase();
+    else {
+      if (!guildSettings.autorole) return ctx.reply("The autorole for this server is **disabled.**");
+      else {
+        const role = ctx.guild.roles.cache.find((e) => e.id === guildSettings.autorole);
+        return ctx.reply(`The autorole for this server is **enabled**. The role **${role.name}** will be assigned to new users.`);
+      }
+    }
+
     if (option === "on") {
       const role = options.getRole("role");
       if (!role) {

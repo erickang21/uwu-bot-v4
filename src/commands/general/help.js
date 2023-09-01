@@ -7,6 +7,7 @@ class Help extends Command {
     super(...args, {
       description: "confused? get a list of commands, or how they're used!",
       usage: "help [command]",
+      aliases: ["commands"],
       options: [
         {
           name: "command",

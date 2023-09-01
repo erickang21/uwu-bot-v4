@@ -125,6 +125,14 @@ class Command extends Base {
       return this.verifyMember(message, arg, option.required);
     }
 
+    if (option.type === "channel") {
+      return this.verifyChannel(message, arg, option.required);
+    }
+
+    if (option.type === "role") {
+      return this.verifyRole(message, arg, option.required);
+    }
+
     if (option.type === "string") {
       if (option.required && !arg) {
         throw `Argument **${option.name}** is required.`;

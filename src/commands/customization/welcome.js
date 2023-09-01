@@ -17,12 +17,29 @@ class Welcome extends Command {
         "{members} for current member count.",
         "{server} for server name."
       ].join("\n"),
+      options: [
+        {
+          name: "action",
+          description: "the action to take",
+          type: "string",
+        },
+        {
+          name: "feed",
+          description: "the channel to set the logs in",
+          type: "channel",
+        },
+        {
+          name: "message",
+          description: "the message to use. use \"uwu help welcome\" to see syntax",
+          type: "string",
+        }
+      ]
     });
   }
   
-  async run(ctx) {
+  async run(ctx, options) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    let option = ctx.rawArgs.split(" ")[0];
+    let option = options.getString("action");
     
     if (option) option = option.toLowerCase();
     else {
@@ -34,13 +51,9 @@ class Welcome extends Command {
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change the welcome message. ${emojis.failure}`);
     if (option === "on") {
-      const args = ctx.rawArgs.split(" ");
-      let channelstr = args[1];
-      if (!channelstr) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
-      let channel = ctx.guild.channels.cache.get(channelstr.replace("<#", "").replace(">", ""));
+      const channel = options.getChannel("feed");
       if (!channel) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
-      args.splice(0, 2);
-      let message = args.join(" ");
+      let message = options.getString("message");
       if (!message || !message.length) return ctx.reply("You did not provide a welcome message.");
       this.client.guildUpdate(ctx.guild.id, { welcome: { channel: channel.id, message: message } });
       ctx.reply(`The welcome message for this server has successfully been updated. ${emojis.success}`)

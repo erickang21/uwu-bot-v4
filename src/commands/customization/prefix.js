@@ -7,13 +7,20 @@ class Prefix extends Command {
       description: "set/reset a custom prefix for the bot.",
       usage: "prefix <[prefix]/reset>",
       guildOnly: true,
-      aliases: ["setprefix"]
+      aliases: ["setprefix"],
+      options: [
+        {
+          name: "prefix",
+          description: "the prefix to use. enter \"reset\" to use the default.",
+          type: "string",
+        },
+      ]
     });
   }
   
-  async run(ctx) {
+  async run(ctx, options) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    let prefix = ctx.rawArgs.split(" ")[0];
+    let prefix = options.getString("prefix");
     
     if (!prefix) {
       if (!guildSettings.prefix) return ctx.reply("I'm using the default prefix! Type `uwu [command]` to use me.");

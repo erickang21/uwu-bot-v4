@@ -13,6 +13,7 @@ const Settings = require("./Settings.js");
 const schema = require("../utils/schema.js");
 const topgg = require("@top-gg/sdk");
 const { request } = require('undici')
+const imgapi = require("img-api");
 
 class UwUClient extends Client {
   constructor() {
@@ -63,6 +64,7 @@ class UwUClient extends Client {
     this.lifetimeCommandStats = {};
     this.totalCommandUses = 0;
     this.topgg = new topgg.Api(process.env.TOPGG_API);
+    this.imgapi = new imgapi.Client({ port: 3030, host: "localhost" });
     this.once("ready", () => {
       this.emit("uwuReady");
     });

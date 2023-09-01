@@ -73,6 +73,11 @@ class CommandError extends Event {
             value: context.guildName,
             inline: true,
           },
+          {
+            name: "Command Usage",
+            value: context.message.content,
+            inline: true,
+          }
         ])
         .setTimestamp(new Date());
 

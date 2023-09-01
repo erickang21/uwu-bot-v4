@@ -15,14 +15,30 @@ class Leave extends Command {
         "{name} for the username.",
         "{members} for current member count.",
         "{server} for server name."
-      ].join("\n")
+      ].join("\n"),
+      options: [
+        {
+          name: "action",
+          description: "the action to take",
+          type: "string",
+        },
+        {
+          name: "channel",
+          description: "the channel to set the logs in",
+          type: "channel",
+        },
+        {
+          name: "message",
+          description: "the message to use. use \"uwu help leave\" to see syntax",
+          type: "string"
+        }
+      ]
     });
   }
   
-  async run(ctx) {
-    
+  async run(ctx, options) {
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    let option = ctx.rawArgs.split(" ")[0];
+    let option = options.getString("action");
     
     if (option) option = option.toLowerCase();
     else {
@@ -33,14 +49,11 @@ class Leave extends Command {
 
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change the leave message. ${emojis.failure}`);
+
     if (option === "on") {
-      const args = ctx.rawArgs.split(" ");
-      let channelstr = args[1];
-      if (!channelstr) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
-      let channel = ctx.guild.channels.cache.get(channelstr.replace("<#", "").replace(">", ""));
+      const channel = options.getChannel("channel");
       if (!channel) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);
-      args.splice(0, 2);
-      let message = args.join(" ");
+      let message = options.getString("message");
       if (!message || !message.length) return ctx.reply(`You did not provide a leave message. ${emojis.failure}`);
       this.client.guildUpdate(ctx.guild.id, { leave: { channel: channel.id, message: message } });
       ctx.reply(`The leave message for this server has successfully been updated. ${emojis.success}`)
