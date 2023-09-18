@@ -27,6 +27,7 @@ module.exports = {
     TWITTER: "<:twitter:749665645573963847>",
     TWITCH: "<:twitch:749665645477756960>",
     GITHUB: "<:github:749666788832313415>",
+    INSTAGRAM: "<:instagram:1153372733321777192>",
     DBL: "<:DBL:829408131531931679>",
     DOCS: "<:Docs:829408832441679933>",
     CODE: "👨‍💻",

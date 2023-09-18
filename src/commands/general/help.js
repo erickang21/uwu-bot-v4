@@ -97,6 +97,8 @@ class Help extends Command {
     const embed = this.client
       .embed()
       .setTitle("Help - Commands").setDescription(stripIndents`Want to check out what's poppin' in **v5 of uwu bot?** Read all the update notes by running \`uwu updates\`!
+
+      Get to know the uwu bot creator IRL! Check out his reels account: https://www.instagram.com/itzbanana69
       
       **__Commands__**
         Run \`uwu help <category>\` to view all commands in the category, or click the given links to see detailed documentation.

@@ -85,9 +85,9 @@ class Stats extends Command {
           value: [
             `${EMOJIS.DISCORD} [banana's hideout ♡](https://discord.gg/vCMEmNJ)`,
             `${EMOJIS.YOUTUBE} [banana bs](https://www.youtube.com/channel/UC6No09LRXzCk8omS1CMnzSw)`,
-            `${EMOJIS.TWITTER} [itzbananauwu](https://twitter.com/itzbananauwu)`,
-            `${EMOJIS.TWITCH} [itzbananauwu](https://www.twitch.tv/itzbananauwu)`,
-            `${EMOJIS.GITHUB} [erickang21](https://github.com/itzbananauwu)`,
+            `${EMOJIS.TWITCH} [itzbanana69](https://www.twitch.tv/itzbanana69)`,
+            `${EMOJIS.GITHUB} [erickang21](https://github.com/erickang21)`,
+            `${EMOJIS.INSTAGRAM} [itzbanana69](https://www.instagram.com/itzbanana69)`
           ].join("\n"),
           inline: true
         },
