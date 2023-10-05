@@ -7,7 +7,7 @@ class ReadyEvent extends Event {
     const serverCount = this.client.guilds.cache.size;
     const shardCount = this.client.shard.ids[0];
     try {
-      await this.topgg.postStats({
+      await this.client.topgg.postStats({
         serverCount,
         shardCount
       });
