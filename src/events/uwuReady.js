@@ -5,13 +5,13 @@ class ReadyEvent extends Event {
     const { user, log } = this.client;
     const guilds = await this.client.getGuildCount();
     const serverCount = this.client.guilds.cache.size;
-    const shardCount = this.client.shard.ids[0];
+    const shardId = this.client.shard.ids[0];
     try {
       await this.client.topgg.postStats({
         serverCount,
-        shardCount
+        shardId
       });
-      log.info(`Posted to Top.gg. Shard: ${shardCount} | Servers: ${serverCount}`);
+      log.info(`Posted to Top.gg. Shard: ${shardId} | Servers: ${serverCount}`);
     } catch (err) {
       log.error(`An error occurred posting to top.gg:\n\n${err}`);
     }
