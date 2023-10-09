@@ -7,10 +7,9 @@ class ReadyEvent extends Event {
     const serverCount = this.client.guilds.cache.size;
     const shardId = this.client.shard.ids[0];
     try {
-      await this.client.topgg.postStats({
-        serverCount,
-        shardId
-      });
+      if (!this.client.dev) {
+        this.stats = setInterval(() => this.client.postStats(), 300000);
+      }
       log.info(`Posted to Top.gg. Shard: ${shardId} | Servers: ${serverCount}`);
     } catch (err) {
       log.error(`An error occurred posting to top.gg:\n\n${err}`);
