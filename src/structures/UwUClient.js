@@ -73,7 +73,7 @@ class UwUClient extends Client {
   
   postStats() {
     const server_count = this.guilds.cache.size;
-    const shard_id = this.client.shard.ids[0];
+    const shard_id = this.shard.ids[0];
     if (server_count === this.lastStats) return;
 
     return request(`https://top.gg/api/bots/${this.user.id}/stats`, {
