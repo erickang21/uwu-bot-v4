@@ -69,16 +69,21 @@ class UwUClient extends Client {
       this.emit("uwuReady");
     });
     this.lastStats = null;
+    this.maxShard = -1;
   }
   
   postStats() {
     const server_count = this.guilds.cache.size;
     const shard_id = this.shard.ids[0];
+    let shard_count;
+    if (shard_id > this.maxShard) {
+      this.maxShard = shard_id;
+    }
     if (server_count === this.lastStats) return;
 
     return request(`https://top.gg/api/bots/${this.user.id}/stats`, {
       method: 'POST',
-      body: JSON.stringify({ server_count, shard_id }),
+      body: JSON.stringify({ server_count, shard_id, shard_count: this.maxShard + 1 }),
       headers: {
         Authorization: process.env.TOPGG_API,
         'Content-Type': 'application/json'
