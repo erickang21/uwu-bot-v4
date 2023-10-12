@@ -12,7 +12,7 @@ const EventStore = require("./EventStore.js");
 const Settings = require("./Settings.js");
 const schema = require("../utils/schema.js");
 const topgg = require("@top-gg/sdk");
-const { request } = require('undici')
+const { request } = require('undici');
 const imgapi = require("img-api");
 
 class UwUClient extends Client {
