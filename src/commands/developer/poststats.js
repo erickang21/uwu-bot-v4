@@ -13,7 +13,7 @@ class Poststats extends Command {
   async run(ctx) {
     const server_count = await this.client.getGuildCount();
     const shard_count = this.client.shard.count;
-    return request(`https://top.gg/api/bots/${this.user.id}/stats`, {
+    return request(`https://top.gg/api/bots/${this.client.user.id}/stats`, {
       method: 'POST',
       body: JSON.stringify({ server_count, shard_count }),
       headers: {
