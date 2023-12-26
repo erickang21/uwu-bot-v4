@@ -25,8 +25,8 @@ class Ship extends Command {
   async run(ctx, options) {
     const user1 = options.getUser("user1");
     const user2 = options.getUser("user2");
-    const name1 = user1.displayName;
-    const name2 = user2.displayName;
+    const name1 = user1.username;
+    const name2 = user2.username;
     let text;
     const rating = Math.floor(Math.random() * 100);
     if (rating < 20) {
