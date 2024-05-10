@@ -80,7 +80,7 @@ class UwUClient extends Client {
       this.maxShard = shard_id;
     }
     if (server_count === this.lastStats) return;
-
+    
     return request(`https://top.gg/api/bots/${this.user.id}/stats`, {
       method: 'POST',
       body: JSON.stringify({ server_count, shard_id, shard_count: this.maxShard + 1 }),
@@ -111,6 +111,7 @@ class UwUClient extends Client {
 
 
   async setActivity() {
+    /*
     const guilds = await this.getGuildCount();
     const setPresence = (client, { guilds }) => {
       client.user.setActivity(`uwu help | ${guilds} servers`);
@@ -125,6 +126,7 @@ class UwUClient extends Client {
     } else {
       return setPresence(this, { guilds });
     }
+    */
   }
 
   /**

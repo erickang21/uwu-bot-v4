@@ -49,8 +49,8 @@ class CommandHandler {
     const match = message.content.match(regex);
 
     // Update message count
-    if (!this.client.userMessageCount[message.author.id]) this.client.userMessageCount[message.author.id] = 1;
-    else this.client.userMessageCount[message.author.id] += 1;
+    //if (!this.client.userMessageCount[message.author.id]) this.client.userMessageCount[message.author.id] = 1;
+    //else this.client.userMessageCount[message.author.id] += 1;
 
     /*
     Leveling System: 100*(x / 5) + 25 * x (increment xp on each level and make it spike at each 5 levels)
@@ -61,7 +61,7 @@ class CommandHandler {
     Lv 5: 225
     Lv 10: 450
     Lv 15: 675
-    */
+    
 
     // Remain in cache and only request DB upon every 25 messages.
     // Level up by 1 xp/message
@@ -100,7 +100,9 @@ class CommandHandler {
       }
       this.client.userMessageCount[message.author.id] = 0;
       await this.client.userUpdate(message.author.id, data);
+      
     }
+    */
 
 
     if (!match) return;
@@ -133,8 +135,8 @@ class CommandHandler {
     if (!command.modes.includes('text')) return;
     if (!(await this.runChecks(ctx, command))) return;
 
-    await this.handleXP(ctx);
-    await this.trackCmdStats(ctx, command);
+    //await this.handleXP(ctx);
+    //await this.trackCmdStats(ctx, command);
     return command.execute(ctx);
   }
 
@@ -152,8 +154,8 @@ class CommandHandler {
 
     const ctx = new CommandContext(command, { interaction });
     if (!(await this.runChecks(ctx, command))) return;
-    await this.handleXP(ctx);
-    await this.trackCmdStats(ctx, command);
+    //await this.handleXP(ctx);
+    //await this.trackCmdStats(ctx, command);
     return command.execute(ctx);
   }
 

@@ -5,8 +5,7 @@ const token = process.env.NODE_ENV == "development" ? process.env.TOKEN_DEV : pr
 const manager = new ShardingManager("./src/index.js", { 
   token, 
   totalShards: "auto",
-  timeout: -1,
-  respawn: true 
+  respawn: true,
 });
 
 manager.on("shardCreate", (shard) => {
