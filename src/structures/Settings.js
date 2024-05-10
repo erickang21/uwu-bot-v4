@@ -1,5 +1,3 @@
-const { Utils: { mergeDefault } } = require("discord.js");
-
 /**
  * Manages settings for a specific table.
  * Contains methods to update/get data and keeps a cache.
@@ -9,6 +7,20 @@ const { Utils: { mergeDefault } } = require("discord.js");
  * And then use it's methods anywhere.
  * this.client.settings.update({ ... });
  */
+
+ function mergeDefault(def, given) {
+  if (!given) return def;
+  for (const key in def) {
+    if (!Object.hasOwn(given, key) || given[key] === undefined) {
+      given[key] = def[key];
+    } else if (given[key] === Object(given[key])) {
+      given[key] = mergeDefault(def[key], given[key]);
+    }
+  }
+
+  return given;
+}
+
 class Settings {
   constructor(client, collection, defaults = {}) {
     this.client = client;
