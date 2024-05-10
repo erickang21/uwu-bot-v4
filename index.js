@@ -12,4 +12,4 @@ manager.on("shardCreate", (shard) => {
   console.log(`Launched shard ${shard.id}`);
 });
 
-manager.spawn({ amount: 'auto', delay: 5500, timeout: 30000 }).catch(e => console.log(`An error occured with spawning a shard. ${e}`));
+manager.spawn({ amount: 'auto', delay: 5500, timeout: Infinity }).catch(e => console.log(`An error occured with spawning a shard. ${e}`));
