@@ -1,4 +1,4 @@
-const { mergeDefault } = require("discord.js");
+const { Utils: { mergeDefault } } = require("discord.js");
 
 /**
  * Manages settings for a specific table.
