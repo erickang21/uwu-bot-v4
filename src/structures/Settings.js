@@ -114,11 +114,9 @@ class Settings {
    * Call this before the client is logged in.
    */
   async init() {
-    const docs = await this.db.collection(this.collection).find({}, {
-      projection: { _id: 0 }
-    }).toArray();
+    const cursor = this.db.collection(this.collection).find().project({ _id: 0 });
 
-    for (const doc of docs) {
+    for await (const doc of cursor) {
       this.cache.set(doc.id, mergeDefault(this.defaults, doc));
     }
   }
