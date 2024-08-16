@@ -61,6 +61,7 @@ class CommandHandler {
     Lv 5: 225
     Lv 10: 450
     Lv 15: 675
+    */
     
 
     // Remain in cache and only request DB upon every 25 messages.
@@ -102,7 +103,7 @@ class CommandHandler {
       await this.client.userUpdate(message.author.id, data);
       
     }
-    */
+    
 
 
     if (!match) return;
@@ -135,8 +136,8 @@ class CommandHandler {
     if (!command.modes.includes('text')) return;
     if (!(await this.runChecks(ctx, command))) return;
 
-    //await this.handleXP(ctx);
-    //await this.trackCmdStats(ctx, command);
+    await this.handleXP(ctx);
+    await this.trackCmdStats(ctx, command);
     return command.execute(ctx);
   }
 

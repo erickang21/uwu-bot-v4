@@ -111,7 +111,6 @@ class UwUClient extends Client {
 
 
   async setActivity() {
-    /*
     const guilds = await this.getGuildCount();
     const setPresence = (client, { guilds }) => {
       client.user.setActivity(`uwu help | ${guilds} servers`);
@@ -126,7 +125,6 @@ class UwUClient extends Client {
     } else {
       return setPresence(this, { guilds });
     }
-    */
   }
 
   /**
