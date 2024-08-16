@@ -4,7 +4,6 @@ class Causeerror extends Command {
   constructor(...args) {
     super(...args, {
       description: "Intentionally cause an error.",
-      devOnly: true,
     });
   }
 
