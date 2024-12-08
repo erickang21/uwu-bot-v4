@@ -2,7 +2,7 @@
 
 A fan favorite among anime enjoyers on Discord! Send friends cute GIFs, make memes, all while leveling up and perfecting your shiny Discord profile.
 
-__**Invite**__
+<ins>**Invite**</ins>
 
 Intrigued? Click [https://discord.com/oauth2/authorize?client_id=520682706896683009&permissions=8&scope=bot](here) to add it to a server.
 You must have the **Manage Server** permission to add Discord bots. 
