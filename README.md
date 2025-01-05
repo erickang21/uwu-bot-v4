@@ -1,23 +1,30 @@
 # uwu bot
 
-A fan favorite among anime enjoyers on Discord! Send friends cute GIFs, make memes, all while leveling up and perfecting your shiny Discord profile.
+A fan-favorite anime Discord bot! Send cute GIFs to friends, generate memes, and customize your own profile!
 
-<ins>**Invite**</ins>
+### Stats
+**Active Servers:** 26,000+
+**Total Active Users:** 1.4 million+
+
+To see live stats, check [https://top.gg/bot/520682706896683009](the bot listing)!
+
+### Invite
 
 Intrigued? Click [https://discord.com/oauth2/authorize?client_id=520682706896683009&permissions=8&scope=bot](here) to add it to a server.
 You must have the **Manage Server** permission to add Discord bots. 
 
-<ins>**Usage**</ins>
+### Usage
 
 The prefix is `uwu`.
 - Type `uwu help` to view a list of categories. 
 - Type `uwu help <category>` to view the commands for that category.
 - Type `uwu <command name> <arguments>` to run a command.
 
-<ins>**Tech Stack**</ins>
+### Tech Stack
+[![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?logo=node.js&logoColor=white)](#)
+[![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)](#)
+[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-%234285F4.svg?logo=google-cloud&logoColor=white)](#)
 
-Node.js, MongoDB. Hosted on Google Cloud Platform
-
-<ins>**Note**</ins>
+### Note
 
 This code is provided for review purposes only. You may not copy, modify, distribute, or deploy this code without explicit permission from the author.
