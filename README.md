@@ -3,14 +3,14 @@
 A fan-favorite anime Discord bot! Send cute GIFs to friends, generate memes, and customize your own profile!
 
 ### Stats
-**Active Servers:** 26,000+
-**Total Active Users:** 1.4 million+
+- **Active Servers:** 26,000+
+- **Total Active Users:** 1.4 million+
 
-To see live stats, check [https://top.gg/bot/520682706896683009](here) !
+To see live stats, check [the bot listing website](https://top.gg/bot/520682706896683009)!
 
 ### Invite
 
-Intrigued? Click [https://discord.com/oauth2/authorize?client_id=520682706896683009&permissions=8&scope=bot](here) to add it to a server.
+Intrigued? Click [here](https://discord.com/oauth2/authorize?client_id=520682706896683009&permissions=8&scope=bot) to add it to a server.\
 You must have the **Manage Server** permission to add Discord bots. 
 
 ### Usage
