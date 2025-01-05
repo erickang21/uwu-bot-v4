@@ -6,7 +6,7 @@ A fan-favorite anime Discord bot! Send cute GIFs to friends, generate memes, and
 **Active Servers:** 26,000+
 **Total Active Users:** 1.4 million+
 
-To see live stats, check [https://top.gg/bot/520682706896683009](the bot listing)!
+To see live stats, check [https://top.gg/bot/520682706896683009](here) !
 
 ### Invite
 
