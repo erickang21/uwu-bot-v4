@@ -40,7 +40,7 @@ Run this command after you've upvoted to gain all the perks! ${emojis.salute}`)
       return ctx.reply({ embeds: [embed] });
     } else {
       
-      userData.dailyCooldown = ctx.message.createdTimestamp + 86400000;
+      userData.dailyCooldown = ctx.createdTimestamp + 86400000;
       userData.multiplier *= 2;
       let breakpoint = 100 * Math.floor(userData.level / 5) + 25 * userData.level;
       userData.exp += 200; // Ignore multiplier here, since we're applying it afterwards

@@ -52,7 +52,7 @@ class GuildCreate extends Event {
       .setDescription(`Look at you, someone with actual taste, choosing the right Discord bot to make your server infinitely better. 
 
 Let's get this party started! Keep in mind: 
-${emojis.smug} The default prefix is \`uwu\`. (Custom prefix support is coming soon!)
+${emojis.smug} The default prefix is \`uwu\`.
 ${emojis.salute} Run \`uwu help\` to get an overview of what the bot can do!
 ${emojis.takingnotes} If you want to see specific details on a command, run \`uwu help [command]\`.
 ${emojis.love} Want to be caught up on the latest new features? Run \`uwu updates\` to see the most recent changes!
