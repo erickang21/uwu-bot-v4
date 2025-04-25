@@ -34,5 +34,6 @@ module.exports = {
   WhiteSpinningHearts: "<a:WhiteSpinningHearts:1365385073452646476>",
   PinkSpinningHearts: "<a:PinkSpinningHearts:1365385063029801041>",
   LoveLetter: "<a:LoveLetter:1365385094705184870>",
-  FloatingHearts: "<a:FloatingHearts:1365387733178122280>"
+  FloatingHearts: "<a:FloatingHearts:1365387733178122280>",
+  outline: "<:InvisibleOutline:1365392214527705158>"
 };

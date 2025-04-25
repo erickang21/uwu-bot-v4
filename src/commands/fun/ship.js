@@ -30,6 +30,7 @@ class Ship extends Command {
     let text;
     const rating = Math.floor(Math.random() * 100);
     const shipName = name1.substring(0, name1.length / 2) + name2.substring(name2.length / 2, name2.length);
+    const heartCount = 1 + Math.floor(rating / 20);
     if (rating < 20) {
       text = `Absolutely awful. **${name1}** and **${name2}** should stay as far away from each other as possible. ${emojis.ship1}`;
     } else if (rating >= 20 && rating < 40) {
@@ -42,7 +43,7 @@ class Ship extends Command {
       text = `**${name1}** and **${name2}** are one true pair. Go kiss. NOW. ${emojis.ship5}`
     }
 
-    text += `\n\n**rating:** ${rating}% ${emojis.FloatingHearts.repeat(1 + Math.floor(rating / 20))}\n**ship name:** ${shipName.toLowerCase()}`;
+    text += `\n\n**Rating:** ${rating}% ${emojis.FloatingHearts.repeat(heartCount)}${emojis.outline.repeat(5 - heartCount)}\n**Ship Name:** ${shipName.toLowerCase()}`;
     const embed = this.client.embed()
       .setTitle(`${name1} x ${name2}`)
       .setDescription(text)
