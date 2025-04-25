@@ -1,5 +1,6 @@
 
 const Command = require("../../structures/Command.js");
+const emojis = require("../../structures/Emojis");
 
 class Rate extends Command {
   constructor(...args) {
@@ -25,9 +26,10 @@ class Rate extends Command {
     const user = options.getUser("user");
     const thing = options.getString("thing");
     const rating = Math.floor(Math.random() * 100);
+    const RateEmoji = [emojis.BlueSpinningHearts, emojis.WhiteSpinningHearts, emojis.PinkSpinningHearts][Math.floor(Math.random() * 3)]
     const embed = this.client.embed(user)
-      .setTitle(`rating: ${thing}`)
-      .setDescription(`${":star:".repeat(Math.floor(rating / 20))} **${rating}%**`)
+      .setTitle(`Rating`)
+      .setDescription(`**${user.username}**'s level of ${thing} is: **${rating}%** ${RateEmoji.repeat(Math.floor(rating / 20))} `)
       .setColor(0x9590EE)
     return ctx.reply({ embeds: [embed] });
   }   

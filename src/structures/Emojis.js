@@ -25,9 +25,14 @@ module.exports = {
   join: "<:join:1136348278976434277>",
   leave: "<:leave:1136348279609757827>",
   wave: "<:wave:1136701430032515082>",
-  ship5: "<:KeqingHeart:1137094812949037056>",
-  ship4: "<:BlushYes:994711648164139120>",
-  ship3: "<:LaceShrug:724400899497394227>",
-  ship2: "<:thonk:1137096737891291247>",
-  ship1: "<:AiriDead:1137096733877338182>"
+  ship5: "<a:ILoveYouAnimated:1365384387310522368>",
+  ship4: "<:WinkCute:1365380923046236211>",
+  ship3: "<:PraygeClara:1365380910492553359>",
+  ship2: "<:Facepalm:1365380901177131088>",
+  ship1: "<:REEE:1365382313588035687>",
+  BlueSpinningHearts: "<a:BlueSpinningHearts:1365385082008768522>",
+  WhiteSpinningHearts: "<a:WhiteSpinningHearts:1365385073452646476>",
+  PinkSpinningHearts: "<a:PinkSpinningHearts:1365385063029801041>",
+  LoveLetter: "<a:LoveLetter:1365385094705184870>",
+  FloatingHearts: "<a:FloatingHearts:1365387733178122280>"
 };

@@ -29,21 +29,22 @@ class Ship extends Command {
     const name2 = user2.username;
     let text;
     const rating = Math.floor(Math.random() * 100);
-    if (rating < 20) {
-      text = `absolutely awful. stay as far away from each other as possible. ${emojis.ship1}`;
-    } else if (rating >= 20 && rating < 40) {
-      text = `they aren't quite for each other. ${emojis.ship2}`
-    } else if (rating >= 40 && rating < 60) {
-      text = `it's a decent match, but they can do better. ${emojis.ship3}`
-    } else if (rating >= 60 && rating < 80) {
-      text = `it's looking good! y'know what would look better? a date. ${emojis.ship4}`
-    } else {
-      text = `one true pair. go kiss. NOW. ${emojis.ship5}`
-    }
     const shipName = name1.substring(0, name1.length / 2) + name2.substring(name2.length / 2, name2.length);
-    text += `\n\n**rating:** ${rating}%\n**ship name:** ${shipName.toLowerCase()}`;
+    if (rating < 20) {
+      text = `Absolutely awful. **${name1}** and **${name2}** should stay as far away from each other as possible. ${emojis.ship1}`;
+    } else if (rating >= 20 && rating < 40) {
+      text = `I think **${name1}** and **${name2}** aren't quite for each other. ${emojis.ship2}`
+    } else if (rating >= 40 && rating < 60) {
+      text = `It's a decent match. I'm rooting for you, **${[name1, name2][Math.floor(Math.random() * 1.99)]}**! ${emojis.ship3}`
+    } else if (rating >= 60 && rating < 80) {
+      text = `Looking great! Y'know what would look better? If **${name1}** took **${name2}** on a date. ${emojis.ship4}`
+    } else {
+      text = `**${name1}** and **${name2}** are one true pair. Go kiss. NOW. ${emojis.ship5}`
+    }
+
+    text += `\n\n**rating:** ${rating}% ${emojis.FloatingHearts.repeat(1 + Math.floor(rating / 20))}\n**ship name:** ${shipName.toLowerCase()}`;
     const embed = this.client.embed()
-      .setTitle(`ship: ${name1} x ${name2}`)
+      .setTitle(`${name1} x ${name2}`)
       .setDescription(text)
       .setColor(0x9590EE)
     return ctx.reply({ embeds: [embed] });
