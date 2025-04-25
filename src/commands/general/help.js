@@ -96,13 +96,15 @@ class Help extends Command {
 
     const embed = this.client
       .embed()
-      .setTitle("Help - Commands").setDescription(stripIndents`Want to check out what's poppin' in **v5 of uwu bot?** Read all the update notes by running \`uwu updates\`!
+      .setTitle("Help - Commands").setDescription(stripIndents`v5.3 of uwu bot? **It's coming!** Check \`uwu updates\` periodically for more info!
 
-      Get to know the uwu bot creator IRL! Check out his reels account: https://www.instagram.com/itzbanana69
+      If you're enjoying uwu bot, **please consider [leaving a review!](https://top.gg/bot/520682706896683009#reviews)** 
+      
+      You can also run...
+      - \`uwu help <category>\` to view all commands in the category, or click the given links to see detailed documentation.
+      - \`uwu help <command>\`to get details of that command. 
       
       **__Commands__**
-        Run \`uwu help <category>\` to view all commands in the category, or click the given links to see detailed documentation.
-        Run \`uwu help <command>\`to get details of that command.      
       `)
       .setFooter({ text: `${ctx.author.username} | Level ${userData.level} (${userData.exp}/${breakpoint} XP)`, iconURL: ctx.author.displayAvatarURL({ size: 32, extension: 'png' }) })
 

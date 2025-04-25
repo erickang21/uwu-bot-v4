@@ -76,14 +76,14 @@ class Stats extends Command {
           name: "Bot Links",
           value: [
             `${EMOJIS.DBL} [Top.gg Page](https://top.gg/bot/520682706896683009)`,
-            `${EMOJIS.DOCS} [Documentation](https://docs.uwubot.tk)`,
+            //`${EMOJIS.DOCS} [Documentation](https://docs.uwubot.tk)`,
           ].join("\n"),
           inline: true
         },
         {
           name: "Socials",
           value: [
-            `${EMOJIS.DISCORD} [banana's hideout ♡](https://discord.gg/vCMEmNJ)`,
+            `${EMOJIS.DISCORD} [uwu café ˚ʚ♡ɞ˚](https://discord.gg/vCMEmNJ)`,
             `${EMOJIS.YOUTUBE} [banana bs](https://www.youtube.com/channel/UC6No09LRXzCk8omS1CMnzSw)`,
             `${EMOJIS.TWITCH} [itzbanana69](https://www.twitch.tv/itzbanana69)`,
             `${EMOJIS.GITHUB} [erickang21](https://github.com/erickang21)`,

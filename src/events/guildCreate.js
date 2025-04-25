@@ -39,17 +39,23 @@ class GuildCreate extends Event {
     log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
     await this.client.setActivity();
 
+    // Permissions
+    const VIEW_CHANNEL = BigInt(1 << 10);
+    const SEND_MESSAGES = BigInt(1 << 11);
+    const EMBED_LINKS = BigInt(1 << 14);
+    const USE_EXTERNAL_EMOJIS = BigInt(1 << 18);
+
     // send to server upon joining
     const botGuildMember = await guild.members.fetch(this.client.user.id);
     console.log("Attempting to prepare the welcome message!");
     let joinChannel;
     joinChannel = guild.channels.cache.find((c) => c.type === 0 && (c.name.includes("general") || c.name.includes("global") || c.name.includes("chat")));
-    if (!joinChannel) joinChannel = guild.channels.cache.find((c) => c.type === 0 && c.permissionsFor(botGuildMember).has("VIEW_CHANNEL") && c.permissionsFor(botGuildMember).has("SEND_MESSAGES") && c.permissionsFor(botGuildMember).has("EMBED_LINKS"));
+    if (!joinChannel) joinChannel = guild.channels.cache.find((c) => c.type === 0 && c.permissionsFor(botGuildMember).has(VIEW_CHANNEL) && c.permissionsFor(botGuildMember).has(SEND_MESSAGES) && c.permissionsFor(botGuildMember).has(EMBED_LINKS) && c.permissionsFor(botGuildMember).has(USE_EXTERNAL_EMOJIS));
     if (!joinChannel) return;
     const embed = this.client.embed(this.client.user)
       .setTitle(`Thank you for choosing **uwu bot!** ${emojis.love}`)
       .setColor(0xcb14e3)
-      .setDescription(`Look at you, someone with actual taste, choosing the right Discord bot to make your server infinitely better. 
+      .setDescription(`Look at you, so kawaii, choosing the right Discord bot to make your server infinitely better. 
 
 Let's get this party started! Keep in mind: 
 ${emojis.smug} The default prefix is \`uwu\`.
@@ -57,8 +63,7 @@ ${emojis.salute} Run \`uwu help\` to get an overview of what the bot can do!
 ${emojis.takingnotes} If you want to see specific details on a command, run \`uwu help [command]\`.
 ${emojis.love} Want to be caught up on the latest new features? Run \`uwu updates\` to see the most recent changes!
 
-${emojis.pet} Oh! I almost forgot to mention...
-If you need help with using the bot, have a juicy new idea in mind, or want to strike up conversation...join the uwu bot's dedicated server!
+${emojis.pet} If you need help with using the bot, have a juicy new idea in mind, or want to strike up conversation...join the [uwu bot's dedicated server](https://discord.gg/rxaFuZqffd)!
 
 Let's rock! ${emojis.dancing}
     `)
