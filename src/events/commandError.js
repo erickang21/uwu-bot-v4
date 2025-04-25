@@ -59,11 +59,6 @@ class CommandError extends Event {
         )
         .setFields([
           {
-            name: "Error ID",
-            value: `\`\`${context.errorId}\`\``,
-            inline: true,
-          },
-          {
             name: "User ID",
             value: `\`\`${context.userId}\`\``,
             inline: true,
@@ -75,13 +70,13 @@ class CommandError extends Event {
           },
           {
             name: "Command Usage",
-            value: context.message.content,
+            value: context.content,
             inline: true,
           }
         ])
         .setTimestamp(new Date());
 
-      return channel.send({ embeds: [embed] }).catch(() => null);
+      return channel.send(`**Error ID:** \`${context.errorId}\``, { embeds: [embed] }).catch(() => null)
     };
 
     if (!this.client.dev) {
