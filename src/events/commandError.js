@@ -38,8 +38,9 @@ class CommandError extends Event {
           embeds: [
             this.client
               .embed(ctx.author)
+              .setTitle("An error occurred.")
               .setDescription(
-                `${emojis.error} NANI?! An error has occurred while running \`\`${ctx.command.name}\`\`. \n\nPlease join [uwu bot official server](https://discord.gg/vCMEmNJ) and give the developers this error code: \`\`${errorId}\`\`.`
+                `${emojis.error} Something went wrong while running \`\`${ctx.command.name}\`\`. Don't worry, it's not your fault! \n\nPlease join [uwu bot official server](https://discord.gg/WzgYaGTbEG), and give the developers this error code: \`\`${errorId}\`\`.`
               ),
           ],
         })
@@ -51,7 +52,7 @@ class CommandError extends Event {
       if (!channel) return;
 
       const embed = client.embed()
-        .setTitle(`Command Error ${context.emojis.failure}`)
+        .setTitle(`Command Error ${context.errorEmoji}`)
         .setDescription(
           `An error occurred with command: **${context.cmdName}**\n\`\`\`js\n${
             context.err
@@ -76,14 +77,14 @@ class CommandError extends Event {
         ])
         .setTimestamp(new Date());
 
-      return channel.send(`**Error ID:** \`${context.errorId}\``, { embeds: [embed] }).catch(() => null)
+      return channel.send({ content: `**Error ID:** \`${context.errorId}\``, embeds: [embed] }).catch(() => null)
     };
     console.log("Attempting to send a error message")
     if (!this.client.dev) {
       console.log("Attempting to send a error message, isn't dev")
       if (this.client.shard) {
         console.log("Attempting to send now")
-        return this.client.shard.broadcastEval(report, { context: { content: ctx.content, emojis, errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildId: ctx.guild.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
+        return this.client.shard.broadcastEval(report, { context: { content: ctx.content, errorEmoji:  emojis.commandError, errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildId: ctx.guild.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
       } else {
         console.log("Did not to send a error message")
         return report(this.client);
