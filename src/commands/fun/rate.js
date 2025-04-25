@@ -29,7 +29,7 @@ class Rate extends Command {
     const RateEmoji = [emojis.BlueSpinningHearts, emojis.WhiteSpinningHearts, emojis.PinkSpinningHearts][Math.floor(Math.random() * 3)]
     const embed = this.client.embed(user)
       .setTitle(`Rating`)
-      .setDescription(`**${user.username}**'s level of ${thing} is: **${rating}%** ${RateEmoji.repeat(Math.floor(rating / 20))} `)
+      .setDescription(`**${user.username}**'s level of ${thing} is: **${rating}%** ${RateEmoji.repeat(1 + Math.floor(rating / 20))} `)
       .setColor(0x9590EE)
     return ctx.reply({ embeds: [embed] });
   }   
