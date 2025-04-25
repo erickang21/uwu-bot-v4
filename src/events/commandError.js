@@ -14,7 +14,7 @@ class CommandError extends Event {
 
     const errorId =
       Date.now().toString(36) + Math.random().toString(36).substring(100);
-
+    console.log("Error caught!!")
     if (ctx.dev) {
       await ctx
         .reply({
@@ -65,12 +65,12 @@ class CommandError extends Event {
           },
           {
             name: "Guild",
-            value: context.guildName,
+            value: `${context.guildName || "Could not get guild name."} (ID: ${context.guildId})`,
             inline: true,
           },
           {
             name: "Command Usage",
-            value: context.content,
+            value: context.content || "Could not get message content.",
             inline: true,
           }
         ])
@@ -78,11 +78,14 @@ class CommandError extends Event {
 
       return channel.send(`**Error ID:** \`${context.errorId}\``, { embeds: [embed] }).catch(() => null)
     };
-
+    console.log("Attempting to send a error message")
     if (!this.client.dev) {
+      console.log("Attempting to send a error message, isn't dev")
       if (this.client.shard) {
-        return this.client.shard.broadcastEval(report, { context: { emojis, errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
+        console.log("Attempting to send now")
+        return this.client.shard.broadcastEval(report, { context: { content: ctx.content, emojis, errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildId: ctx.guild.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
       } else {
+        console.log("Did not to send a error message")
         return report(this.client);
       }
     }

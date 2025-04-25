@@ -105,7 +105,7 @@ class MessageCreate extends Event {
 
     if (command.devOnly && !ctx.dev) {
       return ctx.reply({
-        content: `This command can only be used by the developers. ${EMOJIS.GIRL_CHILLING}`,
+        content: `This command can only be used by the developers. ${EMOJIS.NotAllowed}`,
       });
     }
 
@@ -160,7 +160,7 @@ class MessageCreate extends Event {
 
     if (missing.length) {
       await ctx.reply({
-        content: `I need the following permission${plural(missing)} to run that command: **${missing.join(", ")}**`
+        content: `You need to give me the following permission${plural(missing)} to run that command: **${missing.join(", ")}**`
       });
 
       return false;
