@@ -83,7 +83,7 @@ class CommandHandler {
         const inGuild = await this.isMemberInGuild(message.guild.id, message.author.id);
         if (inGuild) {
           data.guilds.push(message.guild.id);
-          console.log(`ghot user ${message.author.username} (id: ${message.author.id}) in ${message.guild.name} (id: ${message.guild.id})`)
+          //console.log(`ghot user ${message.author.username} (id: ${message.author.id}) in ${message.guild.name} (id: ${message.guild.id})`)
         }
       }
       while (data.exp >= breakpoint) {
@@ -135,6 +135,10 @@ class CommandHandler {
     if (!command) return this.closestCommand(ctx, alias);
     if (!command.modes.includes('text')) return;
     if (!(await this.runChecks(ctx, command))) return;
+    const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
+    if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
+      return message.channel.send(serverSpecificPermission.errorMessage);
+    }
 
     await this.handleXP(ctx);
     await this.trackCmdStats(ctx, command);
@@ -219,6 +223,35 @@ class CommandHandler {
     }
 
     return true;
+  }
+
+  async checkServerSpecific(ctx, command) {
+    if (!ctx.guild) return { allowed: true };
+    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    if (!guildSettings.commandConfig) return { allowed: true };
+    else if (!guildSettings.commandConfig[command.name]) return { allowed: true };
+    else {
+      const commandConfig = guildSettings.commandConfig[command.name];
+      if (commandConfig.use === "all") return { allowed: true };
+      else if (commandConfig.use === "some") {
+        // "some" = allowed roles only. Check that it's list of allowed roles.
+        if (Array(...ctx.member.roles.cache.keys()).some(id => commandConfig.roles[id])) {
+          return { allowed: true };
+        } else {
+          const requiredRoleNames = commandConfig.roles.map((r) => ctx.guild.roles.cache.get(r).name).join(", ");
+          return { allowed: false, errorMessage: `You cannot run this command in this server. You need one of these roles:\n**${requiredRoleNames}**` };
+        }
+      } else if (commandConfig.use === "someNot") {
+        if (!Array(...ctx.member.roles.cache.keys()).some(id => commandConfig.roles[id])) {
+          return { allowed: true };
+        } else {
+          const bannedRoleNames = commandConfig.roles.map((r) => ctx.guild.roles.cache.get(r).name).join(", ");
+          return { allowed: false, errorMessage: `You cannot run this command in this server. You cannot run it if you have these roles:\n**${bannedRoleNames}**` };
+        }
+      } else if (commandConfig.use === "none") {
+        return { allowed: false, errorMessage: "This server has disabled this command." };
+      }
+    }
   }
 
   async handleXP(ctx) {
