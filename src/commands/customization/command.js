@@ -69,40 +69,49 @@ class ManageCommands extends Command {
       }
     }
     const defaultConfig =  { use: "all", roles: {} };
-    const originalConfig = guildSettings.commandConfig || defaultConfig;
-    let newConfig = guildSettings.commandConfig || defaultConfig;
+    const originalConfig = guildSettings.commandConfig || {};
+
 
     if (option === "help") {
       return ctx.reply("Help is coming soon.")
     } else if (option === "enable") {
       // Make sure they specified a command.
       if (!command) return ctx.reply("You need to specify the command to be changed!");
-      // Case 1: Didn't mention any roles. Command is enabled for whole server.
+      // GET CONFIG INFORMATION
+      const originalCommandConfig = originalConfig[command] || { use: "all", roles: {} };
+      let newCommandConfig = { ...originalCommandConfig };
+      // Case 1: Didn't mention any roles. Command is enabled for whole server
       if (!roles.length) {
-        newConfig[command] = { use: "all", roles: {} }
+        newCommandConfig = { use: "all", roles: {} }
       }
       // Case 2: They did, enable commands for those roles.
       else {
-        newConfig[command].use = "some";
+        newCommandConfig.use = "some";
         const roleIds = Object.fromEntries(roles.map(key => [key, true]));
-        newConfig[command].roles = {...originalConfig[command].roles, ...roleIds};
+        // Stack with previous allowed list ONLY if configuration was the same, else overwrite it.
+        if (originalCommandConfig.use === "some") newCommandConfig.roles = {...originalCommandConfig.roles, ...roleIds};
+        else newCommandConfig.roles = { ...roleIds };
       }
-      this.client.guildUpdate(ctx.guild.id, { commandConfig: newConfig });
+      this.client.guildUpdate(ctx.guild.id, { commandConfig: {...originalConfig, [command]: newCommandConfig } });
       ctx.reply("Updated")
     } else if (option === "disable") {
       // Make sure they specified a command.
       if (!command) return ctx.reply("You need to specify the command to be changed!");
+      // GET CONFIG INFORMATION
+      const originalCommandConfig = originalConfig[command] || { use: "all", roles: {} };
+      let newCommandConfig = { ...originalCommandConfig };
       // Case 1: Didn't mention any roles. Command is DISABLED for whole server.
       if (!roles.length) {
-        newConfig[command] = { use: "none", roles: {} }
+        newCommandConfig = { use: "none", roles: {} }
       }
       // Case 2: They did, DISABLE commands for those roles.
       else {
-        newConfig[command].use = "someNot";
+        newCommandConfig.use = "someNot";
         const roleIds = Object.fromEntries(roles.map(key => [key, true]));
-        newConfig[command].roles = {...originalConfig[command].roles, ...roleIds};
+        if (originalCommandConfig.use === "someNot") newCommandConfig.roles = {...originalCommandConfig.roles, ...roleIds};
+        else newCommandConfig.roles = { ...roleIds };
       }
-      this.client.guildUpdate(ctx.guild.id, { commandConfig: newConfig });
+      this.client.guildUpdate(ctx.guild.id, { commandConfig: {...originalConfig, [command]: newCommandConfig } });
       ctx.reply("Updated")
     } else {
       return ctx.reply("Invalid usage of command. Use `uwu command help` for details.")
