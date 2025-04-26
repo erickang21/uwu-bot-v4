@@ -65,7 +65,7 @@ class ManageCommands extends Command {
       if (!guildSettings.commandConfig) return ctx.reply("There are no custom configurations for commands in this server.");
       else {
         // TODO: RESPOND WITH the status
-        return ctx.reply(`Here you wuold receive a summary of the status in your server.\n\`\`\`${guildSettings.commandConfig}\`\`\``)
+        return ctx.reply(`Here you wuold receive a summary of the status in your server.\n\`\`\`${JSON.stringify(guildSettings.commandConfig)}\`\`\``)
       }
     }
     const defaultConfig =  { use: "all", roles: {} };
@@ -77,6 +77,7 @@ class ManageCommands extends Command {
     } else if (option === "enable") {
       // Make sure they specified a command.
       if (!command) return ctx.reply("You need to specify the command to be changed!");
+      else if (!this.client.commands.has(command)) return ctx.reply("This is not a valid command of uwu bot.");
       // GET CONFIG INFORMATION
       const originalCommandConfig = originalConfig[command] || { use: "all", roles: {} };
       let newCommandConfig = { ...originalCommandConfig };
@@ -97,6 +98,7 @@ class ManageCommands extends Command {
     } else if (option === "disable") {
       // Make sure they specified a command.
       if (!command) return ctx.reply("You need to specify the command to be changed!");
+      else if (!this.client.commands.has(command)) return ctx.reply("This is not a valid command of uwu bot.");
       // GET CONFIG INFORMATION
       const originalCommandConfig = originalConfig[command] || { use: "all", roles: {} };
       let newCommandConfig = { ...originalCommandConfig };

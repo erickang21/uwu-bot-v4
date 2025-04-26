@@ -159,6 +159,7 @@ class CommandHandler {
 
     const ctx = new CommandContext(command, { interaction });
     if (!(await this.runChecks(ctx, command))) return;
+    //TODO: check server specific perms as well
     //await this.handleXP(ctx);
     //await this.trackCmdStats(ctx, command);
     return command.execute(ctx);
@@ -226,10 +227,17 @@ class CommandHandler {
   }
 
   async checkServerSpecific(ctx, command) {
+    console.log("Command run: ", command)
     if (!ctx.guild) return { allowed: true };
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    if (!guildSettings.commandConfig) return { allowed: true };
-    else if (!guildSettings.commandConfig[command.name]) return { allowed: true };
+    if (!guildSettings.commandConfig) {
+      console.log("No commandconfig")
+      return { allowed: true };
+    }
+    else if (!guildSettings.commandConfig[command.name]) {
+      console.log("No command specific config")
+      return { allowed: true };
+    }
     else {
       const commandConfig = guildSettings.commandConfig[command.name];
       if (commandConfig.use === "all") return { allowed: true };
@@ -249,6 +257,7 @@ class CommandHandler {
           return { allowed: false, errorMessage: `You cannot run this command in this server. You cannot run it if you have these roles:\n**${bannedRoleNames}**` };
         }
       } else if (commandConfig.use === "none") {
+        console.log("No command specific None")
         return { allowed: false, errorMessage: "This server has disabled this command." };
       }
     }
