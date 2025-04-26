@@ -16,7 +16,8 @@ class CommandError extends Event {
       Date.now().toString(36) + Math.random().toString(36).substring(100);
     console.log("Error caught!!")
     if (ctx.dev) {
-      await ctx
+      // Prevent spam of error logs due to testing
+      return await ctx
         .reply({
           embeds: [
             this.client
