@@ -65,11 +65,12 @@ class ManageCommands extends Command {
       if (!guildSettings.commandConfig) return ctx.reply("There are no custom configurations for commands in this server.");
       else {
         // TODO: RESPOND WITH the status
-        return ctx.reply("Here you wuold receive a summary of the status in your server.")
+        return ctx.reply(`Here you wuold receive a summary of the status in your server.\n\`\`\`${guildSettings.commandConfig}\`\`\``)
       }
     }
-    const originalConfig = guildSettings.commandConfig || {};
-    let newConfig = guildSettings.commandConfig || {};
+    const defaultConfig =  { use: "all", roles: {} };
+    const originalConfig = guildSettings.commandConfig || defaultConfig;
+    let newConfig = guildSettings.commandConfig || defaultConfig;
 
     if (option === "help") {
       return ctx.reply("Help is coming soon.")
