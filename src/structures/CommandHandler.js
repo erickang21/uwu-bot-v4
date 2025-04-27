@@ -227,7 +227,6 @@ class CommandHandler {
   }
 
   async checkServerSpecific(ctx, command) {
-    console.log("Command run: ", command.name)
     if (!ctx.guild) return { allowed: true };
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
     if (!guildSettings.commandConfig) {

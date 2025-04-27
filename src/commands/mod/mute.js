@@ -9,7 +9,7 @@ class Mute extends Command {
       botPermissions: ["ModerateMembers"],
       aliases: ["timeout"],
       guildOnly: true,
-      usage: "mute <@​member> [time] [reason]",
+      usage: "mute <@member> [time] [reason]",
       options: [
         {
           name: "member",
@@ -19,8 +19,8 @@ class Mute extends Command {
         },
         {
             name: "time",
-            description: "(optional) the amount of time in minutes to mute this user for (leave blank for indefinite time)",
-            type: "integer"
+            description: "(optional) the amount of time to mute for (eg: 30s, 7mins, 1d)",
+            type: "string"
         },
         {
             name: "reason",
@@ -31,13 +31,43 @@ class Mute extends Command {
     });
   }
 
+  parseTime(timeString) {
+    const match = timeString.match(/^(\d+)([a-zA-Z]+)$/);
+    if (!match) return null;
+    const timeNumber = parseInt(match[1]);
+    const timeUnit = match[2];
+    if (isNaN(timeNumber)) throw "Value of duration is not valid.";
+    // Need to convert to milliseconds
+    if (['s', 'sec', 'seconds', 'second', 'secs'].includes(timeUnit.toLowerCase())) {
+      return { time: timeNumber * 1000, timeStr: `${timeNumber} seconds` };
+    } else if (['m', 'min', 'mins', 'minute', 'minutes'].includes(timeUnit.toLowerCase())) {
+      return { time: timeNumber * 60 * 1000, timeStr: `${timeNumber} minutes` };
+    } else if (['h', 'hr', 'hrs', 'hour', 'hours'].includes(timeUnit.toLowerCase())) {
+      return { time: timeNumber * 60 * 60 * 1000, timeStr: `${timeNumber} hours` };
+    } else if (['d', 'day', 'days'].includes(timeUnit.toLowerCase())) {
+      return { time: timeNumber * 24 * 60 * 60 * 1000, timeStr: `${timeNumber} days` };
+    } else {
+      throw "Could not identify amount of time needed."
+    }
+  }
+
   async run(ctx, options) {
     const member = await ctx.guild.members.fetch(options.getUser("member").id);
 
     if(member.id === ctx.author.id) return ctx.reply("Baka! Why would you mute yourself?");
     if(member.id === this.client.user.id) return ctx.reply("Baka! Why would you mute me?");
     if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't mute this user. ${emojis.error}`);
-    
+    let muteTime;
+    let alternateResponse;
+    let muteTimeStr;
+    try {
+      const {  time , timeStr } = this.parseTime(options.getString("time"));
+      muteTime = time;
+      muteTimeStr = timeStr;
+    } catch (e) {
+      muteTime = null;
+      alternateResponse = e;
+    }
     let muteReason = ctx.author.id + ":";
 
     if (options.getString("reason")?.length > 0) {
@@ -45,10 +75,14 @@ class Mute extends Command {
     } else {
       muteReason += "No reason provided."
     }
+    muteReason = `Muted by ${ctx.author.username} for: ${muteReason}`
 
-    // the equivalent of an infinite mute would be 1 week
-    await member.timeout(options.getInteger("time") * 60 * 1000 || 7 * 24 * 60 * 60 * 1000, muteReason);
-    return ctx.reply(`**${member.user.tag}** was muted. ${emojis.mute}`);
+    await member.timeout(muteTime, muteReason);
+    if (alternateResponse) {
+      return ctx.reply(`**${member.user.tag}** was muted **indefinitely**. ${emojis.mute}\n\n(${alternateResponse})`);
+    } else {
+      return ctx.reply(`**${member.user.tag}** was muted for **${muteTimeStr}**. ${emojis.mute}`);
+    }
   }
 }
 
