@@ -109,7 +109,7 @@ class CommandHandler {
     if (!match) return;
 
     // Don't run a command if we don't have the most basic permissions.
-    if (!message.channel.permissionsFor(this.client.user).has([
+    if (message.channel.isTextBased() && !message.channel.permissionsFor(this.client.user).has([
       PermissionFlagsBits.SendMessages,
       PermissionFlagsBits.EmbedLinks
     ])) return;

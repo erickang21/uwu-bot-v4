@@ -40,7 +40,9 @@ class UwUClient extends Client {
         autorole: null,
         welcome: null,
         leave: null,
-        modlog: null
+        modlog: null,
+        commandConfig: null,
+        auditLog: null
       },
       users: {
         level: 1,

@@ -45,5 +45,8 @@ module.exports = {
   downArrow: "<:downArrow:1366064784717643777>",
   checkmark: "<a:checkmark:1366065879296507914>",
   info: "<:info:1366070445211783248>",
-  blueRightArrow: "<:blueRightArrow:1366078277365534860>"
+  blueRightArrow: "<:blueRightArrow:1366078277365534860>",
+  staticCheckmark: "<:check:1366118667992961044>",
+  banned: "<:Banned:1366120438668984422>",
+  leavearrow: "<:LeaveSymbol:1366125344586989640>"
 };

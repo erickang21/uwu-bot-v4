@@ -33,17 +33,36 @@ class Ban extends Command {
     if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't ban this user. ${emojis.error}`);
     if(!member.bannable) return ctx.reply(`I can't ban this user! ${emojis.error}`);
     
-    const data = { deleteMessageSeconds: 60 * 60 * 24 * 7 };
-    let banReason = ctx.author.id + ":";
+    const data = { deleteMessageSeconds: 0 };
+
+    let banReason =  "";
 
     if (options.getString("reason")?.length > 0) {
       banReason += options.getString("reason");
     } else {
       banReason += "No reason provided."
     }
+    banReason = `Banned by ${ctx.author.username} (ID: ${ctx.author.id}) for: ${banReason}`
+
     data.reason = banReason;
     await member.ban(data);
-    return ctx.reply(`**${member.user.tag}** was banned. ${emojis.ban}`);
+    const msg = await ctx.reply(`**${member.user.username}** was banned. ${emojis.ban}`);
+    // Save to audit logs
+    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    let updatedAuditLog = guildSettings.auditLog;
+    if (!guildSettings.auditLog) {
+      updatedAuditLog = { [member.id]: [] };
+    } else if (!guildSettings.auditLog[member.id]) {
+      updatedAuditLog[member.id] = [];
+    }
+    const auditLogEntry = {
+      action: "ban",
+      timestamp: msg.createdTimestamp,
+      reason: options.getString("reason"),
+      moderator: ctx.author.id,
+    }
+    updatedAuditLog[member.id] = [...updatedAuditLog[member.id], auditLogEntry];
+    this.client.guildUpdate(ctx.guild.id, { auditLog: updatedAuditLog });
   }
 }
 

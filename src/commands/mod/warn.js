@@ -38,19 +38,36 @@ class Warn extends Command {
       .embed(this.client.user)
       .setTitle(`You have received a warning. ${emojis.error}`)
       .setDescription(
-        ` 
-${emojis.shiningarrow} **Server:** ${ctx.guild.name}
-${emojis.shiningarrow} **Warned by:** ${ctx.author.tag}
-${emojis.shiningarrow} **Reason:** ${reason?.length ? reason : "No reason given."}
-                `
-      );
+        `${reason?.length ? reason : "No reason given."}
+         
+${emojis.blueRightArrow} **Server:** ${ctx.guild.name}
+${emojis.blueRightArrow} **Warned by:** ${ctx.author.username}
 
+${emojis.info} This warning will be recorded in audit logs for moderators in the server.`
+      );
+    let msg;
     try {
       await user.send({ embeds: [ embed ] });
-      return ctx.reply(`A warning message has been sent to **${user.tag}**. ${emojis.success}`);
+      msg = await ctx.reply(`A warning message has been sent to **${user.username}**. ${emojis.success}`);
     } catch(err) {
       return ctx.reply(`A warning message could not be sent. The user may have blocked the bot or disabled DMs. ${emojis.failure}`);
     }
+    // Save to audit logs
+    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    let updatedAuditLog = guildSettings.auditLog;
+    if (!guildSettings.auditLog) {
+      updatedAuditLog = { [user.id]: [] };
+    } else if (!guildSettings.auditLog[user.id]) {
+      updatedAuditLog[user.id] = [];
+    }
+    const auditLogEntry = {
+      action: "warn",
+      timestamp: msg.createdTimestamp,
+      reason,
+      moderator: ctx.author.id,
+    }
+    updatedAuditLog[user.id] = [...updatedAuditLog[user.id], auditLogEntry];
+    this.client.guildUpdate(ctx.guild.id, { auditLog: updatedAuditLog });
   }
 }
 
