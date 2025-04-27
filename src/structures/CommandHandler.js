@@ -227,15 +227,13 @@ class CommandHandler {
   }
 
   async checkServerSpecific(ctx, command) {
-    console.log("Command run: ", command)
+    console.log("Command run: ", command.name)
     if (!ctx.guild) return { allowed: true };
     const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
     if (!guildSettings.commandConfig) {
-      console.log("No commandconfig")
       return { allowed: true };
     }
     else if (!guildSettings.commandConfig[command.name]) {
-      console.log("No command specific config")
       return { allowed: true };
     }
     else {
@@ -246,15 +244,15 @@ class CommandHandler {
         if (Array(...ctx.member.roles.cache.keys()).some(id => commandConfig.roles[id])) {
           return { allowed: true };
         } else {
-          const requiredRoleNames = commandConfig.roles.map((r) => ctx.guild.roles.cache.get(r).name).join(", ");
+          const requiredRoleNames = Object.keys(commandConfig.roles).map((r) => ctx.guild.roles.cache.get(r).name).join(", ");
           return { allowed: false, errorMessage: `You cannot run this command in this server. You need one of these roles:\n**${requiredRoleNames}**` };
         }
       } else if (commandConfig.use === "someNot") {
         if (!Array(...ctx.member.roles.cache.keys()).some(id => commandConfig.roles[id])) {
           return { allowed: true };
         } else {
-          const bannedRoleNames = commandConfig.roles.map((r) => ctx.guild.roles.cache.get(r).name).join(", ");
-          return { allowed: false, errorMessage: `You cannot run this command in this server. You cannot run it if you have these roles:\n**${bannedRoleNames}**` };
+          const bannedRoleNames = Object.keys(commandConfig.roles).map((r) => ctx.guild.roles.cache.get(r).name).join(", ");
+          return { allowed: false, errorMessage: `You cannot run this command in this server, since you have one or more of these roles:\n**${bannedRoleNames}**` };
         }
       } else if (commandConfig.use === "none") {
         console.log("No command specific None")

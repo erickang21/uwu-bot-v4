@@ -37,5 +37,13 @@ module.exports = {
   FloatingHearts: "<a:FloatingHearts:1365387733178122280>",
   outline: "<:InvisibleOutline:1365392214527705158>",
   NotAllowed: "<:NotAllowed:1365413581662847089>",
-  commandError: "<:Error:1365418581571014827>"
+  commandError: "<:Error:1365418581571014827>",
+  online: "<:online:1365711839786303602>",
+  idle: "<:idle:1365711821536755813>",
+  dnd: "<:dnd:1365711805594337330>",
+  offline: "<:offline:1365711830776938536>",
+  downArrow: "<:downArrow:1366064784717643777>",
+  checkmark: "<a:checkmark:1366065879296507914>",
+  info: "<:info:1366070445211783248>",
+  blueRightArrow: "<:blueRightArrow:1366078277365534860>"
 };
