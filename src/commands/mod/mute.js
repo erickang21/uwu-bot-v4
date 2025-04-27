@@ -32,6 +32,7 @@ class Mute extends Command {
   }
 
   parseTime(timeString) {
+    if (!timeString) throw "No duration given."
     const match = timeString.match(/^(\d+)([a-zA-Z]+)$/);
     if (!match) return null;
     const timeNumber = parseInt(match[1]);
@@ -65,24 +66,43 @@ class Mute extends Command {
       muteTime = time;
       muteTimeStr = timeStr;
     } catch (e) {
-      muteTime = null;
+      muteTime = 7 * 24 * 60 * 60 * 1000; // Default to a 7-day mute if time can't be parsed.
+      muteTimeStr = "7 days"
       alternateResponse = e;
     }
-    let muteReason = ctx.author.id + ":";
+    let muteReason =  "";
 
     if (options.getString("reason")?.length > 0) {
       muteReason += options.getString("reason");
     } else {
       muteReason += "No reason provided."
     }
-    muteReason = `Muted by ${ctx.author.username} for: ${muteReason}`
-
+    muteReason = `Muted by ${ctx.author.username} (ID: ${ctx.author.id}) for: ${muteReason}`
+    // Provide immediate response, start saving to audit logs after
     await member.timeout(muteTime, muteReason);
+    let msg;
     if (alternateResponse) {
-      return ctx.reply(`**${member.user.tag}** was muted **indefinitely**. ${emojis.mute}\n\n(${alternateResponse})`);
+      msg = await ctx.reply(`**${member.user.tag}** was muted for **one week**. ${emojis.mute}\n\n(${alternateResponse})`);
     } else {
-      return ctx.reply(`**${member.user.tag}** was muted for **${muteTimeStr}**. ${emojis.mute}`);
+      msg = await ctx.reply(`**${member.user.tag}** was muted for **${muteTimeStr}**. ${emojis.mute}`);
     }
+    // Now save this action to the audit log
+    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    let updatedAuditLog = guildSettings.auditLog;
+    if (!guildSettings.auditLog) {
+      updatedAuditLog = { [member.id]: [] };
+    } else if (!guildSettings.auditLog[member.id]) {
+      updatedAuditLog[member.id] = [];
+    }
+    const auditLogEntry = {
+      action: "mute",
+      timestamp: msg.createdTimestamp,
+      duration: muteTimeStr,
+      reason: options.getString("reason"),
+      moderator: ctx.author.id,
+    }
+    updatedAuditLog[member.id] = [...updatedAuditLog[member.id], auditLogEntry];
+    this.client.guildUpdate(ctx.guild.id, { auditLog: updatedAuditLog });
   }
 }
 
