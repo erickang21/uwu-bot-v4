@@ -119,7 +119,7 @@ class CommandHandler {
 
     // A mention only.
     if (!rawContent) {
-      return message.channel.send(`${emojis.wave} Hey there, senpai~ Did you forget how to use me? Run \`\`${prefix}help\`\` to see all my commands, or browse the slash commands by typing \`\`/\`\``);
+      return message.channel.send(`${emojis.ship4} Hey there, senpai~ Did you forget how to use me? Run \`\`${prefix}help\`\` to see all my commands, or browse the slash commands by typing \`\`/\`\``);
     }
 
     const { content, flags } = this.getFlags(rawContent);
@@ -269,7 +269,7 @@ class CommandHandler {
     // Remain in cache and only request DB upon every 5 commands.
     // Level up by 5 xp/command
     if (this.client.userCommandCount[ctx.author.id] >= 5) {
-      const data = await this.client.syncUserSettings(ctx.author.id);
+      const data = await this.client.settings.users.fetch(ctx.author.id);
       if (!data.guilds) data.guilds = [];
       if (!data.guilds.includes(ctx.guild.id)) {
         // check to make sure they're actually in the server

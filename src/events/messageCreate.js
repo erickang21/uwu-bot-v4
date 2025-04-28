@@ -51,7 +51,7 @@ class MessageCreate extends Event {
     // Remain in cache and only request DB upon every 25 messages.
     // Level up by 1 xp/message
     if (this.client.userMessageCount[message.author.id] >= 25) {
-      const data = await this.client.syncUserSettings(message.author.id);
+      const data = await this.client.settings.users.fetch(message.author.id);
       let breakpoint = 100 * Math.floor(data.level / 5) + 25 * data.level;
       if (message.guild.id === "372526440324923393") {
         data.exp += 25 * data.multiplier * 3;

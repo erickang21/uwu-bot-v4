@@ -65,7 +65,6 @@ class Settings {
     const { value } = await this.db.collection(this.collection).findOneAndUpdate({ _id: id }, { $set: obj }, {
       upsert: true,
       returnNewDocument: true,
-      projection: { _id: 0 }
     });
     this.cache.set(id, mergeDefault(this.defaults, obj));
     return value;
@@ -78,9 +77,7 @@ class Settings {
    * @returns {Object} The newly fetched data from the database.
    */
   async sync(id) {
-    const doc = await this.db.collection(this.collection).findOne({ _id: id }, {
-      projection: { _id: 0 }
-    });
+    const doc = await this.db.collection(this.collection).findOne({ _id: id });
 
     if (!doc) return;
     this.cache.set(id, mergeDefault(this.defaults, doc));
@@ -92,7 +89,7 @@ class Settings {
    * @param {String} id - ID of the document to delete.
    */
   async delete(id) {
-    await this.db.collection(this.collection).deleteOne({ id });
+    await this.db.collection(this.collection).deleteOne({ _id: id });
     this.cache.delete(id);
   }
 
@@ -122,10 +119,10 @@ class Settings {
     if (!this.loadOnStartup) {
       return;
     }
-    const cursor = this.db.collection(this.collection).find().project({ _id: 0 });
+    const cursor = this.db.collection(this.collection).find();
 
     for await (const doc of cursor) {
-      this.cache.set(doc.id, mergeDefault(this.defaults, doc));
+      this.cache.set(doc._id, mergeDefault(this.defaults, doc));
     }
   }
 }
