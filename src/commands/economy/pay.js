@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const utils = require("../../utils/Utils.js");
+const utils = require("../../utils/utils.js");
 
 class Pay extends Command {
   constructor(...args) {
