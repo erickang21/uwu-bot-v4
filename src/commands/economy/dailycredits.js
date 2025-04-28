@@ -12,15 +12,18 @@ class Dailycredits extends Command {
   async run(ctx) {
 
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
-    let updatedServerEconomy = guildSettings.economy;
+    let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};
+    }
+    if (!updatedServerEconomy[1]) {
+      updatedServerEconomy[1] = { icon: ":banana:"};
     }
     if (!updatedServerEconomy[ctx.author.id]) {
       updatedServerEconomy[ctx.author.id] = 0;
     }
     let amount = 3000;
-    const emoji = updatedServerEconomy[1].icon || ":banana:";
+    const emoji = updatedServerEconomy[1]?.icon || ":banana:";
     const voted = await this.client.topgg.hasVoted(ctx.author.id);
     if (!voted) {
       const embed = this.client.embed(ctx.author)

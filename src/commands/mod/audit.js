@@ -49,7 +49,7 @@ class Audit extends Command {
   }
 
   parseType(type) {
-    if (!type.length) return "all";
+    if (!type?.length) return "all";
     if (["mute", "mutes", "timeout", "timeouts", "m"].includes(type.toLowerCase())) {
       return "mute";
     } else if (["unmute", "unmutes", "u"].includes(type.toLowerCase())) {

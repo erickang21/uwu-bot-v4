@@ -11,7 +11,7 @@ class Freerealestate extends Command {
 
   async run(ctx) {
     const guildSettings = this.client.settings.guilds.getDefaults(ctx.guild.id);
-    let updatedServerEconomy = guildSettings.economy;
+    let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};
     }

@@ -26,7 +26,7 @@ class Setcurrency extends Command {
     if (!emojiRegex.test(currencyEmoji)) return ctx.reply("That is not a valid emoji. You can use a Discord default emoji or custom emojis within your server.");
 
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
-    let updatedServerEconomy = guildSettings.economy;
+    let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};
     }

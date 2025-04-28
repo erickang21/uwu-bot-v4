@@ -31,7 +31,7 @@ class Pay extends Command {
     if (user.id === ctx.author.id) return ctx.reply("Nice try, baka. You can't pay yourself!");
     if (amount <= 0) return ctx.reply("The amount to pay must be a positive number.");
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
-    let updatedServerEconomy = guildSettings.economy;
+    let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};
     }

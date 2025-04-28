@@ -12,7 +12,7 @@ class Work extends Command {
 
   async run(ctx) {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
-    let updatedServerEconomy = guildSettings.economy;
+    let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};
     }

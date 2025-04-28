@@ -30,7 +30,7 @@ class Give extends Command {
     const amount = options.getInteger("amount");
 
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
-    let updatedServerEconomy = guildSettings.economy;
+    let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};
     }
