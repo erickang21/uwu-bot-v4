@@ -66,7 +66,7 @@ class Settings {
       upsert: true,
       returnNewDocument: true,
     });
-    this.cache.set(id, mergeDefault(this.defaults, obj));
+    this.cache.set(id, mergeDefault(this.defaults, value));
     return value;
   }
 
