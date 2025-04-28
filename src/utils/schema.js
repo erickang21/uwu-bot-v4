@@ -7,7 +7,10 @@ module.exports = {
     welcome: null,
     leave: null,
     modlog: null,
-    prefix: null
+    commandConfig: {},
+    auditLog: {},
+    economy: {},
+    economyIcon: null,
   },
   users: {
     level: 1,
