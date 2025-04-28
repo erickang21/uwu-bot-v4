@@ -64,8 +64,9 @@ class Settings {
 
     const { value } = await this.db.collection(this.collection).findOneAndUpdate({ _id: id }, { $set: obj }, {
       upsert: true,
-      returnNewDocument: true,
+      returnDocument: "after",
     });
+    console.log("RETURNED VALUE: ", value)
     this.cache.set(id, mergeDefault(this.defaults, value));
     return value;
   }
