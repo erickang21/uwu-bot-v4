@@ -165,7 +165,7 @@ class Command extends Base {
   async verifyUser(msg, user, required) {
     // if (!user && defaultToAuthor) return msg.author;
     if (!user && required) {
-      throw "What do you expect me to do without a user mention or an ID?";
+      throw "Please enter a valid user mention or an ID!";
     } else if (!user) {
       return;
     }

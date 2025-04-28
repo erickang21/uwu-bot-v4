@@ -42,7 +42,8 @@ class UwUClient extends Client {
         leave: null,
         modlog: null,
         commandConfig: null,
-        auditLog: null
+        auditLog: null,
+        economy: null,
       },
       users: {
         level: 1,
