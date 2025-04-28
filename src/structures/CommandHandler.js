@@ -165,7 +165,7 @@ class CommandHandler {
     if (!(await this.runChecks(ctx, command))) return;
     const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
-      return interaction.reply({ content: serverSpecificPermission.errorMessage });
+      return interaction.editReply({ content: serverSpecificPermission.errorMessage });
     }
     //await this.handleXP(ctx);
     //await this.trackCmdStats(ctx, command);
