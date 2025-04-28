@@ -77,7 +77,6 @@ class CommandContext {
   }
 
   async reply(options) {
-    if (this.slash && (!this.interaction.replied || !this.interaction.deferred)) return this.interaction.reply(options);
     if (this.slash) return this.interaction.editReply(options);
     if (this.message.lastReply) return this.message.lastReply.edit(options);
     this.message.lastReply = await this.message.reply(options);

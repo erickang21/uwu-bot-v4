@@ -39,8 +39,6 @@ class Command extends Base {
   async execute(ctx) {
     try {
       this.client.log.debug(`Running command '${this.name}'`);
-      if (ctx.text) await ctx.channel.sendTyping();
-      else await ctx.interaction.deferReply({ ephemeral: this.ephemeral });
 
       const options = ctx.slash
         ? ctx.interaction.options
