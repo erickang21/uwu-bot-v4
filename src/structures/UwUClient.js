@@ -58,7 +58,7 @@ class UwUClient extends Client {
     this.settings = {
       guilds: new Settings(this, "guilds", schema.guilds),
       members: new Settings(this, "members", schema.members),
-      users: new Settings(this, "users", schema.users),
+      users: new Settings(this, "users", schema.users, false),
       commands: new Settings(this, "commands", schema.commands)
     };
     this.userMessageCount = {};

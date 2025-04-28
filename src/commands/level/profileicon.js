@@ -36,7 +36,7 @@ class Profileicons extends Command {
       sleepy: "<a:sleepy:1136116044176576572>",
 
     }
-    const userData = await this.client.syncUserSettings(ctx.author.id);
+    const userData = await this.client.settings.users.fetch(ctx.author.id);
     if (!userData.icons) {
       userData.icons = [];
       await this.client.userUpdate(ctx.author.id, userData);

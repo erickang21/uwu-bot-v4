@@ -26,7 +26,7 @@ class Mutuals extends Command {
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
     let servers = '';
-    const userData = await this.client.syncUserSettings(user.id);
+    const userData = await this.client.settings.users.fetch(user.id)
     if (!userData.guilds) { 
       return ctx.reply(`I have not detected any servers that I share with this user. In order to be detected, the user must have been active in the server recently. ${emojis.error}`);
     }

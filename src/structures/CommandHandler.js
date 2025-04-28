@@ -67,7 +67,7 @@ class CommandHandler {
     // Remain in cache and only request DB upon every 25 messages.
     // Level up by 1 xp/message
     if (this.client.userMessageCount[message.author.id] >= 25) {
-      const data = await this.client.syncUserSettings(message.author.id);
+      const data = await this.client.settings.users.fetch(message.author.id)
       if (Date.now() > data.dailyCooldown) { // if it's been 24 hours, reset the multiplier
         data.multiplier = 1; 
       }
@@ -231,8 +231,8 @@ class CommandHandler {
 
   async checkServerSpecific(ctx, command) {
     if (!ctx.guild) return { allowed: true };
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
-    if (!guildSettings.commandConfig) {
+    const guildSettings = this.client.settings.guilds.getDefaults(ctx.guild.id);
+    if (!guildSettings || !guildSettings.commandConfig) {
       return { allowed: true };
     }
     else if (!guildSettings.commandConfig[command.name]) {
@@ -257,7 +257,6 @@ class CommandHandler {
           return { allowed: false, errorMessage: `You cannot run this command in this server, since you have one or more of these roles:\n**${bannedRoleNames}**` };
         }
       } else if (commandConfig.use === "none") {
-        console.log("No command specific None")
         return { allowed: false, errorMessage: "This server has disabled this command." };
       }
     }

@@ -22,11 +22,12 @@
 }
 
 class Settings {
-  constructor(client, collection, defaults = {}) {
+  constructor(client, collection, defaults = {}, loadOnStartup = true) {
     this.client = client;
     this.cache = new Map();
     this.collection = collection;
     this.defaults = defaults;
+    this.loadOnStartup = loadOnStartup;
   }
 
   /**
@@ -95,6 +96,10 @@ class Settings {
     this.cache.delete(id);
   }
 
+  async fetch(id) {
+    return this.cache.get(id) || await this.sync(id) || this.defaults;
+  }
+
   /**
    * Alias to db.collection(col).find(...)
    */
@@ -114,6 +119,9 @@ class Settings {
    * Call this before the client is logged in.
    */
   async init() {
+    if (!this.loadOnStartup) {
+      return;
+    }
     const cursor = this.db.collection(this.collection).find().project({ _id: 0 });
 
     for await (const doc of cursor) {

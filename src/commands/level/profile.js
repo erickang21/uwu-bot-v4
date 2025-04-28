@@ -18,10 +18,9 @@ class Profile extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const userData = await this.client.syncUserSettings(user.id);
+    const userData = await this.client.settings.users.fetch(user.id);
     if (!userData.icons) {
       userData.icons = [];
-      await this.client.userUpdate(ctx.author.id, userData);
     }
     let icons = '';
     const slotCount = Math.ceil((userData.level + 1) / 5);

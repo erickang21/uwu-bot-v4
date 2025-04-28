@@ -19,7 +19,7 @@ class Daily extends Command {
   }
 
   async run(ctx) {
-    const userData = await this.client.syncUserSettings(ctx.author.id);
+    const userData = await this.client.settings.users.fetch(ctx.author.id);
     // Defenses against older DB entries:
     if (!userData.dailyCooldown) userData.dailyCooldown = 0;
     if (!userData.multiplier) userData.multiplier = 1;
