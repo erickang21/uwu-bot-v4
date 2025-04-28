@@ -33,7 +33,7 @@ class Pay extends Command {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
-      updatedServerEconomy = { 1: { icon: ":banana:" }};
+      updatedServerEconomy = {};
     }
     if (!updatedServerEconomy[user.id]) {
       updatedServerEconomy[user.id] = 0;
@@ -41,7 +41,7 @@ class Pay extends Command {
     if (!updatedServerEconomy[ctx.author.id] || updatedServerEconomy[ctx.author.id] < amount) return ctx.reply("You don't have enough credits to pay this. Help yourself before you help others!");
     updatedServerEconomy[ctx.author.id] -= amount;
     updatedServerEconomy[user.id] += amount;
-    const emoji = updatedServerEconomy[1].icon || ":banana:";
+    const emoji = guildSettings?.economyIcon || ":banana:";
     this.client.guildUpdate(ctx.guild.id, { economy: updatedServerEconomy });
     return ctx.reply(`So generous! You paid **${amount}** ${emoji} to **${user.username}**.`);
   }

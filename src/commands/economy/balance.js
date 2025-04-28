@@ -21,16 +21,14 @@ class Balance extends Command {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     const serverEconomy = guildSettings?.economy;
     let balance;
-    let emoji;
+    let emoji = guildSettings?.economyIcon || ":banana:";
     if (!serverEconomy) {
       balance = 0;
       emoji = ":banana:";
     } else if (!serverEconomy[user.id]) {
       balance = 0;
-      emoji = serverEconomy[1] ? (serverEconomy[1].icon ?? ":banana:") : ":banana:";
     } else {
       balance = serverEconomy[user.id];
-      emoji = serverEconomy[1] ? (serverEconomy[1].icon ?? ":banana:") : ":banana:";
     }
     return ctx.reply(`${user.id === ctx.author.id ? "You currently have " : `**${user.username}** currently has `}**${balance.toLocaleString()}** ${emoji}!`);
   }

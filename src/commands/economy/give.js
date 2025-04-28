@@ -32,13 +32,13 @@ class Give extends Command {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
-      updatedServerEconomy = { 1: { icon: ":banana:" }};
+      updatedServerEconomy = {};
     }
     if (!updatedServerEconomy[user.id]) {
       updatedServerEconomy[user.id] = 0;
     }
     updatedServerEconomy[user.id] += amount;
-    const emoji = updatedServerEconomy[1].icon || ":banana:";
+    const emoji = guildSettings?.economyIcon || ":banana:";
     this.client.guildUpdate(ctx.guild.id, { economy: updatedServerEconomy });
     return ctx.reply(`**Moderation Action:** You have paid **${amount}** ${emoji} to **${user.username}**.`);
   }

@@ -44,6 +44,7 @@ class UwUClient extends Client {
         commandConfig: null,
         auditLog: null,
         economy: null,
+        economyIcon: null,
       },
       users: {
         level: 1,

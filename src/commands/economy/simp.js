@@ -14,13 +14,13 @@ class Simp extends Command {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
-      updatedServerEconomy = { 1: { icon: ":banana:" }};
+      updatedServerEconomy = {};
     }
     if (!updatedServerEconomy[ctx.author.id]) {
       updatedServerEconomy[ctx.author.id] = 0;
     }
     let amount = 2000 + Math.floor(Math.random() * 1000);
-    const emoji = updatedServerEconomy[1].icon || ":banana:";
+    const emoji = guildSettings?.economyIcon || ":banana:";
     updatedServerEconomy[ctx.author.id] += amount;
     this.client.guildUpdate(ctx.guild.id, { economy: updatedServerEconomy });
     const response = random([

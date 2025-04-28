@@ -14,13 +14,13 @@ class Gamble extends Command {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
-      updatedServerEconomy = { 1: { icon: ":banana:" }};
+      updatedServerEconomy = {};
     }
     if (!updatedServerEconomy[ctx.author.id]) {
       updatedServerEconomy[ctx.author.id] = 0;
     }
     const balance = updatedServerEconomy[ctx.author.id];
-    const emoji = updatedServerEconomy[1].icon || ":banana:";
+    const emoji = guildSettings?.economyIcon || ":banana:";
     let amount = 0;
     if (balance < 2000) amount = -balance + Math.floor(Math.random() * 4000);
     else amount = -2000 + Math.floor(Math.random() * 4000);

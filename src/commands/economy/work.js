@@ -14,7 +14,7 @@ class Work extends Command {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
-      updatedServerEconomy = { 1: { icon: ":banana:" }};
+      updatedServerEconomy = {};
     }
     if (!updatedServerEconomy[ctx.author.id]) {
       updatedServerEconomy[ctx.author.id] = 0;
@@ -45,7 +45,7 @@ class Work extends Command {
       return ctx.reply("You took too long! You didn't receive any credit for this.");
     }
     let amount = 2500 + Math.floor(Math.random() * 500);
-    const emoji = updatedServerEconomy[1].icon || ":banana:";
+    const emoji = guildSettings?.economyIcon || ":banana:";
     const mathAnswer = new Array([...collected.values()])[0][0]?.content;
     if (mathAnswer.toString() === result.toString()) {
       updatedServerEconomy[ctx.author.id] += amount;

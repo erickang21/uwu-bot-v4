@@ -14,13 +14,13 @@ class Search extends Command {
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings?.economy;
     if (!updatedServerEconomy) {
-      updatedServerEconomy = { 1: { icon: ":banana:" }};
+      updatedServerEconomy = {};
     }
     if (!updatedServerEconomy[ctx.author.id]) {
       updatedServerEconomy[ctx.author.id] = 0;
     }
     let amount = 100 + Math.floor(Math.random() * 500);
-    const emoji = updatedServerEconomy[1].icon || ":banana:";
+    const emoji = guildSettings?.economyIcon || ":banana:";
     updatedServerEconomy[ctx.author.id] += amount;
     this.client.guildUpdate(ctx.guild.id, { economy: updatedServerEconomy });
     const response = random([
