@@ -17,6 +17,14 @@ class ReadyEvent extends Event {
     }
     */
     log.info(`Logged in as ${user.tag} (${user.id})`);
+    let count = 0;
+    for (const id of this.client.settings.guilds.cache.keys()) {
+      if (!this.client.guilds.cache.has(id)) {
+        this.client.settings.guilds.cache.delete(id);
+        count++;
+      }
+    }
+    log.info(`Removed ${count} unnecessary GUILD entries in cache.`)
     //log.info(`Bot is in ${guilds} servers.`);
     //this.client.setActivity();
     

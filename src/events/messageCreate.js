@@ -105,7 +105,7 @@ class MessageCreate extends Event {
 
     if (command.devOnly && !ctx.dev) {
       return ctx.reply({
-        content: `This command can only be used by the developers. ${EMOJIS.NotAllowed}`,
+        content: `This command can only be used by the developers. ${emojis.NotAllowed}`,
       });
     }
 
