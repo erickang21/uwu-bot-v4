@@ -19,7 +19,7 @@ class Prefix extends Command {
   }
   
   async run(ctx, options) {
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let prefix = options.getString("prefix");
     
     if (!prefix) {

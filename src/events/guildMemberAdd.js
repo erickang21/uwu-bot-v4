@@ -3,7 +3,7 @@ const { MessageEmbed } = require("discord.js");
 
 class GuildMemberAdd extends Event {
   async run(member) {
-    const settings = await this.client.syncGuildSettingsCache(member.guild.id);
+    const settings = this.client.settings.guilds.get(member.guild.id);
     if (!settings) return;
     if (settings.welcome) {
       if (settings.welcome.channel) {

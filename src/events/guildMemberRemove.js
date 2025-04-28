@@ -7,7 +7,7 @@ class GuildMemberRemove extends Event {
 
     
 
-    const settings = await this.client.syncGuildSettingsCache(member.guild.id);
+    const settings = this.client.settings.guilds.get(member.guild.id);
     //await settings.members.delete(`${member.guild.id}.${member.id}`).catch(() => null);
     if (!settings) return;
     if (settings.leave) {

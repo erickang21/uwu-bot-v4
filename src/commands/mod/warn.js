@@ -53,7 +53,7 @@ ${emojis.info} This warning will be recorded in audit logs for moderators in the
       return ctx.reply(`A warning message could not be sent. The user may have blocked the bot or disabled DMs. ${emojis.failure}`);
     }
     // Save to audit logs
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedAuditLog = guildSettings.auditLog;
     if (!guildSettings.auditLog) {
       updatedAuditLog = { [user.id]: [] };

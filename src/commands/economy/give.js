@@ -29,7 +29,7 @@ class Give extends Command {
     const user = options.getUser("user");
     const amount = options.getInteger("amount");
 
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};

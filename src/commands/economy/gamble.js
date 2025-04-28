@@ -11,7 +11,7 @@ class Gamble extends Command {
   }
 
   async run(ctx) {
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};

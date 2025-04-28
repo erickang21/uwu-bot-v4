@@ -87,7 +87,7 @@ class Mute extends Command {
       msg = await ctx.reply(`**${member.user.tag}** was muted for **${muteTimeStr}**. ${emojis.mute}`);
     }
     // Now save this action to the audit log
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedAuditLog = guildSettings.auditLog;
     if (!guildSettings.auditLog) {
       updatedAuditLog = { [member.id]: [] };

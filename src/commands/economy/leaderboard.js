@@ -20,7 +20,7 @@ class Leaderboard extends Command {
   async run(ctx, options) {
     const PAGE_SIZE = 10;
     const page = options.getInteger("page") ?? 1;
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     const serverEconomy = guildSettings.economy;
     if(!serverEconomy || Object.entries(serverEconomy).length <= 1) return ctx.reply("I'm unable to create a leaderboard! This is probably because no one in the server has used an economy command yet.")
     const emoji = serverEconomy[1]?.icon || ":banana:";

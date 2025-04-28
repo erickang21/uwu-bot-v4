@@ -48,7 +48,7 @@ class Ban extends Command {
     await member.ban(data);
     const msg = await ctx.reply(`**${member.user.username}** was banned. ${emojis.ban}`);
     // Save to audit logs
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedAuditLog = guildSettings.auditLog;
     if (!guildSettings.auditLog) {
       updatedAuditLog = { [member.id]: [] };

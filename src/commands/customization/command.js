@@ -72,7 +72,7 @@ class ManageCommands extends Command {
   async run(ctx, options) {
     if(!ctx.member.permissions.has("MANAGE_GUILD"))
       return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change this. ${emojis.failure}`);
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let option = options.getString("action");
     let command = options.getString("command");
     let roles = [1,2,3,4,5].map((i) => options.getRole(`role${i}`)?.id);

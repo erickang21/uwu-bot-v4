@@ -10,7 +10,7 @@ class Viewserver extends Command {
   }
 
   async run(ctx) {
-    const guildData = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildData = this.client.settings.guilds.get(ctx.guild.id);
     let str = "{\n";
     for (const key of Object.keys(guildData)) {
       str += `  ${key}: ${JSON.stringify(guildData[key])},\n`;

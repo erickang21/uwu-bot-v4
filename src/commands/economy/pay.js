@@ -30,7 +30,7 @@ class Pay extends Command {
     if (user.bot) return ctx.reply("You cannot pay a bot!");
     if (user.id === ctx.author.id) return ctx.reply("Nice try, baka. You can't pay yourself!");
     if (amount <= 0) return ctx.reply("The amount to pay must be a positive number.");
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedServerEconomy = guildSettings.economy;
     if (!updatedServerEconomy) {
       updatedServerEconomy = { 1: { icon: ":banana:" }};

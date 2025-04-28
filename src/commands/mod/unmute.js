@@ -46,7 +46,7 @@ class Unmute extends Command {
     await member.timeout(null, unmuteReason);
     const msg = await ctx.reply(`**${member.user.tag}** was unmuted. ${emojis.unmute}`);
     // Now save this action to the audit log
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedAuditLog = guildSettings.auditLog;
     if (!guildSettings.auditLog) {
       updatedAuditLog = { [member.id]: [] };

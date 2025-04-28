@@ -66,7 +66,7 @@ class Audit extends Command {
   async run(ctx, options) {
     const user = options.getUser("user");
     const filterType = options.getString("entryType");
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let member;
     try {
       member = await ctx.guild.members.fetch(user.id);

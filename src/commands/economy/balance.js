@@ -18,7 +18,7 @@ class Balance extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     const serverEconomy = guildSettings.economy;
     let balance;
     let emoji;

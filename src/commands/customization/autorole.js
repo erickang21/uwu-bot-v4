@@ -46,7 +46,7 @@ class Autorole extends Command {
   }
   
   async run(ctx, options) {
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let option = options.getString("action");
     
     if (option) option = option.toLowerCase();

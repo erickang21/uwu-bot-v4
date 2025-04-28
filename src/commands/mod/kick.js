@@ -45,7 +45,7 @@ class Kick extends Command {
     await member.kick(kickReason);
     const msg = await ctx.reply(`**${member.user.tag}** was kicked. ${emojis.kick}`);
     // Save to audit logs
-    const guildSettings = await this.client.syncGuildSettingsCache(ctx.guild.id);
+    const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let updatedAuditLog = guildSettings.auditLog;
     if (!guildSettings.auditLog) {
       updatedAuditLog = { [member.id]: [] };
