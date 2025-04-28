@@ -16,7 +16,7 @@ class Audit extends Command {
           required: true,
         },
         {
-          name: "entryType",
+          name: "entry",
           description: "The type of log to filter by. (eg. (w)arn, (k)ick, (m)ute, (b)an)",
           type: "string",
         }
@@ -65,7 +65,7 @@ class Audit extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user");
-    const filterType = options.getString("entryType");
+    const filterType = options.getString("entry");
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let member;
     try {
