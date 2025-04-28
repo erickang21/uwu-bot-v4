@@ -1,9 +1,10 @@
 const Command = require("../../structures/Command.js");
+const { blueRightArrow } = require("../../structures/Emojis");
 
 class Updates extends Command {
   constructor(...args) {
     super(...args, {
-      description: "shows the latest patch notes for uwu bot. find the TWICE references :)",
+      description: "Shows the latest patch notes for uwu bot.",
       aliases: ["updateinfo", "update", "versioninfo"]
     });
   }
@@ -25,36 +26,37 @@ Slap your face (well...profile picture) onto some meme templates!
   async run(ctx) {
     const embed = this.client
       .embed(this.client.user)
-      .setTitle(`A not-so-mini mini version update: v5.2`)
-      .setDescription(`After a BRIEF [VACAY](https://www.youtube.com/watch?v=6g1rUqKy8p4) from working on the bot, I'm back for more!
-      
-__**Image manipulation has entered the chat!**__
-Slap your face (well...profile picture) onto some meme templates! There's 2 types of commands:
+      .setTitle(`v5.3 of uwu bot is HERE!`)
+      .setDescription(`This update has been developed with **your (yes, YOUR) user suggestions** in mind. You can give your own by joining the [support server](https://discord.gg/RASYKT4kMV) and writing in the suggestions channel!
 
-- Text-based commands (type text to display on a template)
----> NEW COMMANDS: achievement, fatherless, trumptweet
+__**Audit logs for all moderation actions.**__
+No more being a bad boy! Moderators can now see all previous actions taken against someone. (warn, mute, kick, ban)
+${blueRightArrow} \`uwu audit @user\` to see all actions taken against them, listed as most recent first.
+${blueRightArrow} \`uwu audit @user warn\` to see only warnings, for example.
+**Please note:** This only records actions taken with uwu bot. It also doesn't apply retroactively (it won't show actions taken before this update was released.)
 
-- Image-based commands (use your profile picture or tag someone else to use theirs!)
----> NEW COMMANDS: beautiful, bobross, delete, fear, painting, patrick, religion, respect, sacred
+__**Command Enable/Disable**__
+If you don't like a command on uwu bot, you can do something about it! Server moderators can restrict usage of commands to certain roles or disable them entirely.
+For a full explanation on how that works, type \`uwu command help\`.
 
-- Interactive commands (you must mention someone else to be part of this template with you)
----> NEW COMMANDS: monster, crush
+__**The "banana" economy is back, and better than ever.**__
+For the nostalgic feeling of the old uwu bot economy system, I've added it back! Each user now has a server-specific balance of 0 :banana:.
+${blueRightArrow} You can gain bananas using: dailycredits*, freerealestate, gamble, search, simp, work. You can also be generous and use \`pay\` to give your credits to others!
+${blueRightArrow} Server moderators can manually hand out currency using \`give\`, like before.
+${blueRightArrow} Compete with your friends by checking your ranking using \`lb\`.
+${blueRightArrow} Here's the new and improved part - you can customize the currency icon to whatever you want! So if you don't like bananas :banana:, a server moderator can use \`uwu setcurrency [emoji]\` using a custom or default emoji of their choice.
+(If you would like a per-server role shop to be implemented, join the support server and voice your opinion in the suggestions channel!)
+(*: Not to be confused with \`daily\`, which is for leveling up your profile.)
 
-__**A lot of bug fixing!**__
-We've kept our nose close to the error logs, and understand your frustration with errors related to customization commands! We've done a lot of bug squashing!
-- There should no longer be unknown errors.
-- Commands should now be compatible with slash commands. 
-- Additionally, the purge command should work properly. We promise!
+__**And some other changes.**__
+${blueRightArrow} **New rizz command!** Let uwu bot be your wing(man? woman? idk), and type \`uwu rizz @user\` to send them a sweet pickup line.
+${blueRightArrow} **Indecisive? We got you.** Type \`uwu choose choice1,choice2,choice3...\` to let uwu bot help you decide!
+${blueRightArrow} The \`ship\` and \`rate\` command have been given a makeover and are a lot more user friendly to look at.
+${blueRightArrow} Lots of broken emojis all over the place were fixed.
+${blueRightArrow} Optimizations across the board.
+${blueRightArrow} **We catch errors properly now!** So if you come to our server with an error code, we'll be more than happy to pinpoint the exact issue. Don't be afraid to do that!
 
-__**MORE ERROR HANDLING!**__
-- All NSFW commands will now send a meaningful message if the API is down. No more head-scratching errors!
-- Fixed an issue where owoify would sometimes error.
-
-__**Improved error tracking!**__
-More boring dev talk, but we've implemented better logging to improve our understanding of the context of errors. So we can address bugs faster!
-
-Missed the v5.0 update notes? They're long as hell! Read it on <https://top.gg/bot/520682706896683009?tab=updates>.
-`
+If you are enjoying this update, be sure to give us a good rating [here](https://top.gg/bot/520682706896683009#reviews)! `
       );
     return ctx.reply({ embeds: [embed] });
   }

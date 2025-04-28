@@ -21,7 +21,7 @@ class Rizz extends Command {
     const { text } = await request("https://rizzapi.vercel.app/random").then(
       ({ body }) => body.json()
     );
-    return ctx.reply(`Hey, **${user.username}*! ${text}`);
+    return ctx.reply(`Hey, **${user.username}**! ${text}`);
   }
 }
 

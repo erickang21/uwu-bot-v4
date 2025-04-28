@@ -21,7 +21,7 @@ class Help extends Command {
   async run(ctx, options) {
     const command = options.getString("command");
     const map = {}; // Map<Category, Array<Command.Name>>
-    const userData = await this.client.syncUserSettings(ctx.author.id);
+    const userData = await this.client.settings.users.fetch(ctx.author.id);
     const breakpoint = 100 * Math.floor(userData.level / 5) + 25 * userData.level;
 
     for (const command of this.store.values()) {
