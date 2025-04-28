@@ -135,9 +135,7 @@ class CommandHandler {
     if (!command) return this.closestCommand(ctx, alias);
     if (!command.modes.includes('text')) return;
 
-    if (ctx.text) await ctx.channel.sendTyping();
-    else await ctx.interaction.deferReply();
-
+    await ctx.channel.sendTyping();
 
     if (!(await this.runChecks(ctx, command))) return;
     const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
@@ -163,6 +161,7 @@ class CommandHandler {
     }
 
     const ctx = new CommandContext(command, { interaction });
+    await ctx.interaction.deferReply();
     if (!(await this.runChecks(ctx, command))) return;
     const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
