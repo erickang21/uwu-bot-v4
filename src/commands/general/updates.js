@@ -51,6 +51,7 @@ ${blueRightArrow} Here's the new and improved part - you can customize the curre
 __**And some other changes.**__
 ${blueRightArrow} **New rizz command!** Let uwu bot be your wing(man? woman? idk), and type \`uwu rizz @user\` to send them a sweet pickup line.
 ${blueRightArrow} **Indecisive? We got you.** Type \`uwu choose choice1,choice2,choice3...\` to let uwu bot help you decide!
+${blueRightArrow} Mute command now times out for the correct duration. For example: \`uwu mute @user 3h being annoying\`.
 ${blueRightArrow} The \`ship\` and \`rate\` command have been given a makeover and are a lot more user friendly to look at.
 ${blueRightArrow} Lots of broken emojis all over the place were fixed.
 ${blueRightArrow} Optimizations across the board.
