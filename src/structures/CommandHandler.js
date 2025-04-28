@@ -159,7 +159,10 @@ class CommandHandler {
 
     const ctx = new CommandContext(command, { interaction });
     if (!(await this.runChecks(ctx, command))) return;
-    //TODO: check server specific perms as well
+    const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
+    if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
+      return interaction.reply({ content: serverSpecificPermission.errorMessage });
+    }
     //await this.handleXP(ctx);
     //await this.trackCmdStats(ctx, command);
     return command.execute(ctx);
