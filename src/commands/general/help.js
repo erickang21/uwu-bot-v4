@@ -96,7 +96,7 @@ class Help extends Command {
 
     const embed = this.client
       .embed()
-      .setTitle("Help - Commands").setDescription(stripIndents`v5.3 of uwu bot? **It's coming!** Check \`uwu updates\` periodically for more info!
+      .setTitle("Help - Commands").setDescription(stripIndents`v5.3 of uwu bot **is here!** Read about this massive update in \`uwu updates\`.
 
       If you're enjoying uwu bot, **please consider [leaving a review!](https://top.gg/bot/520682706896683009#reviews)** 
       
