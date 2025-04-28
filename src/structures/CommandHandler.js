@@ -171,7 +171,7 @@ class CommandHandler {
   async runChecks(ctx, command) {
     if (command.devOnly && !ctx.dev) {
       await ctx.reply({
-        content: `This command can only be used by the developers. ${EMOJIS.GIRL_CHILLING}`,
+        content: `This command can only be used by the developers. ${EMOJIS.NotAllowed}`,
       });
 
       return false;
