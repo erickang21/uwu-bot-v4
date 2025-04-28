@@ -22,7 +22,7 @@ class Choose extends Command {
     if (choiceArr.length > 20) return ctx.reply("You can only add up to 20 choices. It can't be that cooked, can it?");
     const embed = this.client.embed(ctx.author)
       .setTitle("Choice")
-      .setDescription(`I choose...\n**${random(choiceArr).trim()}`)
+      .setDescription(`I choose...\n**${random(choiceArr).trim()}**`)
       .setColor(0x9590EE)
     return ctx.reply({ embeds: [embed] });
   }
