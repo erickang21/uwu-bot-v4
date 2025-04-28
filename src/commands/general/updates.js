@@ -41,12 +41,12 @@ For a full explanation on how that works, type \`uwu command help\`.
 
 __**The "banana" economy is back, and better than ever.**__
 For the nostalgic feeling of the old uwu bot economy system, I've added it back! Each user now has a server-specific balance of 0 :banana:.
-${blueRightArrow} You can gain bananas using: dailycredits*, freerealestate, gamble, search, simp, work. You can also be generous and use \`pay\` to give your credits to others!
+${blueRightArrow} You can gain bananas using: dailycredits(!), freerealestate, gamble, search, simp, work. You can also be generous and use \`pay\` to give your credits to others!
 ${blueRightArrow} Server moderators can manually hand out currency using \`give\`, like before.
 ${blueRightArrow} Compete with your friends by checking your ranking using \`lb\`.
 ${blueRightArrow} Here's the new and improved part - you can customize the currency icon to whatever you want! So if you don't like bananas :banana:, a server moderator can use \`uwu setcurrency [emoji]\` using a custom or default emoji of their choice.
 (If you would like a per-server role shop to be implemented, join the support server and voice your opinion in the suggestions channel!)
-(*: Not to be confused with \`daily\`, which is for leveling up your profile.)
+(!: Not to be confused with \`daily\`, which is for leveling up your profile.)
 
 __**And some other changes.**__
 ${blueRightArrow} **New rizz command!** Let uwu bot be your wing(man? woman? idk), and type \`uwu rizz @user\` to send them a sweet pickup line.
