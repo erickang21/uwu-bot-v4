@@ -11,6 +11,7 @@ module.exports = {
     auditLog: {},
     economy: {},
     economyIcon: null,
+    dailyCreditsCooldown: {}
   },
   users: {
     level: 1,
