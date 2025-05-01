@@ -26,7 +26,12 @@ class Daily extends Command {
     if (Date.now() < userData.dailyCooldown) {
       return ctx.reply(`You baka! This command is still on cooldown. You better wait another **${this.getDuration(userData.dailyCooldown - Date.now())}** before asking again! ${emojis.ban}`)
     }
-    const voted = await this.client.topgg.hasVoted(ctx.author.id);
+    let voted = false;
+    try {
+      voted = await this.client.topgg.hasVoted(ctx.author.id);
+    } catch (err) {
+      voted = false;
+    }
     if (!voted) {
       const embed = this.client.embed(ctx.author)
         .setTitle(`You need to upvote for uwu bot to claim your daily rewards! ${emojis.mute}`)

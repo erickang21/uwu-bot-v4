@@ -33,7 +33,12 @@ class Dailycredits extends Command {
     }
     let amount = 3000;
     const emoji = guildSettings?.economyIcon || ":banana:";
-    const voted = await this.client.topgg.hasVoted(ctx.author.id);
+    let voted = false;
+    try {
+      voted = await this.client.topgg.hasVoted(ctx.author.id);
+    } catch (err) {
+      voted = false;
+    }
     if (!voted) {
       const embed = this.client.embed(ctx.author)
         .setTitle(`Want a head-start in all servers you're in? ${emojis.LoveLetter}`)

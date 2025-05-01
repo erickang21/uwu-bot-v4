@@ -25,7 +25,8 @@ class Give extends Command {
   }
 
   async run(ctx, options) {
-    if(!ctx.member.permissions.has("MANAGE_GUILD")) return ctx.reply("Baka! You need the `Manage Server` permissions to use this command.\n\n(TIP: Want to pay your money to someone else? Use `uwu pay @user amount` instead!)");
+    const MANAGE_GUILD = BigInt(1 << 5);
+    if(!ctx.member.permissions.has(MANAGE_GUILD)) return ctx.reply("Baka! You need the `Manage Server` permissions to use this command.\n\n(TIP: Want to pay your money to someone else? Use `uwu pay @user amount` instead!)");
     const user = options.getUser("user");
     const amount = options.getInteger("amount");
 
