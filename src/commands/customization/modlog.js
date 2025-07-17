@@ -8,6 +8,7 @@ class Modlog extends Command {
       usage: "modlog <on/off> <#channel>",
       guildOnly: true,
       aliases: ["setmodlog"],
+      userPermissions: ["ManageGuild"],
       options: [
         {
           name: "action",
@@ -32,9 +33,6 @@ class Modlog extends Command {
       if (!guildSettings.modlog) return ctx.reply("The modlog for this server is **disabled.**");
       else return ctx.reply(`The modlog for this server is **enabled**. Messages will be sent in <#${guildSettings.modlog}>.`)
     }
-
-    if(!ctx.member.permissions.has("MANAGE_GUILD"))
-      return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change modlogs. ${emojis.failure}`);
 
     if (option === "on") {
       const channel = options.getChannel("channel");

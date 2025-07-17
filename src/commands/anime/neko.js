@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
+const { nekoAPI } = require("../../helpers/anime.js");
 
 class Neko extends Command {
   constructor(...args) {
@@ -10,9 +10,7 @@ class Neko extends Command {
   }
 
   async run(ctx) {
-    const { url } = await request("https://nekos.life/api/v2/img/neko").then(
-      ({ body }) => body.json()
-    );
+    const url = await nekoAPI("neko");
     const embed = this.client.embed(ctx.author).setTitle(`Neko`).setImage(url);
     return ctx.reply({ embeds: [embed] });
   }

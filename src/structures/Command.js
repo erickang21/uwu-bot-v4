@@ -39,7 +39,6 @@ class Command extends Base {
   async execute(ctx) {
     try {
       this.client.log.debug(`Running command '${this.name}'`);
-
       const options = ctx.slash
         ? ctx.interaction.options
         : await this._parseArgs(ctx);

@@ -7,6 +7,8 @@ class Purge extends Command {
       guildOnly: true,
       description: "purges a certain amount of messages.",
       usage: "purge [limit=50] [link|invite|bots|you|me|upload|@user]",
+      botPermissions: ["ManageMessages"],
+      userPermissions: ["ManageMessages"],
       options: [
         {
           name: "limit",
@@ -26,8 +28,6 @@ class Purge extends Command {
   async run(ctx, options) {
     const limit = options.getInteger("limit");
     const filter = options.getString("filter");
-    if(!ctx.member.permissions.has("MANAGE_GUILD"))
-      return ctx.reply(`Baka! You need the \`Manage Messages\` permissions to purge messages. ${emojis.failure}`);
     if (limit > 100) return ctx.reply(`You cannot purge more than 100 messages at a time. ${emojis.failure}`)
     if (ctx.message) await ctx.message.delete();
     let messages = await ctx.channel.messages.fetch({ limit });

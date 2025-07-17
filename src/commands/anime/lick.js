@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
+const { waifuAPI } = require("../../helpers/anime.js");
 
 class Lick extends Command {
   constructor(...args) {
@@ -18,9 +18,7 @@ class Lick extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const { url } = await request("https://api.waifu.pics/sfw/lick").then(
-      ({ body }) => body.json()
-    );
+    const url = await waifuAPI("lick");
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`Lick :3`)

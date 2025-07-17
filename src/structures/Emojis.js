@@ -36,7 +36,7 @@ module.exports = {
   LoveLetter: "<a:LoveLetter:1365385094705184870>",
   FloatingHearts: "<a:FloatingHearts:1365387733178122280>",
   outline: "<:InvisibleOutline:1365392214527705158>",
-  NotAllowed: "<:NotAllowed:1365413581662847089>",
+  NotAllowed: "<:RinMad:1395183793262039161>",
   commandError: "<:Error:1365418581571014827>",
   online: "<:online:1365711839786303602>",
   idle: "<:idle:1365711821536755813>",

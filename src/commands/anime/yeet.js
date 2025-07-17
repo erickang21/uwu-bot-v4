@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
+const { waifuAPI } = require("../../helpers/anime.js");
 
 class Yeet extends Command {
   constructor(...args) {
@@ -18,9 +18,7 @@ class Yeet extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const { url } = await request("https://api.waifu.pics/sfw/yeet").then(
-      ({ body }) => body.json()
-    );
+    const url = await waifuAPI("yeet");
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`YEET >:)`)

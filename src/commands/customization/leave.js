@@ -7,6 +7,7 @@ class Leave extends Command {
       description: "set a message to be sent when a user leaves your server.",
       usage: "leave <on/off> <#channel> <message>",
       guildOnly: true,
+      userPermissions: ["ManageGuild"],
       aliases: ["setleave"],
       extendedHelp: [
         "Use on to turn the message on and include arguments after, or use off to turn it off without any arguments after.",
@@ -46,9 +47,6 @@ class Leave extends Command {
       else if (!guildSettings.leave.channel) return ctx.reply("The leave message for this server is **disabled.**");
       else return ctx.reply(`The leave messages for this server is **enabled**. Messages will be sent in <#${guildSettings.leave.channel}>.`)
     }
-
-    if(!ctx.member.permissions.has("MANAGE_GUILD"))
-      return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change the leave message. ${emojis.failure}`);
 
     if (option === "on") {
       const channel = options.getChannel("channel");

@@ -9,7 +9,7 @@ class ManageCommands extends Command {
       description: "Turn on/off commands server-wide. (Use help for more details)",
       usage: "command <enable/disable/help> <... specific roles>",
       guildOnly: true,
-
+      userPermissions: ["ManageGuild"],
       options: [
         {
           name: "action",
@@ -70,9 +70,6 @@ class ManageCommands extends Command {
   }
 
   async run(ctx, options) {
-    const MANAGE_GUILD = BigInt(1 << 5);
-    if(!ctx.member.permissions.has(MANAGE_GUILD))
-      return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change this. ${emojis.failure}`);
     const guildSettings = this.client.settings.guilds.get(ctx.guild.id);
     let option = options.getString("action");
     let command = options.getString("command");

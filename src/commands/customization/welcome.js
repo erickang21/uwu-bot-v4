@@ -8,6 +8,7 @@ class Welcome extends Command {
       usage: "welcome <on/off> <#channel> <message>",
       guildOnly: true,
       aliases: ["setwelcome"],
+      userPermissions: ["ManageGuild"],
       extendedHelp: [
         "Use on to turn the message on and include arguments after, or use off to turn it off without any arguments after.",
         "#channel is a channel mention of where you want welcome messages to be sent.",
@@ -48,8 +49,6 @@ class Welcome extends Command {
       else return ctx.reply(`The welcome messages for this server is **enabled**. Messages will be sent in <#${guildSettings.welcome.channel}>.`)
     }
 
-    if(!ctx.member.permissions.has("MANAGE_GUILD"))
-      return ctx.reply(`Baka! You need the \`Manage Server\` permissions to change the welcome message. ${emojis.failure}`);
     if (option === "on") {
       const channel = options.getChannel("feed");
       if (!channel) return ctx.reply(`You did not provide a channel. ${emojis.failure}`);

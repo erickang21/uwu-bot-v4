@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
+const { get } = require("../../helpers/api.js");
 
 class Owoify extends Command {
   constructor(...args) {
@@ -19,9 +19,7 @@ class Owoify extends Command {
 
   async run(ctx, options) {
     const text = options.getString("text");
-    const { owo } = await request(
-      `https://nekos.life/api/v2/owoify?text=${text}`
-    ).then(({ body }) => body.json());
+    const { owo } = await get(`https://nekos.life/api/v2/owoify?text=${text}`);
     if (!owo) return ctx.reply("That didn't work. Try some other text!");
     if (owo.length > 1994) return ctx.reply("Your text is too long!");
     return ctx.reply(owo);

@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
+const { nekoAPI } = require("../../helpers/anime.js");
 
 class Cuddle extends Command {
   constructor(...args) {
@@ -18,9 +18,7 @@ class Cuddle extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const { url } = await request("https://nekos.life/api/v2/img/cuddle").then(
-      ({ body }) => body.json()
-    );
+    const url = await nekoAPI("cuddle");
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`Cuddle!`)

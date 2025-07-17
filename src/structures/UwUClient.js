@@ -14,6 +14,7 @@ const schema = require("../utils/schema.js");
 const topgg = require("@top-gg/sdk");
 const { request } = require('undici');
 const imgapi = require("img-api");
+const translate = require("../helpers/translate.js");
 
 class UwUClient extends Client {
   constructor() {
@@ -62,6 +63,7 @@ class UwUClient extends Client {
       users: new Settings(this, "users", schema.users, false),
       commands: new Settings(this, "commands", schema.commands)
     };
+    this.t = translate;
     this.userMessageCount = {};
     this.userCommandCount = {};
     this.commandStats = {};

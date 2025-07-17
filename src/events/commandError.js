@@ -1,6 +1,7 @@
 const Event = require("../structures/Event.js");
 const { EMOJIS } = require("../utils/constants.js");
 const emojis = require("../structures/Emojis");
+const { getMessageContent } = require("../helpers/helpers.js");
 
 class CommandError extends Event {
   async run(ctx, err) {
@@ -85,7 +86,7 @@ class CommandError extends Event {
       console.log("Attempting to send a error message, isn't dev")
       if (this.client.shard) {
         console.log("Attempting to send now")
-        return this.client.shard.broadcastEval(report, { context: { content: ctx.content, errorEmoji:  emojis.commandError, errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildId: ctx.guild.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
+        return this.client.shard.broadcastEval(report, { context: { content: getMessageContent(ctx), errorEmoji:  emojis.commandError, errorId, cmdName: ctx.command.name, userId: ctx.author.id, guildId: ctx.guild.id, guildName: ctx.guild.name, err: err.stack.toString() || err.toString() }});
       } else {
         console.log("Did not to send a error message")
         return report(this.client);
