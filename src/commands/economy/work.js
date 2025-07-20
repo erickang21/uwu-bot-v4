@@ -6,7 +6,8 @@ class Work extends Command {
   constructor(...args) {
     super(...args, {
       description: "In this economy?! Get a simple math question done and earn credits for it!",
-      cooldown: 900
+      cooldown: 900,
+      avoidTimeout: true,
     });
   }
 

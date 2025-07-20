@@ -17,10 +17,18 @@ class Profileicons extends Command {
         "{members} for current member count.",
         "{server} for server name."
       ].join("\n"),
+      options: [
+        {
+          name: "args",
+          description: "The arguments to pass to the command.",
+          type: "string",
+          required: false,
+        },
+      ],
     });
   }
   
-  async run(ctx) {
+  async run(ctx, options) {
     const iconKeys = {
       blobdancing: "<a:blobdancing:1136116026711490610>",
       catvibe: "<a:catvibe:1136116029370671225>",
@@ -42,7 +50,8 @@ class Profileicons extends Command {
       await this.client.userUpdate(ctx.author.id, userData);
     }
     const slotCount = Math.ceil((userData.level + 1) / 5);
-    let option = ctx.rawArgs.split(" ")[0];
+    const args = options.getString("args");
+    let option = args?.split(" ")?.[0];
     
     if (option) option = option.toLowerCase();
     else {
@@ -61,7 +70,7 @@ class Profileicons extends Command {
 
     
     if (option === "set" || option === "edit") {
-      const args = ctx.rawArgs.split(" ");
+      const args = args.split(" ");
       let index = parseInt(args[1]);
       if (isNaN(index)) {
         return ctx.reply(`Invalid index provided! For more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);
@@ -76,7 +85,7 @@ class Profileicons extends Command {
       await this.client.userUpdate(ctx.author.id, userData);
       ctx.reply(`You have successfully updated the icon in slot **${index}**. Check it out by running \`uwu profile\`!${emojis.success}`);
     } else if (option === "remove" || option === "delete") {
-      const args = ctx.rawArgs.split(" ");
+      const args = args.split(" ");
       let index = parseInt(args[1]);
       if (isNaN(index)) {
         return ctx.reply(`Invalid index provided! For more info on how to use this command, run \`uwu profileicon help\`. ${emojis.failure}`);

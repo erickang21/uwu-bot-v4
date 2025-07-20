@@ -66,7 +66,7 @@ class Settings {
       upsert: true,
       returnDocument: "after",
     });
-    console.log("RETURNED VALUE: ", value)
+
     this.cache.set(id, mergeDefault(this.defaults, value));
     return value;
   }

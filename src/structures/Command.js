@@ -27,7 +27,7 @@ class Command extends Base {
     this.delim = options.delim ?? " ";
     this.ephemeral = options.ephemeral ?? false;
     this.subcommands = options.subcommands ?? [];
-
+    this.avoidTimeout = options.avoidTimeout ?? false;
     this.botPermissions = new PermissionsBitField(
       options.botPermissions ?? []
     ).freeze();

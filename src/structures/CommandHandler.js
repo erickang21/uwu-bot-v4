@@ -39,15 +39,16 @@ class CommandHandler {
   }
 
   async handleMessage(message) {
+    console.time("handleMessage")
     if (!message.content || message.author.bot) return;
     if (message.channel.partial) await message.channel.fetch();
-
+    console.time("prefix")
     const { user } = this.client;
     const settings = this.client.getGuildSettings(message.guild?.id);
     const prefix = settings.prefix || "uwu ";
     const regex = new RegExp(`^<@!?${user.id}>|^${escapeRegex(prefix)}${!message.guild ? "|" : ""}`);
     const match = message.content.match(regex);
-
+    console.timeEnd("prefix")
     // Update message count
     //if (!this.client.userMessageCount[message.author.id]) this.client.userMessageCount[message.author.id] = 1;
     //else this.client.userMessageCount[message.author.id] += 1;
@@ -62,7 +63,7 @@ class CommandHandler {
     Lv 10: 450
     Lv 15: 675
     */
-    
+    console.time("leveling")
 
     // Remain in cache and only request DB upon every 25 messages.
     // Level up by 1 xp/message
@@ -101,9 +102,8 @@ class CommandHandler {
       }
       this.client.userMessageCount[message.author.id] = 0;
       await this.client.userUpdate(message.author.id, data);
-      
     }
-    
+    console.timeEnd("leveling")
 
 
     if (!match) return;
@@ -121,37 +121,55 @@ class CommandHandler {
     if (!rawContent) {
       return message.channel.send(`${emojis.ship4} Hey there, senpai~ Did you forget how to use me? Run \`\`${prefix}help\`\` to see all my commands, or browse the slash commands by typing \`\`/\`\``);
     }
-
+    console.time("getFlags")
     const { content, flags } = this.getFlags(rawContent);
+    console.timeEnd("getFlags")
+    console.time("split")
     const args = content.split(/ +/g);
     const alias = args.shift().toLowerCase();
     const command = this.client.commands.get(alias);
-
+    console.timeEnd("split")
+    console.time("ctx")
     const ctx = new CommandContext(command, {
       message, flags, content,
       prefixLength, alias, args
     });
-
+    console.timeEnd("ctx")
+    console.time("closestCommand")
     if (!command) return this.closestCommand(ctx, alias);
     if (!command.modes.includes('text')) return;
-
-    await ctx.channel.sendTyping();
-
+    console.timeEnd("closestCommand")
+    console.time("sendTyping")
+    //await ctx.channel.sendTyping();
+    console.timeEnd("sendTyping")
+    console.time("runChecks")
     if (!(await this.runChecks(ctx, command))) return;
+    console.timeEnd("runChecks")
+    console.time("checkServerSpecific")
     const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
       return message.channel.send(serverSpecificPermission.errorMessage);
     }
-
+    console.timeEnd("checkServerSpecific")
+    console.time("xp")
     await this.handleXP(ctx);
+    console.timeEnd("xp")
+    console.time("trackCmdStats")
     await this.trackCmdStats(ctx, command);
-    return command.execute(ctx);
+    console.timeEnd("trackCmdStats")
+    console.timeEnd("handleMessage")
+    console.time("execute")
+    const e = command.execute(ctx);
+    console.timeEnd("execute")
+    return e;
   }
 
   async handleInteraction(interaction) {
+    console.time("handleInteraction")
     if (!interaction.isChatInputCommand()) return;
+    console.time("getCommand")
     const command = this.client.commands.get(interaction.commandName);
-
+    console.timeEnd("getCommand")
     if (!command) {
       this.client.log.warn(`Command '${interaction.commandName}' not implemented.`);
       return interaction.reply({
@@ -161,15 +179,24 @@ class CommandHandler {
     }
 
     const ctx = new CommandContext(command, { interaction });
-    await ctx.interaction.deferReply();
+    console.time("deferReply")
+    if (command.avoidTimeout) await ctx.interaction.deferReply();
+    console.timeEnd("deferReply")
+    console.time("runChecks")
     if (!(await this.runChecks(ctx, command))) return;
+    if (!(await this.runChecksSlash(interaction))) return ctx.reply({ content: "uwu bot cannot send messages in this channel. Please enable the 'Send Messages' permission at the very least.", ephemeral: true });
     const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
       return interaction.editReply({ content: serverSpecificPermission.errorMessage });
     }
+    console.timeEnd("runChecks")
     //await this.handleXP(ctx);
     //await this.trackCmdStats(ctx, command);
-    return command.execute(ctx);
+    console.time("execute")
+    const e = command.execute(ctx);
+    console.timeEnd("execute")
+    console.timeEnd("handleInteraction")
+    return e;
   }
 
   async runChecks(ctx, command) {
@@ -199,6 +226,18 @@ class CommandHandler {
 
     if (!(await this.checkPermissions(ctx, command))) return false;
     if (!(await this.checkCooldown(ctx, command))) return false;
+
+    return true;
+  }
+
+  async runChecksSlash(interaction) {
+    if (!interaction.channel) return;
+
+    const permissions = interaction.channel.permissionsFor(interaction.client.user);
+
+    if (!permissions || !permissions.has('SendMessages')) {
+      return false;
+    }
 
     return true;
   }

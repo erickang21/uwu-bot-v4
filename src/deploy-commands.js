@@ -2,8 +2,8 @@ require("dotenv").config();
 
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord.js");
-const { TOKEN_DEV, TOKEN, DEV, CLIENT_ID } = process.env;
-
+const { TOKEN_DEV, TOKEN, DEV, CLIENT_ID, DEV_CLIENT_ID } = process.env;
+console.log("DEV? ", DEV);
 const rest = new REST({ version: "10" }).setToken(DEV ? TOKEN_DEV : TOKEN);
 
 const UwUClient = require("./structures/UwUClient");
@@ -26,7 +26,7 @@ async function main() {
     }
   }
 
-  await rest.put(Routes.applicationCommands(CLIENT_ID), { body });
+  await rest.put(Routes.applicationCommands(DEV ? DEV_CLIENT_ID : CLIENT_ID), { body });
   console.log(`Successfully registered ${body.length} application commands.`);
 }
 
