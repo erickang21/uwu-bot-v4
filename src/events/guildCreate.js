@@ -39,6 +39,14 @@ class GuildCreate extends Event {
     log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
     await this.client.setActivity();
 
+    // Save to analytics.
+    const currentServerCount = this.client.getGuildCount();
+    try {
+      await this.client.analyticsManager.serverJoined(guild.memberCount, currentServerCount);
+    } catch (error) {
+      log.error(`[GuildCreate] Error saving server count to analytics: ${error}`);
+    }
+
     // Permissions
     const VIEW_CHANNEL = BigInt(1 << 10);
     const SEND_MESSAGES = BigInt(1 << 11);

@@ -39,6 +39,14 @@ class GuildDelete extends Event {
 
     log.info(`[GuildCreate] uwu bot LEFT a server: ${guild.name}`);
     await this.client.setActivity();    
+
+    // Save to analytics.
+    const currentServerCount = this.client.getGuildCount();
+    try {
+      await this.client.analyticsManager.serverLeft(guild.memberCount, currentServerCount);
+    } catch (error) {
+      log.error(`[GuildDelete] Error saving server count to analytics: ${error}`);
+    }
   }
 }
 
