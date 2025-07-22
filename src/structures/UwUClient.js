@@ -37,7 +37,7 @@ class UwUClient extends Client {
     this.events = new EventStore(this);
     this.db = null;
     this.dbClient = null;
-    this.analytics = null;
+    this.analyticsManager = null;
     this.dbSchema = {
       guilds: {
         autorole: null,
@@ -162,7 +162,7 @@ class UwUClient extends Client {
 
     this.log.info("Connected to MongoDB");
     this.db = this.dbClient.db("test");
-    this.analytics = new AnalyticsManager(this.db);
+    this.analyticsManager = new AnalyticsManager(this.db);
     this.log.info("Analytics Manager initialized");
 
     for (const [name, settings] of Object.entries(this.settings)) {
