@@ -41,7 +41,7 @@ class GuildDelete extends Event {
     await this.client.setActivity();    
 
     // Save to analytics.
-    const currentServerCount = this.client.getGuildCount();
+    const currentServerCount = await this.client.getGuildCount();
     try {
       await this.client.analyticsManager.serverLeft(guild.memberCount, currentServerCount);
     } catch (error) {

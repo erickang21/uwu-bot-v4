@@ -40,7 +40,7 @@ class GuildCreate extends Event {
     await this.client.setActivity();
 
     // Save to analytics.
-    const currentServerCount = this.client.getGuildCount();
+    const currentServerCount = await this.client.getGuildCount();
     try {
       await this.client.analyticsManager.serverJoined(guild.memberCount, currentServerCount);
     } catch (error) {

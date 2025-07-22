@@ -131,8 +131,11 @@ class CommandHandler {
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
       return message.channel.send(serverSpecificPermission.errorMessage);
     }
+    // track analytics
+    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, false);
     await this.handleXP(ctx);
     await this.trackCmdStats(ctx, command);
+
     return await Promise.all([ctx.channel.sendTyping(), command.execute(ctx)]);
   }
 
@@ -155,6 +158,7 @@ class CommandHandler {
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
       return interaction.editReply({ content: serverSpecificPermission.errorMessage });
     }
+    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, true);
     // await this.handleXP(ctx);
     //await this.trackCmdStats(ctx, command);
     return command.execute(ctx);

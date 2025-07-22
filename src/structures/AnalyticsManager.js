@@ -21,7 +21,8 @@ class AnalyticsManager {
         this.collection = this.db.collection("analytics");
         this.serverCount = 0;
         this.commandUsage = {}; // key: command name, value: count
-        this.commandCount = 0;
+        this.slashCommandCount = 0;
+        this.textCommandCount = 0;
         this.commandErrors = {}; // key: error message, value: count
         // setInterval(() => this.saveCommandUses(), 60000); // Save command uses every minute
         this.usersToday = new Set();
@@ -159,14 +160,15 @@ class AnalyticsManager {
         await this.collection.bulkWrite([dbUpdate, dbSegmentUpdate]);
     }
 
-    async commandUsed(commandName, userId) {
+    async commandUsed(commandName, userId, slash) {
         this.commandUsage[commandName] = (this.commandUsage[commandName] || 0) + 1;
-        this.commandCount++;
+        if (slash) this.slashCommandCount++;
+        else this.textCommandCount++;
         this.usersToday.add(userId);
     }
 
     // gets run only once (not among all shards) - check uwuReady.js
-    async saveCommandUses(commandUsage, commandCount) {
+    async saveCommandUses(commandUsage, slashCount, textCount) {
         const bulkOps = [];
         const today = this.getTodayDateString();
         // DAY SPECIFIC
@@ -174,7 +176,7 @@ class AnalyticsManager {
         bulkOps.push({
             updateOne: {
                 filter: { _id: { type: "allCommandUsage", date: today } },
-                update: { $inc: { count: commandCount } },
+                update: { $inc: { slashCount, textCount } },
                 upsert: true,
             }
         });
@@ -182,7 +184,7 @@ class AnalyticsManager {
         bulkOps.push({
             updateOne: {
                 filter: { _id: { type: "commandUsageTotal" } },
-                update: { $inc: { count: commandCount } },
+                update: { $inc: { slashCount, textCount } },
                 upsert: true,
             }
         });
@@ -239,7 +241,8 @@ class AnalyticsManager {
 
     async resetCommandUsage() {
         this.commandUsage = {};
-        this.commandCount = 0;
+        this.slashCommandCount = 0;
+        this.textCommandCount = 0;
     }
 }
 

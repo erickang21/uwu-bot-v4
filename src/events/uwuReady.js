@@ -10,7 +10,7 @@ class ReadyEvent extends Event {
         // returns:
         // [{ usage: { ...}, count: 123}, { usage: {...}, count: 456}...]
         const allUsage = await this.client.shard.broadcastEval((client) => {
-          return { usage: client.analyticsManager.commandUsage, count: client.analyticsManager.commandCount };
+          return { usage: client.analyticsManager.commandUsage, slashCount: client.analyticsManager.slashCommandCount, textCount: client.analyticsManager.textCommandCount };
         });
     
         const mergedUsage = allUsage.reduce((acc, shardUsage) => {
@@ -21,11 +21,14 @@ class ReadyEvent extends Event {
         }, {});
         console.log("[ANALYTICS] Saving command usage...", mergedUsage);
 
-        const mergedCount = allUsage.reduce((acc, shardUsage) => {
-          return acc + shardUsage.count;
+        const mergedSlashCount = allUsage.reduce((acc, shardUsage) => {
+          return acc + shardUsage.slashCount;
+        }, 0);
+        const mergedTextCount = allUsage.reduce((acc, shardUsage) => {
+          return acc + shardUsage.textCount;
         }, 0);
     
-        await this.client.analyticsManager.saveCommandUses(mergedUsage, mergedCount);
+        await this.client.analyticsManager.saveCommandUses(mergedUsage, mergedSlashCount, mergedTextCount);
         // Once done, reset command usage on all shards.
         await this.client.shard.broadcastEval((client) => {
           client.analyticsManager.resetCommandUsage();
