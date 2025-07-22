@@ -7,20 +7,22 @@ class ReadyEvent extends Event {
     // Periodically merge and save command analytics.
     if (this.client.shard?.ids[0] === 0) {
       setInterval(async () => {
+        // returns:
+        // [{ usage: { ...}, count: 123}, { usage: {...}, count: 456}...]
         const allUsage = await this.client.shard.broadcastEval((client) => {
-          return client.analyticsManager.commandUsage;
+          return { usage: client.analyticsManager.commandUsage, count: client.analyticsManager.commandCount };
         });
     
         const mergedUsage = allUsage.reduce((acc, shardUsage) => {
-          for (const [cmd, count] of Object.entries(shardUsage)) {
+          for (const [cmd, count] of Object.entries(shardUsage.usage)) {
             acc[cmd] = (acc[cmd] ?? 0) + count;
           }
           return acc;
         }, {});
         console.log("[ANALYTICS] Saving command usage...", mergedUsage);
 
-        const mergedCount = allUsage.reduce((acc, shardCount) => {
-          return acc + shardCount;
+        const mergedCount = allUsage.reduce((acc, shardUsage) => {
+          return acc + shardUsage.count;
         }, 0);
     
         await this.client.analyticsManager.saveCommandUses(mergedUsage, mergedCount);
