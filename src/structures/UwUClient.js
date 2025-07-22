@@ -15,6 +15,7 @@ const topgg = require("@top-gg/sdk");
 const { request } = require('undici');
 const imgapi = require("img-api");
 const translate = require("../helpers/translate.js");
+const AnalyticsManager = require("./AnalyticsManager.js");
 
 class UwUClient extends Client {
   constructor() {
