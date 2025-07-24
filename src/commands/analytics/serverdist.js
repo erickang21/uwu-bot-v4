@@ -1,4 +1,5 @@
 const Command = require("../../structures/Command.js");
+const Emojis = require("../../structures/Emojis.js");
 
 class Serverdist extends Command {
   constructor(...args) {
@@ -32,11 +33,11 @@ class Serverdist extends Command {
     const memberSizeMap = new Map();
     memberSizeCounts.forEach((data) => {
       const key = this.client.analyticsManager.getInterval(data.memberCount);
-      if (memberSizeMap.has(key) && memberSizeMap.get(key).length < 10) {
-        memberSizeMap.get(key).push(data);
-      } else {
-        memberSizeMap.set(key, [data]);
+      if (!memberSizeMap.has(key)) {
+        memberSizeMap.set(key, []);
       }
+      const arr = memberSizeMap.get(key);
+      if (arr.length < 10) arr.push(data);
     });
     const embed = this.client.embed()
       .setTitle("Server Distribution")
@@ -60,7 +61,7 @@ class Serverdist extends Command {
       embed.addFields({ 
         name: key, 
         value: serversInBucket ? 
-        "```" + serversInBucket.map(data => `${padRight(truncate(data.name, MAX_ROW_LEN), longestName)} | ${data.memberCount.toLocaleString()}${showId ? `\n(ID: ${data.id})` : ""}`).join("\n") + "```" 
+        serversInBucket.map((data, index) => `**#${index + 1}: ${padRight(truncate(data.name, MAX_ROW_LEN), longestName)}**\n${Emojis.blueRightArrow} ${data.memberCount.toLocaleString()}${showId ? `\n(ID: ${data.id})` : ""}`).join("\n") 
         : "No servers.", 
         inline: true 
       });
