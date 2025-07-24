@@ -270,7 +270,6 @@ class AnalyticsManager {
             },
         });
         await this.collection.bulkWrite(bulkOps);
-        console.log("[ANALYTICS] Saved users today", this.usersToday);
         this.usersToday.clear();
     }
 
