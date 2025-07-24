@@ -16,9 +16,9 @@ class AnalyticsManager {
      * Command count is stored like this:
      * { _id: { type: "totalCommandCount", date: "YYYY-MM-DD"}} -> { count: 1 }
      */
-    constructor(db, broadcastEval) {
+    constructor(db, shard) {
         this.db = db;
-        this.broadcastEval = broadcastEval;
+        this.shard = shard;
         this.collection = this.db.collection("analytics");
         this.serverCount = 0;
         this.commandUsage = {}; // key: command name, value: count
@@ -99,7 +99,7 @@ class AnalyticsManager {
           decrease: increase ? 0 : 1,
         });
         // Record server count segmented by size
-        const memberSizes = await this.broadcastEval(() => {
+        const memberSizes = await this.shard.broadcastEval(() => {
             return this.guilds.cache.map(guild => guild.memberCount);
         })
         const memberSizeCounts = memberSizes.flat();
