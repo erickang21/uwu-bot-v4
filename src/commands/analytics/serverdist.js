@@ -61,7 +61,7 @@ class Serverdist extends Command {
       embed.addFields({ 
         name: key, 
         value: serversInBucket ? 
-        serversInBucket.map((data, index) => `**#${index + 1}: ${padRight(truncate(data.name, MAX_ROW_LEN), longestName)}**\n${Emojis.blueRightArrow} ${data.memberCount.toLocaleString()}${showId ? `\n(ID: ${data.id})` : ""}`).join("\n") 
+        serversInBucket.map((data, index) => `**#${index + 1}: ${padRight(truncate(data.name, MAX_ROW_LEN), longestName)}**\n❯ ${data.memberCount.toLocaleString()}${showId ? `\n(ID: ${data.id})` : ""}`).join("\n") 
         : "No servers.", 
         inline: true 
       });
