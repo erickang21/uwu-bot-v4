@@ -109,6 +109,7 @@ class AnalyticsManager {
             memberSizeMap.set(key, (memberSizeMap.get(key) || 0) + 1);
         });
         memberSizeMap.forEach(async (totalServers, key) => {
+            console.log(`Member Size Map: ${key}: ${totalServers}`);
             await this.collection.insertOne({
                 _id: { type: "serverCount", date: today, range: key },
                 count: totalServers,
