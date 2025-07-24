@@ -19,7 +19,6 @@ class ReadyEvent extends Event {
           }
           return acc;
         }, {});
-        console.log("[ANALYTICS] Saving command usage...", mergedUsage);
 
         const mergedSlashCount = allUsage.reduce((acc, shardUsage) => {
           return acc + shardUsage.slashCount;
