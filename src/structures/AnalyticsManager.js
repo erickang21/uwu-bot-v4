@@ -16,8 +16,9 @@ class AnalyticsManager {
      * Command count is stored like this:
      * { _id: { type: "totalCommandCount", date: "YYYY-MM-DD"}} -> { count: 1 }
      */
-    constructor(db) {
+    constructor(db, broadcastEval) {
         this.db = db;
+        this.broadcastEval = broadcastEval;
         this.collection = this.db.collection("analytics");
         this.serverCount = 0;
         this.commandUsage = {}; // key: command name, value: count
@@ -63,7 +64,21 @@ class AnalyticsManager {
         return format(new Date(), 'yyyy-MM-dd');
     }
 
-    async initialDailyServerUpdate(totalServers, increase) {
+    async getServerCount(dateString) {
+        const result = await this.collection.findOne({
+            _id: { type: "totalServerCount", date: dateString },
+        });
+        if (!result) {
+            return null;
+        }
+        return {
+            count: result.count,
+            increase: result.increase,
+            decrease: result.decrease,
+        };
+    }
+
+    async initialDailyServerUpdate(totalServers, serverSize, increase) {
         const today = this.getTodayDateString();
 
         const existing = await this.collection.findOne({
@@ -75,6 +90,7 @@ class AnalyticsManager {
             console.log(`[Analytics] Daily snapshot already exists for ${today}`);
             return true;
         }
+        // Record total server count
         await this.collection.insertOne({ 
           _id: { type: 'totalServerCount', date: today },
           count: totalServers,
@@ -82,13 +98,32 @@ class AnalyticsManager {
           increase: increase ? 1 : 0,
           decrease: increase ? 0 : 1,
         });
+        // Record server count segmented by size
+        const memberSizes = await this.broadcastEval(() => {
+            return this.guilds.cache.map(guild => guild.memberCount);
+        })
+        const memberSizeCounts = memberSizes.flat();
+        const memberSizeMap = new Map();
+        memberSizeCounts.forEach((size) => {
+            const key = this.getInterval(size);
+            memberSizeMap.set(key, (memberSizeMap.get(key) || 0) + 1);
+        });
+        memberSizeMap.forEach(async (totalServers, key) => {
+            await this.collection.insertOne({
+                _id: { type: "serverCount", date: today, range: key },
+                count: totalServers,
+                increase: increase && key === this.getInterval(serverSize) ? 1 : 0,
+                decrease: !increase && key === this.getInterval(serverSize) ? 1 : 0,
+                lastUpdated: new Date(),
+            });
+        })
         console.log(`[Analytics] Daily snapshot recorded for ${today} (${totalServers} servers)`);
         return false;
     }
 
     async serverJoined(serverSize, totalServers) {
         const today = this.getTodayDateString();
-        if (!(await this.initialDailyServerUpdate(totalServers, true))) {
+        if (!(await this.initialDailyServerUpdate(totalServers, serverSize,true))) {
             // Then server count was inserted, no need to update.
             return;
         }

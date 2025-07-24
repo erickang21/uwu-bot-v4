@@ -162,7 +162,7 @@ class UwUClient extends Client {
 
     this.log.info("Connected to MongoDB");
     this.db = this.dbClient.db("test");
-    this.analyticsManager = new AnalyticsManager(this.db);
+    this.analyticsManager = new AnalyticsManager(this.db, this.shard.broadcastEval);
     this.log.info("Analytics Manager initialized");
 
     for (const [name, settings] of Object.entries(this.settings)) {

@@ -48,5 +48,8 @@ module.exports = {
   blueRightArrow: "<:blueRightArrow:1366078277365534860>",
   staticCheckmark: "<:check:1366118667992961044>",
   banned: "<:Banned:1366120438668984422>",
-  leavearrow: "<:LeaveSymbol:1366125344586989640>"
+  leavearrow: "<:LeaveSymbol:1366125344586989640>",
+  star: "<:star:1397037593828262059>",
+  up: "<:UP:1397039049490956290>",
+  down: "<:DOWN:1397039069933863124>",
 };
