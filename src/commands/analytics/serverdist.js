@@ -37,7 +37,7 @@ class Serverdist extends Command {
         memberSizeMap.set(key, []);
       }
       const arr = memberSizeMap.get(key);
-      if (arr.length < 10) arr.push(data);
+      arr.push(data);
     });
     const embed = this.client.embed()
       .setTitle("Server Distribution")
@@ -52,17 +52,18 @@ class Serverdist extends Command {
     });
     const padRight = (str, len) => str + ' '.repeat(Math.max(0, len - str.length));
     sortedBuckets.forEach(async ([key, serversInBucket]) => {
-      serversInBucket.sort((a, b) => b.memberCount - a.memberCount);
+      const topTen = serversInBucket?.slice(0, 10) || [];
+      topTen.sort((a, b) => b.memberCount - a.memberCount);
       const MAX_ROW_LEN = 28;
-      const longestName = Math.min(MAX_ROW_LEN, serversInBucket.reduce((max, data) => Math.max(max, data.name.length), 0));
+      const longestName = Math.min(MAX_ROW_LEN, topTen.reduce((max, data) => Math.max(max, data.name.length), 0));
       const truncate = (str, max) => {
         return str.length > max ? str.slice(0, max - 3) + "..." : str;
       };
+      let description = `**Servers in Category:** ${serversInBucket.length}\n\n`;
+      description += topTen.map((data, index) => `**#${index + 1}: ${padRight(truncate(data.name, MAX_ROW_LEN), longestName)}**\n❯ ${data.memberCount.toLocaleString()}${showId ? `\n(ID: ${data.id})` : ""}`).join("\n");
       embed.addFields({ 
         name: key, 
-        value: serversInBucket ? 
-        serversInBucket.map((data, index) => `**#${index + 1}: ${padRight(truncate(data.name, MAX_ROW_LEN), longestName)}**\n❯ ${data.memberCount.toLocaleString()}${showId ? `\n(ID: ${data.id})` : ""}`).join("\n") 
-        : "No servers.", 
+        value: topTen?.length ? description : "No servers.",
         inline: true 
       });
     });
