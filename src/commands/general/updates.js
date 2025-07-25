@@ -38,8 +38,10 @@ __**Performance buff.**__
 Both regular and slash comamnds became way faster! We improved performance across the board.
 
 __**Improved error reporting.**__
-We sometimes couldn't help in the support channel  because some error information was missing. Now we've fixed that, and will be able to read all errors!`
-      );
+We sometimes couldn't help in the support channel because some error information was missing. Now we've fixed that, and will be able to read all errors!
+
+We're implementing lots of analytics to help understand you better! But as usual, the best way is to submit suggestions in the support server.
+`);
     return ctx.reply({ embeds: [embed] });
   }
 }
