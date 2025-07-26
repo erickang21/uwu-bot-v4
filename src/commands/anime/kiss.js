@@ -18,7 +18,7 @@ class Kiss extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const url = await nekoAPI("kiss");
+    const url = await waifuAPI("kiss");
     const embed = this.client.embed(ctx.author).setTitle(`Kiss!`).setImage(url);
     if (user.id !== ctx.author.id)
       embed.setDescription(

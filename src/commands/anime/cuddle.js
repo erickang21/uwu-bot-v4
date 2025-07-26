@@ -18,7 +18,7 @@ class Cuddle extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const url = await nekoAPI("cuddle");
+    const url = await waifuAPI("cuddle");
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`Cuddle!`)

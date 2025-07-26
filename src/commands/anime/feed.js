@@ -18,7 +18,7 @@ class Feed extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const url = await nekoAPI("feed");
+    const url = await waifuAPI("nom");
     const embed = this.client.embed(ctx.author).setTitle(`Feed!`).setImage(url);
     if (user.id !== ctx.author.id)
       embed.setDescription(

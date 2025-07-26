@@ -18,7 +18,7 @@ class Pat extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const url = await nekoAPI("pat");
+    const url = await waifuAPI("pat");
     const embed = this.client.embed(ctx.author).setTitle(`Pat!`).setImage(url);
     if (user.id !== ctx.author.id)
       embed.setDescription(

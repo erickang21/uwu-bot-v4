@@ -18,7 +18,7 @@ class Slap extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const url = await nekoAPI("slap");
+    const url = await waifuAPI("slap");
     const embed = this.client.embed(ctx.author).setTitle(`Slap!`).setImage(url);
     if (user.id !== ctx.author.id)
       embed.setDescription(

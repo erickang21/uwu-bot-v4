@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { nekoAPI } = require("../../helpers/anime.js");
+const { otakuAPI } = require("../../helpers/anime.js");
 
 class Tickle extends Command {
   constructor(...args) {
@@ -18,7 +18,7 @@ class Tickle extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const url = await nekoAPI("tickle");
+    const url = await otakuAPI("tickle");
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`Tickle!`)

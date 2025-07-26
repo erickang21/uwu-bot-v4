@@ -52,6 +52,7 @@ class Serverdist extends Command {
     });
     const padRight = (str, len) => str + ' '.repeat(Math.max(0, len - str.length));
     sortedBuckets.forEach(async ([key, serversInBucket]) => {
+      serversInBucket.sort((a, b) => b.memberCount - a.memberCount);
       const topTen = serversInBucket?.slice(0, 10) || [];
       topTen.sort((a, b) => b.memberCount - a.memberCount);
       const MAX_ROW_LEN = 28;

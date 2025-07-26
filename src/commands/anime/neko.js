@@ -10,7 +10,7 @@ class Neko extends Command {
   }
 
   async run(ctx) {
-    const url = await nekoAPI("neko");
+    const url = await waifuAPI("neko");
     const embed = this.client.embed(ctx.author).setTitle(`Neko`).setImage(url);
     return ctx.reply({ embeds: [embed] });
   }
