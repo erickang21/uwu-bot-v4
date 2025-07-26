@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { nekoAPI } = require("../../helpers/anime.js");
+const { waifuAPI } = require("../../helpers/anime.js");
 
 class Kiss extends Command {
   constructor(...args) {
