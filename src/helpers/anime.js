@@ -30,5 +30,6 @@ async function otakuAPI(endpoint) {
 
 module.exports = {
     waifuAPI,
-    nekoAPI
+    nekoAPI,
+    otakuAPI,
 }
