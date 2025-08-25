@@ -6,6 +6,7 @@ class Rizz extends Command {
     super(...args, {
       description: "if you dare? send someone a nice pickup line",
       usage: "rizz [user]",
+      avoidTimeout: true,
       options: [
         {
           name: "user",
