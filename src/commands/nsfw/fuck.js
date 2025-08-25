@@ -1,6 +1,6 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
-const emojis = require("../../structures/Emojis");
+const { gelbooruAPI } = require("../../helpers/anime");
+const utils = require("../../utils/utils.js");
 
 class Fuck extends Command {
   constructor(...args) {
@@ -20,18 +20,12 @@ class Fuck extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    let data;
-    try {
-      data = await request(
-        "https://api.waifu.im/search/?included_tags=ero&gif=true"
-      ).then(({ body }) => body.json());
-    } catch (e) {
-      return ctx.reply(`An error occurred with the image service. ${emojis.failure}`);
-    }
+    const result = await gelbooruAPI(["sex"]);
+    const urls = result.map((entry) => entry.file_url)
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Fuck :eggplant:")
-      .setImage(data["images"][0]["url"]);
+      .setImage(utils.random(urls));
     if (user.id !== ctx.author.id)
       embed.setTitle(
         `**${ctx.author.username}** is fucking **${user.username}**! :eggplant:`
