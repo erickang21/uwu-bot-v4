@@ -2,6 +2,7 @@ const Command = require("../../structures/Command.js");
 const { request } = require("undici");
 const utils = require("../../utils/utils.js");
 const emojis = require("../../structures/Emojis");
+const { gelbooruAPI } = require("../../helpers/anime");
 
 class Hentai extends Command {
   constructor(...args) {
@@ -36,17 +37,9 @@ class Hentai extends Command {
         .setImage(data["images"][0]["url"]);
       return ctx.reply({ embeds: [embed] });
     } else {
-      const tagListString = tags.toLowerCase().split(",").join("%20");
-      let data;
-      try {
-        data = await request(
-          `https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&tags=${tagListString}%20-loli%20rating:explicit`
-        ).then(({ body }) => body.json());
-      } catch (e) {
-        return ctx.reply(`An error occurred with the image service. ${emojis.failure}`);
-      }
-      if (!data.post?.length) return ctx.reply(`No results were found. ${emojis.failure}`);
-      const urls = data.post.map((entry) => entry.file_url)
+      const result = await gelbooruAPI(tags.toLowerCase().split(","));
+      if (!result.length) return ctx.reply(`No results were found. ${emojis.failure}`);
+      const urls = result.map((entry) => entry.file_url)
       const embed = this.client
         .embed(ctx.author)
         .setDescription(`**Tags:** ${tags.toLowerCase()}`)
