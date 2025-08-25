@@ -22,8 +22,8 @@ class Hentai extends Command {
 
   async run(ctx, options) {
     const tags = options.getString("tags");
-    const result = await gelbooruAPI(tags?.length ? tags.toLowerCase().split(",") : ["hentai"]);
-    if (!result.length) return ctx.reply(`No results were found. ${emojis.failure}`);
+    const result = await gelbooruAPI(tags?.length ? tags.toLowerCase().split(",").map((tag) => tag.replaceAll(" ", "_")) : []);
+    if (!result?.length) return ctx.reply(`No results with these tags were found. ${emojis.failure}`);
     const urls = result.map((entry) => entry.file_url)
     const embed = this.client
       .embed(ctx.author)

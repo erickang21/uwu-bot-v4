@@ -34,7 +34,7 @@ async function gelbooruAPI(tags) {
     const allTags = [...bannedTags.map(tag => `-${tag}`), ...defaultTags, ...tags];
     const tagString = allTags.join("%20");
     const res = await get(`https://gelbooru.com/index.php?page=dapi&api_key=${process.env.GELBOORU_API}&user_id=${process.env.GELBOORU_USER_ID}&s=post&q=index&json=1&tags=${tagString}`);
-    if (!res.post) {
+    if (!res?.['@attributes']) {
         console.log("Gelbooru API Error: ",res);
         throw translate("error.api");
     }
