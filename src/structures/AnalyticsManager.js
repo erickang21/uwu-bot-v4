@@ -142,7 +142,7 @@ class AnalyticsManager {
           increase: increase ? 1 : 0,
           decrease: increase ? 0 : 1,
         });
-        console.log(`[Analytics] Daily snapshot recorded for ${today} (${totalUserCount} users)`);
+        console.log(`[Analytics] Daily user snapshot recorded for ${today} (${totalUserCount} users)`);
         return false;
     }
 
