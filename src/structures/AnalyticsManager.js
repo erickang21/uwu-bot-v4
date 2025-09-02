@@ -137,7 +137,7 @@ class AnalyticsManager {
         // Record total server count
         await this.collection.insertOne({ 
           _id: { type: 'totalUserCount', date: today },
-          count: totalMemberCount,
+          count: totalUserCount,
           lastUpdated: new Date(),
           increase: increase ? 1 : 0,
           decrease: increase ? 0 : 1,
