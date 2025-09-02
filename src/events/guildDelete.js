@@ -42,8 +42,13 @@ class GuildDelete extends Event {
 
     // Save to analytics.
     const currentServerCount = await this.client.getGuildCount();
+    const users = await this.client.shard.broadcastEval((c) =>
+      c.guilds.cache.reduce((sum, guild) => sum + guild.memberCount, 0)
+    );
+    const totalUsers = users.reduce((a, b) => a + b, 0);
     try {
       await this.client.analyticsManager.serverLeft(guild.memberCount, currentServerCount);
+      await this.client.analyticsManager.serverLeftUpdateUsers(guild.memberCount, totalUsers);
     } catch (error) {
       log.error(`[GuildDelete] Error saving server count to analytics: ${error}`);
     }

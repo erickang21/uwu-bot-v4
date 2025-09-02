@@ -122,6 +122,30 @@ class AnalyticsManager {
         return false;
     }
 
+    async initialDailyUserCountUpdate(totalUserCount, increase) {
+        const today = this.getTodayDateString();
+
+        const existing = await this.collection.findOne({
+            "_id.type": "totalUserCount",
+            "_id.date": today,
+        });
+
+        if (existing) {
+            console.log(`[Analytics] Daily user count snapshot already exists for ${today}`);
+            return true;
+        }
+        // Record total server count
+        await this.collection.insertOne({ 
+          _id: { type: 'totalUserCount', date: today },
+          count: totalMemberCount,
+          lastUpdated: new Date(),
+          increase: increase ? 1 : 0,
+          decrease: increase ? 0 : 1,
+        });
+        console.log(`[Analytics] Daily snapshot recorded for ${today} (${totalUserCount} users)`);
+        return false;
+    }
+
     async serverJoined(serverSize, totalServers) {
         const today = this.getTodayDateString();
         if (!(await this.initialDailyServerUpdate(totalServers, serverSize,true))) {
@@ -159,6 +183,29 @@ class AnalyticsManager {
         await this.collection.bulkWrite([dbUpdate, dbSegmentUpdate]);
     }
 
+    async serverJoinedUpdateUsers(userCount, totalUsers) {
+        const today = this.getTodayDateString();
+        if (!(await this.initialDailyUserCountUpdate(totalUsers, true))) {
+            // Then server count was inserted, no need to update.
+            return;
+        }
+        // Update total server count
+        const dbUpdate = {
+            updateOne: {
+                filter: { _id: { type: "totalUserCount", date: today } },
+                update: { 
+                    $inc: { 
+                        count: userCount,
+                        increase: userCount,
+                    },
+                    $set: { lastUpdated: new Date() } 
+                },
+                upsert: true
+            }
+        };
+        await this.collection.bulkWrite([dbUpdate]);
+    }
+
     async serverLeft(serverSize, totalServers) {
         const today = this.getTodayDateString();
         if (!(await this.initialDailyServerUpdate(totalServers, false))) {
@@ -194,6 +241,29 @@ class AnalyticsManager {
             }
         }
         await this.collection.bulkWrite([dbUpdate, dbSegmentUpdate]);
+    }
+
+    async serverLeftUpdateUsers(userCount, totalUsers) {
+        const today = this.getTodayDateString();
+        if (!(await this.initialDailyUserCountUpdate(totalUsers, false))) {
+            // Then server count was inserted, no need to update.
+            return;
+        }
+        // Update total server count
+        const dbUpdate = {
+            updateOne: {
+                filter: { _id: { type: "totalUserCount", date: today } },
+                update: { 
+                    $inc: { 
+                        count: -userCount,
+                        decrease: userCount,
+                    },
+                    $set: { lastUpdated: new Date() } 
+                },
+                upsert: true
+            }
+        };
+        await this.collection.bulkWrite([dbUpdate]);
     }
 
     async commandUsed(commandName, userId, slash) {
