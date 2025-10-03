@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { Emojis } = require("../../structures/Emojis.js");
+const { wave } = require("../../structures/Emojis.js");
 
 class Bot extends Command {
   constructor(...args) {
@@ -11,7 +11,7 @@ class Bot extends Command {
   }
 
   async run(ctx) {
-    return ctx.reply(`Hey, that's me! ${Emojis.wave}\n\nTo check out my commands, use \`${ctx.prefix}help\`. To invite me, use \`${ctx.prefix}invite\`.`);
+    return ctx.reply(`Hey, that's me! ${wave}\n\nTo check out my commands, use \`${ctx.prefix}help\`. To invite me, use \`${ctx.prefix}invite\`.`);
   }
 }
 
