@@ -1,7 +1,7 @@
 const fs = require("fs/promises");
 const path = require("path");
 
-const BASE_DIR = "/home/erickang21/uwu-bot-images/images";
+const BASE_DIR = "/home/ubuntu/uwu-bot-images/images";
 
 class ImageService {
     constructor() {
