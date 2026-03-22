@@ -1,6 +1,6 @@
 const Command = require("../../structures/Command.js");
-const { gelbooruAPI } = require("../../helpers/anime");
-const utils = require("../../utils/utils.js");
+const imageService = require("../../helpers/images.js");
+const { AttachmentBuilder } = require("discord.js");
 
 class Fuck extends Command {
   constructor(...args) {
@@ -20,17 +20,18 @@ class Fuck extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const result = await gelbooruAPI(["sex"]);
-    const urls = result.map((entry) => entry.file_url)
+    const result = imageService.getRandomImage("fuck");
+    if (!result) return ctx.reply("No images available. Please try again later.");
+    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Fuck :eggplant:")
-      .setImage(utils.random(urls));
+      .setImage("attachment://image.jpg");
     if (user.id !== ctx.author.id)
       embed.setTitle(
         `**${ctx.author.username}** is fucking **${user.username}**! :eggplant:`
       );
-    return ctx.reply({ embeds: [embed] });
+    return ctx.reply({ embeds: [embed], files: [attachment] });
   }
 }
 

@@ -3,6 +3,8 @@ const { request } = require("undici");
 const utils = require("../../utils/utils.js");
 const emojis = require("../../structures/Emojis");
 const { gelbooruAPI } = require("../../helpers/anime");
+const imageService = require("../../helpers/images.js");
+const { AttachmentBuilder } = require("discord.js");
 
 class Hentai extends Command {
   constructor(...args) {
@@ -22,16 +24,16 @@ class Hentai extends Command {
 
   async run(ctx, options) {
     const tags = options.getString("tags");
-    const result = await gelbooruAPI(tags?.length ? tags.toLowerCase().split(",").map((tag) => tag.replaceAll(" ", "_")) : []);
-    if (!result?.length) return ctx.reply(`No results with these tags were found. ${emojis.failure}`);
-    const urls = result.map((entry) => entry.file_url)
-    console.log(urls);
+    // TODO: Fix tags
+    const result = imageService.getRandomImage("hentai");
+    if (!result) return ctx.reply("No images available. Please try again later.");
+    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Hentai :eggplant:")
-      .setImage(utils.random(urls));
+      .setImage("attachment://image.jpg");
     if (tags?.length) embed.setDescription(`**Tags:** ${tags.toLowerCase()}`);
-    return ctx.reply({ embeds: [embed] });
+    return ctx.reply({ embeds: [embed], files: [attachment] });
   }
 }
 

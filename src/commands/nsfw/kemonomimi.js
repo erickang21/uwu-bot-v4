@@ -1,6 +1,6 @@
 const Command = require("../../structures/Command.js");
-const utils = require("../../utils/utils.js");
-const { gelbooruAPI } = require("../../helpers/anime");
+const imageService = require("../../helpers/images.js");
+const { AttachmentBuilder } = require("discord.js");
 
 class Kemonomimi extends Command {
   constructor(...args) {
@@ -12,13 +12,14 @@ class Kemonomimi extends Command {
   }
 
   async run(ctx) {
-    const result = await gelbooruAPI(["solo", "kemonomimi"]);
-    const urls = result.map((entry) => entry.file_url)
+    const result = imageService.getRandomImage("kemonomimi");
+    if (!result) return ctx.reply("No images available. Please try again later.");
+    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Kemonomimi :eggplant:")
-      .setImage(utils.random(urls));
-    return ctx.reply({ embeds: [embed] });
+      .setImage("attachment://image.jpg");
+    return ctx.reply({ embeds: [embed], files: [attachment] });
   }
 }
 

@@ -1,6 +1,6 @@
 const Command = require("../../structures/Command.js");
-const utils = require("../../utils/utils.js");
-const { gelbooruAPI } = require("../../helpers/anime");
+const imageService = require("../../helpers/images.js");
+const { AttachmentBuilder } = require("discord.js");
 
 class Yaoi extends Command {
   constructor(...args) {
@@ -12,13 +12,14 @@ class Yaoi extends Command {
   }
 
   async run(ctx) {
-    const result = await gelbooruAPI(["yaoi", "2boys"]);
-    const urls = result.map((entry) => entry.file_url)
+    const result = imageService.getRandomImage("yaoi");
+    if (!result) return ctx.reply("No images available. Please try again later.");
+    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Yaoi :eggplant:")
-      .setImage(utils.random(urls));
-    return ctx.reply({ embeds: [embed] });
+      .setImage("attachment://image.jpg");
+    return ctx.reply({ embeds: [embed], files: [attachment] });
   }
 }
 
