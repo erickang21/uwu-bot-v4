@@ -1,6 +1,6 @@
 const Command = require("../../structures/Command.js");
-  const { gelbooruAPI } = require("../../helpers/anime");
-  const utils = require("../../utils/utils.js");
+const imageService = require("../../helpers/images.js");
+const { AttachmentBuilder } = require("discord.js");
 
 class Cum extends Command {
   constructor(...args) {
