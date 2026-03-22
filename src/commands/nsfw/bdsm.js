@@ -13,11 +13,11 @@ class BDSM extends Command {
 
   async run(ctx) {
     const result = await gelbooruAPI(["bdsm", "bondage"]);
-    const urls = result.map((entry) => entry.file_url)
+    console.log(result);
     const embed = this.client
       .embed(ctx.author)
       .setTitle("BDSM :eggplant:")
-      .setImage(utils.random(urls));
+      .setImage(result);
     return ctx.reply({ embeds: [embed] });
   }
 }

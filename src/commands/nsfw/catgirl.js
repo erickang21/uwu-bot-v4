@@ -13,11 +13,10 @@ class Catgirl extends Command {
 
   async run(ctx) {
     const result = await gelbooruAPI(["solo", "catgirl", "cat_girl", "cat_ears"]);
-    const urls = result.map((entry) => entry.file_url)
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Catgirl :eggplant:")
-      .setImage(utils.random(urls));
+      .setImage(result);
     return ctx.reply({ embeds: [embed] });
   }
 }

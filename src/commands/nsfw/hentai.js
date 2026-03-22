@@ -25,6 +25,7 @@ class Hentai extends Command {
     const result = await gelbooruAPI(tags?.length ? tags.toLowerCase().split(",").map((tag) => tag.replaceAll(" ", "_")) : []);
     if (!result?.length) return ctx.reply(`No results with these tags were found. ${emojis.failure}`);
     const urls = result.map((entry) => entry.file_url)
+    console.log(urls);
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Hentai :eggplant:")

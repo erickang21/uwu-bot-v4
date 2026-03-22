@@ -1,5 +1,6 @@
 const { get } = require("./api");
 const translate = require("./translate");
+const utils = require("../utils/utils.js");
 
 async function waifuAPI(endpoint) {
     const res = await get(`https://api.waifu.pics/sfw/${endpoint}`);
@@ -38,12 +39,13 @@ async function gelbooruAPI(tags) {
         console.log("Gelbooru API Error: ",res);
         throw translate("error.api");
     }
-    return res.post;
+    const urls = res.post.map((entry) => entry.sample_url.replace("/samples", "//samples"))
+    return utils.random(urls);
 }
 
-module.exports = {
-    waifuAPI,
-    nekoAPI,
-    otakuAPI,
-    gelbooruAPI,
+async function getRandomImage(folder) {
+    c
 }
+
+
+module.exports = { waifuAPI, nekoAPI, otakuAPI, gelbooruAPI };

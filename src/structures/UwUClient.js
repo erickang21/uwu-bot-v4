@@ -16,6 +16,7 @@ const { request } = require('undici');
 const imgapi = require("img-api");
 const translate = require("../helpers/translate.js");
 const AnalyticsManager = require("./AnalyticsManager.js");
+const imageService = require("../helpers/images.js");
 
 class UwUClient extends Client {
   constructor() {
@@ -174,6 +175,7 @@ class UwUClient extends Client {
   async login() {
     await this.load();
     await this.connectDatabase();
+    await imageService.loadImages();
 
     const { TOKEN, TOKEN_DEV } = process.env;
     return super.login(this.dev ? TOKEN_DEV : TOKEN);

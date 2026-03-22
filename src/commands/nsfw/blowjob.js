@@ -21,12 +21,11 @@ class Blowjob extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const result = await gelbooruAPI(["blowjob", "oral"]);
-    const urls = result.map((entry) => entry.file_url)
+    const url = await gelbooruAPI(["blowjob", "oral"]);
     const embed = this.client
       .embed(ctx.author)
       .setTitle("Blowjob :eggplant:")
-      .setImage(utils.random(urls));
+      .setImage(url);
     if (user.id !== ctx.author.id)
       embed.setTitle(
         `**${ctx.author.username}** is giving **${user.username}** a BJ! :eggplant:`

@@ -11,7 +11,7 @@ class Bot extends Command {
   }
 
   async run(ctx) {
-    return ctx.reply(`Hey, that's me! ${wave}\n\nTo check out my commands, use \`${ctx.prefix}help\`. To invite me, use \`${ctx.prefix}invite\`.`);
+    return ctx.reply(`Hey, that's me! ${wave}\n\nTo check out my commands, use \`uwu help\`. To invite me, use uwu invite\`.`);
   }
 }
 
