@@ -1,5 +1,4 @@
 const Command = require("../../structures/Command.js");
-const emojis = require("../../structures/Emojis");
 
 class Balance extends Command {
   constructor(...args) {

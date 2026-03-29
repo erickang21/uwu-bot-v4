@@ -24,7 +24,6 @@ module.exports = {
   profileicon_blank: "<:invisible:1136302181310533643>",
   join: "<:join:1136348278976434277>",
   leave: "<:leave:1136348279609757827>",
-  wave: "<:wave:1136701430032515082>",
   ship5: "<a:ILoveYouAnimated:1365384387310522368>",
   ship4: "<:WinkCute:1365380923046236211>",
   ship3: "<:PraygeClara:1365380910492553359>",

@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
 const utils = require("../../utils/utils.js");
+const emojis = require("../../structures/Emojis")
 const { gelbooruAPI } = require("../../helpers/anime");
 
 class Hsr extends Command {

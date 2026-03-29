@@ -1,5 +1,4 @@
 const Event = require("../structures/Event.js");
-const { MessageEmbed } = require("discord.js");
 
 class GuildMemberRemove extends Event {
   async run(member) {

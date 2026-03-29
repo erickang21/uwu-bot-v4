@@ -1,7 +1,6 @@
 const Command = require("../../structures/Command.js");
 const { inspect } = require("util");
 const { getCodeBlock } = require("../../utils/utils.js");
-const { request } = require("undici");
 const { AttachmentBuilder } = require("discord.js");
 
 class Eval extends Command {

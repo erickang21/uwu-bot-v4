@@ -1,5 +1,4 @@
 const Command = require("../../structures/Command.js");
-const Emojis = require("../../structures/Emojis.js");
 
 class Serverdist extends Command {
   constructor(...args) {

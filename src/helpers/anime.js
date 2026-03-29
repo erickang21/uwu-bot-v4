@@ -43,9 +43,4 @@ async function gelbooruAPI(tags) {
     return utils.random(urls);
 }
 
-async function getRandomImage(folder) {
-    c
-}
-
-
 module.exports = { waifuAPI, nekoAPI, otakuAPI, gelbooruAPI };

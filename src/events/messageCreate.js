@@ -1,9 +1,7 @@
 const Event = require("../structures/Event.js");
-const CommandContext = require("../structures/CommandContext.js");
 const { distance } = require("fastest-levenshtein");
-const { escapeRegex, missingPermissions, plural } = require("../utils/utils.js");
+const { missingPermissions, plural } = require("../utils/utils.js");
 const { EMOJIS } = require("../utils/constants.js");
-const emojis = require("../structures/Emojis");
 
 // eslint-disable-next-line quotes
 const quotes = ['"', "'", "“”", "‘’"];
@@ -23,6 +21,7 @@ class MessageCreate extends Event {
 
   async run(message) {
     return this.client.commands.handler.handleMessage(message);
+    /*
     if (!message.content || message.author.bot) return;
     if (message.channel.partial) await message.channel.fetch();
 
@@ -46,7 +45,6 @@ class MessageCreate extends Event {
     Lv 5: 225
     Lv 10: 450
     Lv 15: 675
-    */
 
     // Remain in cache and only request DB upon every 25 messages.
     // Level up by 1 xp/message
@@ -149,6 +147,7 @@ class MessageCreate extends Event {
       await this.client.userUpdate(message.author.id, data);
     }
     return command.execute(ctx);
+    */
   }
 
   async checkPermissions(ctx, command) {

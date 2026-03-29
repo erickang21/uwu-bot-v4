@@ -84,7 +84,6 @@ class UwUClient extends Client {
   postStats() {
     const server_count = this.guilds.cache.size;
     const shard_id = this.shard.ids[0];
-    let shard_count;
     if (shard_id > this.maxShard) {
       this.maxShard = shard_id;
     }

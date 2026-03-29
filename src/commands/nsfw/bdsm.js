@@ -1,5 +1,4 @@
 const Command = require("../../structures/Command.js");
-const utils = require("../../utils/utils.js");
 const imageService = require("../../helpers/images.js");
 const { AttachmentBuilder } = require("discord.js");
 

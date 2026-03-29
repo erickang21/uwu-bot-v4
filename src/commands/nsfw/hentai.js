@@ -1,8 +1,4 @@
 const Command = require("../../structures/Command.js");
-const { request } = require("undici");
-const utils = require("../../utils/utils.js");
-const emojis = require("../../structures/Emojis");
-const { gelbooruAPI } = require("../../helpers/anime");
 const imageService = require("../../helpers/images.js");
 const { AttachmentBuilder } = require("discord.js");
 

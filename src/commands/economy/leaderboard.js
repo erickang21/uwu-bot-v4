@@ -1,5 +1,5 @@
 const Command = require("../../structures/Command.js");
-const { MessageEmbed } = require("discord.js");
+
 
 // CREDIT: ravener
 class Leaderboard extends Command {
@@ -59,7 +59,7 @@ class Leaderboard extends Command {
       leaderboard.push(`**${rankTxt}** ❯ ${user.username}\n    → ${parseInt(amount).toLocaleString()} ${emoji}`);
     })
 
-    const selfIndex = entries.findIndex(([key, value]) => key === ctx.author.id);
+    const selfIndex = entries.findIndex(([key, ]) => key === ctx.author.id);
     const selfPos = selfIndex + 1;
     let rankTxt = "";
     switch (selfPos) {

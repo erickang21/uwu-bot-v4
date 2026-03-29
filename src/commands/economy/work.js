@@ -1,6 +1,4 @@
 const Command = require("../../structures/Command.js");
-const emojis = require("../../structures/Emojis");
-const { random } = require("../../utils/utils");
 
 class Work extends Command {
   constructor(...args) {
