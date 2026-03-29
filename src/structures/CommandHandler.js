@@ -132,7 +132,7 @@ class CommandHandler {
       return message.channel.send(serverSpecificPermission.errorMessage);
     }
     // track analytics
-    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, false);
+    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, false, command.category);
     await this.handleXP(ctx);
     await this.trackCmdStats(ctx, command);
 
@@ -158,7 +158,7 @@ class CommandHandler {
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
       return interaction.editReply({ content: serverSpecificPermission.errorMessage });
     }
-    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, true);
+    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, true, command.category);
     // await this.handleXP(ctx);
     //await this.trackCmdStats(ctx, command);
     return command.execute(ctx);

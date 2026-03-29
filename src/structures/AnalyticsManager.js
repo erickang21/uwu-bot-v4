@@ -22,6 +22,7 @@ class AnalyticsManager {
         this.collection = this.db.collection("analytics");
         this.serverCount = 0;
         this.commandUsage = {}; // key: command name, value: count
+        this.commandUsageByCategory = {}; // key: category name, value: count
         this.slashCommandCount = 0;
         this.textCommandCount = 0;
         this.commandErrors = {}; // key: error message, value: count
@@ -266,10 +267,11 @@ class AnalyticsManager {
         await this.collection.bulkWrite([dbUpdate]);
     }
 
-    async commandUsed(commandName, userId, slash) {
+    async commandUsed(commandName, userId, slash, category) {
         this.commandUsage[commandName] = (this.commandUsage[commandName] || 0) + 1;
         if (slash) this.slashCommandCount++;
         else this.textCommandCount++;
+        this.commandUsageByCategory[category] = (this.commandUsageByCategory[category] || 0) + 1;
         this.usersToday.add(userId);
     }
 
@@ -313,7 +315,24 @@ class AnalyticsManager {
                 },
             });
         });
-        
+        Object.entries(this.commandUsageByCategory).forEach(([category, count]) => {
+            // DAY SPECIFIC
+            bulkOps.push({
+                updateOne: {
+                    filter: { _id: { type: "commandUsageByCategory", date: today, category } },
+                    update: { $inc: { count } },
+                    upsert: true,
+                },
+            });
+            // LIFETIME
+            bulkOps.push({
+                updateOne: {
+                    filter: { _id: { type: "commandUsageByCategoryTotal", category } },
+                    update: { $inc: { count } },
+                    upsert: true,
+                },
+            });
+        });
         // Save all updates
         await this.collection.bulkWrite(bulkOps);
     }
