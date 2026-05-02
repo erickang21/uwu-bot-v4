@@ -21,11 +21,11 @@ class Holdhand extends Command {
     const user = options.getUser("user") || ctx.author;
     const result = await imageService.getRandomSFWImage("handhold");
     if (!result) return ctx.reply("No images available. Please try again later.");
-    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
+    const attachment = new AttachmentBuilder(result, { name: "image.gif" });
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`HOLD HANDS! :3`)
-      .setImage("attachment://image.jpg");
+      .setImage("attachment://image.gif");
     if (user.id !== ctx.author.id)
       embed.setDescription(
         `**${ctx.author.username}** is holding hands with **${user.username}**!`

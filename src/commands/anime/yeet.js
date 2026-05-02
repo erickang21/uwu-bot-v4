@@ -21,11 +21,11 @@ class Yeet extends Command {
     const user = options.getUser("user") || ctx.author;
     const result = await imageService.getRandomSFWImage("yeet");
     if (!result) return ctx.reply("No images available. Please try again later.");
-    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
+    const attachment = new AttachmentBuilder(result, { name: "image.gif" });
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`YEET >:)`)
-      .setImage("attachment://image.jpg");
+      .setImage("attachment://image.gif");
     if (user.id !== ctx.author.id)
       embed.setDescription(
         `**${ctx.author.username}** is yeeting **${user.username}**! See you later!`
