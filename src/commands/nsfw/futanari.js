@@ -12,7 +12,7 @@ class Futanari extends Command {
   }
 
   async run(ctx) {
-    const result = imageService.getRandomImage("futanari");
+    const result = await imageService.getRandomNSFWImage("futanari");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

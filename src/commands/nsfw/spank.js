@@ -20,7 +20,7 @@ class Spank extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const result = imageService.getRandomImage("spank");
+    const result = await imageService.getRandomNSFWImage("spank");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

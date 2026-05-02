@@ -13,7 +13,7 @@ class Feet extends Command {
   }
 
   async run(ctx) {
-    const result = imageService.getRandomImage("feet");
+    const result = await imageService.getRandomNSFWImage("feet");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

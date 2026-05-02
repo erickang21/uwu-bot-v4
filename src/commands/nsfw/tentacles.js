@@ -12,7 +12,7 @@ class Tentacles extends Command {
   }
 
   async run(ctx) {
-    const result = imageService.getRandomImage("tentacles");
+    const result = await imageService.getRandomNSFWImage("tentacles");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

@@ -12,7 +12,7 @@ class Furry extends Command {
   }
 
   async run(ctx) {
-    const result = imageService.getRandomImage("furry");
+    const result = await imageService.getRandomNSFWImage("furry");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

@@ -21,7 +21,7 @@ class Hentai extends Command {
   async run(ctx, options) {
     const tags = options.getString("tags");
     // TODO: Fix tags
-    const result = imageService.getRandomImage("hentai");
+    const result = await imageService.getRandomNSFWImage("hentai");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

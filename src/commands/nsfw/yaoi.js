@@ -12,7 +12,7 @@ class Yaoi extends Command {
   }
 
   async run(ctx) {
-    const result = imageService.getRandomImage("yaoi");
+    const result = await imageService.getRandomNSFWImage("yaoi");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

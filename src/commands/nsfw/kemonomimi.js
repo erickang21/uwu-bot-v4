@@ -12,7 +12,7 @@ class Kemonomimi extends Command {
   }
 
   async run(ctx) {
-    const result = imageService.getRandomImage("kemonomimi");
+    const result = await imageService.getRandomNSFWImage("kemonomimi");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

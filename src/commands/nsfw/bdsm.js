@@ -12,7 +12,7 @@ class BDSM extends Command {
   }
 
   async run(ctx) {
-    const result = imageService.getRandomImage("bdsm");
+    const result = await imageService.getRandomNSFWImage("bdsm");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

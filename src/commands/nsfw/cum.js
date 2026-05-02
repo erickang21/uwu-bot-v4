@@ -20,7 +20,7 @@ class Cum extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const result = imageService.getRandomImage("cum");
+    const result = await imageService.getRandomNSFWImage("cum");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client

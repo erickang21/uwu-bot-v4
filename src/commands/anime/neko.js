@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
-const { waifuAPI } = require("../../helpers/anime.js");
+const imageService = require("../../helpers/images.js");
+const { AttachmentBuilder } = require("discord.js");
 
 class Neko extends Command {
   constructor(...args) {
@@ -10,9 +11,11 @@ class Neko extends Command {
   }
 
   async run(ctx) {
-    const url = await waifuAPI("neko");
-    const embed = this.client.embed(ctx.author).setTitle(`Neko`).setImage(url);
-    return ctx.reply({ embeds: [embed] });
+    const result = await imageService.getRandomSFWImage("neko");
+    if (!result) return ctx.reply("No images available. Please try again later.");
+    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
+    const embed = this.client.embed(ctx.author).setTitle(`Neko`).setImage("attachment://image.jpg");
+    return ctx.reply({ embeds: [embed], files: [attachment] });
   }
 }
 

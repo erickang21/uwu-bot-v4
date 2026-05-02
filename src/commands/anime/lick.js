@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
-const { waifuAPI } = require("../../helpers/anime.js");
+const imageService = require("../../helpers/images.js");
+const { AttachmentBuilder } = require("discord.js");
 
 class Lick extends Command {
   constructor(...args) {
@@ -18,16 +19,18 @@ class Lick extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
-    const url = await waifuAPI("lick");
+    const result = await imageService.getRandomSFWImage("peck"); // Better match needed
+    if (!result) return ctx.reply("No images available. Please try again later.");
+    const attachment = new AttachmentBuilder(result, { name: "image.jpg" });
     const embed = this.client
       .embed(ctx.author)
       .setTitle(`Lick :3`)
-      .setImage(url);
+      .setImage("attachment://image.jpg");
     if (user.id !== ctx.author.id)
       embed.setDescription(
         `**${ctx.author.username}** is licking **${user.username}**!`
       );
-    return ctx.reply({ embeds: [embed] });
+    return ctx.reply({ embeds: [embed], files: [attachment] });
   }
 }
 

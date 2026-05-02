@@ -174,7 +174,8 @@ class UwUClient extends Client {
   async login() {
     await this.load();
     await this.connectDatabase();
-    await imageService.loadImages();
+    await imageService.loadSFWImages();
+    await imageService.loadNSFWImages();
 
     const { TOKEN, TOKEN_DEV } = process.env;
     return super.login(this.dev ? TOKEN_DEV : TOKEN);
