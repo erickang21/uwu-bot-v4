@@ -32,12 +32,11 @@ Slap your face (well...profile picture) onto some meme templates!
 
 We've also boosted image quality for some commands, with some shiny new APIs!
 
-${ctx.channel.nsfw ? `We've also greatly improved some NSFW commands in the process, now using GIFs instead of boring old images!
+${ctx.channel.nsfw ? `**NSFW Improvements:** We've also greatly improved some NSFW commands in the process, now using GIFs instead of boring old images!
 
 The following commands have been improved: blowjob, cum, fuck, genshin, hentai, yaoi, yuri
 
-We've also ADDED new commands!! Try out: anal, maid, titties
-` : ""}
+We've also ADDED new commands!! Try out: anal, maid, titties` : ""}
 
 We're implementing lots of analytics to help understand you better! But as usual, the best way is to submit suggestions in the [support server](https://discord.gg/RASYKT4kMV).
 `);
