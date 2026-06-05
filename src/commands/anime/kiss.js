@@ -26,7 +26,9 @@ class Kiss extends Command {
 
     try {
       ({ url, animeName } = await getNekosBestAPI("kiss"));
-    } catch {}
+    } catch {
+      return ctx.reply("No images available. Please try again later.");
+    }
 
     if (!url) {
       const fallback = await imageService.getRandomSFWImage("kiss");

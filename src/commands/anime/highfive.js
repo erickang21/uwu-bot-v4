@@ -26,7 +26,9 @@ class Highfive extends Command {
 
     try {
       ({ url, animeName } = await getNekosBestAPI("highfive"));
-    } catch {}
+    } catch {
+      return ctx.reply("No images available. Please try again later.");
+    }
 
     if (!url) {
       const fallback = await imageService.getRandomSFWImage("highfive");

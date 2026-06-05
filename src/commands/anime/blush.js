@@ -26,7 +26,9 @@ class Blush extends Command {
 
     try {
       ({ url, animeName } = await getNekosBestAPI("blush"));
-    } catch {}
+    } catch {
+      return ctx.reply("No images available. Please try again later.");
+    }
 
     if (!url) {
       const fallback = await imageService.getRandomSFWImage("blush");

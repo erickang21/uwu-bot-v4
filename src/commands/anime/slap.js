@@ -26,7 +26,9 @@ class Slap extends Command {
 
     try {
       ({ url, animeName } = await getNekosBestAPI("slap"));
-    } catch {}
+    } catch {
+      return ctx.reply("No images available. Please try again later.");
+    }
 
     if (!url) {
       const fallback = await imageService.getRandomSFWImage("slap");

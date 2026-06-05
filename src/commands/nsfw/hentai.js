@@ -28,7 +28,6 @@ class Hentai extends Command {
       .embed(ctx.author)
       .setTitle("Hentai :eggplant:")
       .setImage("attachment://image.jpg");
-    if (tags?.length) embed.setDescription(`**Tags:** ${tags.toLowerCase()}`);
     return ctx.reply({ embeds: [embed], files: [attachment] });
   }
 }

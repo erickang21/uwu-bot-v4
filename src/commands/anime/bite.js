@@ -26,7 +26,9 @@ class Bite extends Command {
 
     try {
       ({ url, animeName } = await getNekosBestAPI("bite"));
-    } catch {}
+    } catch {
+      return ctx.reply("No images available. Please try again later.");
+    }
 
     if (!url) {
       const fallback = await imageService.getRandomSFWImage("bite");

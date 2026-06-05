@@ -26,7 +26,9 @@ class Yeet extends Command {
 
     try {
       ({ url, animeName } = await getNekosBestAPI("yeet"));
-    } catch {}
+    } catch {
+      return ctx.reply("No images available. Please try again later.");
+    }
 
     if (!url) {
       const fallback = await imageService.getRandomSFWImage("yeet");

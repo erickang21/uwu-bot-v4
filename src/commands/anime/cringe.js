@@ -26,7 +26,9 @@ class Cringe extends Command {
 
     try {
       ({ url, animeName } = await getNekosBestAPI("confused"));
-    } catch {}
+    } catch {
+      return ctx.reply("No images available. Please try again later.");
+    }
 
     if (!url) {
       const fallback = await imageService.getRandomSFWImage("confused");
