@@ -1,5 +1,4 @@
 const Command = require("../../structures/Command.js");
-const { blueRightArrow } = require("../../structures/Emojis");
 
 class Updates extends Command {
   constructor(...args) {
@@ -26,21 +25,21 @@ Slap your face (well...profile picture) onto some meme templates!
   async run(ctx) {
     const embed = this.client
       .embed(this.client.user)
-      .setTitle(`v5.4 of uwu bot has just dropped :)`)
-      .setDescription(`This update fixes many bugs and unexplained errors. If you notice any other bugs, be sure to join the [support server](https://discord.gg/RASYKT4kMV) and voice your opinion in the suggestions or support channel!
+      .setTitle(`v5.5 of uwu bot has arrived!!`)
+      .setDescription(`This update adds some long-awaited buffs to the anime features!
 
-__**No more erroring on missing permissions.**__
-We understand that it was annoying to get the default error message for no reason. 
-${blueRightArrow} For all moderation and customization commands, the error is due to missing permissions. This has been fixed now.
-${blueRightArrow} And for other random commands like \`profileicon\`, the erroring has been fixed.
+**Arguably the biggest improvement:** You can now see the source of an anime GIF! When using commands in the Anime category, you can see the name of the anime at the bottom, on the footer. A big shoutout to [Nekos.best](https://nekos.best/) for the data :)
 
-__**Performance buff.**__
-Both regular and slash comamnds became way faster! We improved performance across the board.
+We've also boosted image quality for some commands, with some shiny new APIs!
 
-__**Improved error reporting.**__
-We sometimes couldn't help in the support channel because some error information was missing. Now we've fixed that, and will be able to read all errors!
+${ctx.channel.nsfw ? `We've also greatly improved some NSFW commands in the process, now using GIFs instead of boring old images!
 
-We're implementing lots of analytics to help understand you better! But as usual, the best way is to submit suggestions in the support server.
+The following commands have been improved: blowjob, cum, fuck, genshin, hentai, yaoi, yuri
+
+We've also ADDED new commands!! Try out: anal, maid, titties
+` : ""}
+
+We're implementing lots of analytics to help understand you better! But as usual, the best way is to submit suggestions in the [support server](https://discord.gg/RASYKT4kMV).
 `);
     return ctx.reply({ embeds: [embed] });
   }
