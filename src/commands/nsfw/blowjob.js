@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
 const imageService = require("../../helpers/images.js");
+const { getPurrbotAPI } = require("../../helpers/anime");
 const { AttachmentBuilder } = require("discord.js");
 
 class Blowjob extends Command {
@@ -21,6 +22,18 @@ class Blowjob extends Command {
 
   async run(ctx, options) {
     const user = options.getUser("user") || ctx.author;
+    const { url } = await getPurrbotAPI("blowjob");
+    if (url) {
+      const embed = this.client
+        .embed(ctx.author)
+        .setTitle("Blowjob :eggplant:")
+        .setImage(url);
+      if (user.id !== ctx.author.id)
+        embed.setTitle(
+          `**${ctx.author.username}** is giving **${user.username}** a BJ! :eggplant:`
+        );
+      return ctx.reply({ embeds: [embed] });
+    }
     const result = await imageService.getRandomNSFWImage("blowjob");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });

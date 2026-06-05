@@ -2,24 +2,24 @@ const Command = require("../../structures/Command.js");
 const { getWaifuIm } = require("../../helpers/anime");
 const emojis = require("../../structures/Emojis");
 
-class Genshin extends Command {
+class Titties extends Command {
   constructor(...args) {
     super(...args, {
-      description: "find nsfw genshin content.",
-      usage: "genshin",
+      description: "paizuri: nsfw paizuri content.",
+      usage: "titties",
       nsfw: true,
     });
   }
 
   async run(ctx) {
-    const { url } = await getWaifuIm({ includedTags: "genshin-impact", isNsfw: true });
+    const { url } = await getWaifuIm({ includedTags: "paizuri", isNsfw: true });
     if (!url) return ctx.reply(`No images available. Please try again later. ${emojis.failure}`);
     const embed = this.client
       .embed(ctx.author)
-      .setTitle("Genshin :eggplant:")
+      .setTitle("Titties :eggplant:")
       .setImage(url);
     return ctx.reply({ embeds: [embed] });
   }
 }
 
-module.exports = Genshin;
+module.exports = Titties;

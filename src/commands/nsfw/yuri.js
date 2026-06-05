@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
 const imageService = require("../../helpers/images.js");
+const { getPurrbotAPI } = require("../../helpers/anime");
 const { AttachmentBuilder } = require("discord.js");
 
 class Yuri extends Command {
@@ -13,6 +14,14 @@ class Yuri extends Command {
   }
 
   async run(ctx) {
+    const { url } = await getPurrbotAPI("yuri");
+    if (url) {
+      const embed = this.client
+        .embed(ctx.author)
+        .setTitle("Yuri :eggplant:")
+        .setImage(url);
+      return ctx.reply({ embeds: [embed] });
+    }
     const result = await imageService.getRandomNSFWImage("yuri");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });

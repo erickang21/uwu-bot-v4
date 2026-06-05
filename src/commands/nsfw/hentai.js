@@ -1,5 +1,6 @@
 const Command = require("../../structures/Command.js");
 const imageService = require("../../helpers/images.js");
+const { getWaifuIm } = require("../../helpers/anime");
 const { AttachmentBuilder } = require("discord.js");
 
 class Hentai extends Command {
@@ -8,19 +9,18 @@ class Hentai extends Command {
       description: "hentai - optionally, search for specific genres by adding tags, separated by commas.",
       usage: "hentai",
       nsfw: true,
-      options: [
-        {
-          name: "tags",
-          description: "desired genres. if a tag has spaces, use underscore (_). if adding multiple tags, separate with comma (,)",
-          type: "string",
-        },
-      ],
     });
   }
 
-  async run(ctx, options) {
-    const tags = options.getString("tags");
-    // TODO: Fix tags
+  async run(ctx) {
+    const { url } = await getWaifuIm({ includedTags: "hentai", isNsfw: true, isAnimated: true });
+    if (url) {
+      const embed = this.client
+        .embed(ctx.author)
+        .setTitle("Hentai :eggplant:")
+        .setImage(url);
+      return ctx.reply({ embeds: [embed] });
+    }
     const result = await imageService.getRandomNSFWImage("hentai");
     if (!result) return ctx.reply("No images available. Please try again later.");
     const attachment = new AttachmentBuilder(result, { name: "image.jpg" });

@@ -86,6 +86,73 @@ async function otakuAPI(endpoint) {
     return res.url;
 }
 
+function formatWaifuImValue(value) {
+    if (typeof value === "boolean") return value ? "True" : "False";
+    return String(value);
+}
+
+function toWaifuImParamName(key) {
+    return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
+async function getWaifuIm(options = {}) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(options)) {
+        if (value == null) continue;
+        params.set(toWaifuImParamName(key), formatWaifuImValue(value));
+    }
+    try {
+        const { statusCode, body } = await request(`https://api.waifu.im/images?${params}`);
+        const text = await body.text();
+        if (statusCode !== 200) {
+            console.log("WaifuIm API Error:", statusCode, text);
+            return { url: null, dominantColor: null };
+        }
+        let res;
+        try {
+            res = JSON.parse(text);
+        } catch {
+            console.log("WaifuIm API Error: invalid JSON response", text);
+            return { url: null, dominantColor: null };
+        }
+        const item = res?.items?.[0];
+        if (!item?.url) {
+            console.log("WaifuIm API Error:", res);
+            return { url: null, dominantColor: null };
+        }
+        return { url: item.url, dominantColor: item.dominantColor ?? null };
+    } catch (error) {
+        console.log("WaifuIm API Error:", error.message);
+        return { url: null, dominantColor: null };
+    }
+}
+
+async function getPurrbotAPI(endpoint) {
+    try {
+        const { statusCode, body } = await request(`https://api.purrbot.site/v2/img/nsfw/${endpoint}/gif`);
+        const text = await body.text();
+        if (statusCode !== 200) {
+            console.log("Purrbot API Error:", statusCode, text);
+            return { url: null };
+        }
+        let res;
+        try {
+            res = JSON.parse(text);
+        } catch {
+            console.log("Purrbot API Error: invalid JSON response", text);
+            return { url: null };
+        }
+        if (res?.error || !res?.link) {
+            console.log("Purrbot API Error:", res);
+            return { url: null };
+        }
+        return { url: res.link };
+    } catch (error) {
+        console.log("Purrbot API Error:", error.message);
+        return { url: null };
+    }
+}
+
 async function gelbooruAPI(tags) {
     const bannedTags = ["loli", "shota", "child", "young"];
     const defaultTags = ["rating:explicit"];
@@ -100,4 +167,4 @@ async function gelbooruAPI(tags) {
     return utils.random(urls);
 }
 
-module.exports = { waifuAPI, nekoAPI, otakuAPI, gelbooruAPI, getNekosBestAPI };
+module.exports = { waifuAPI, nekoAPI, otakuAPI, gelbooruAPI, getNekosBestAPI, getWaifuIm, getPurrbotAPI };
