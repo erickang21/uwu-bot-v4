@@ -1,4 +1,5 @@
 const Command = require("../../structures/Command.js");
+const { getNekosBestAPI } = require("../../helpers/anime.js");
 const imageService = require("../../helpers/images.js");
 const { AttachmentBuilder } = require("discord.js");
 
@@ -11,11 +12,26 @@ class Neko extends Command {
   }
 
   async run(ctx) {
-    const result = await imageService.getRandomSFWImage("neko");
-    if (!result) return ctx.reply("No images available. Please try again later.");
-    const attachment = new AttachmentBuilder(result, { name: "image.gif" });
-    const embed = this.client.embed(ctx.author).setTitle(`Neko`).setImage("attachment://image.gif");
-    return ctx.reply({ embeds: [embed], files: [attachment] });
+    let url;
+    let animeName;
+    let attachment;
+
+    try {
+      ({ url, animeName } = await getNekosBestAPI("neko"));
+    } catch {}
+
+    if (!url) {
+      const fallback = await imageService.getRandomSFWImage("neko");
+      if (!fallback) return ctx.reply("No images available. Please try again later.");
+      attachment = new AttachmentBuilder(fallback, { name: "image.gif" });
+      url = "attachment://image.gif";
+      animeName = "Unknown";
+    }
+
+    const embed = this.client.embed(ctx.author).setTitle(`Neko`).setImage(url).setFooter({ text: `Anime: ${animeName}` });
+    const reply = { embeds: [embed] };
+    if (attachment) reply.files = [attachment];
+    return ctx.reply(reply);
   }
 }
 
