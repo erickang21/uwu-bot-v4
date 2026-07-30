@@ -40,14 +40,14 @@ class GuildCreate extends Event {
     await this.client.setActivity();
 
     // Save to analytics.
-    const currentServerCount = await this.client.getGuildCount();
-    const users = await this.client.shard.broadcastEval((c) =>
-      c.guilds.cache.reduce((sum, guild) => sum + guild.memberCount, 0)
-    );
-    const totalUsers = users.reduce((a, b) => a + b, 0);
     try {
-      await this.client.analyticsManager.serverJoined(guild.memberCount, currentServerCount);
-      await this.client.analyticsManager.serverJoinedUpdateUsers(guild.memberCount, totalUsers);
+      const { totalServers, totalMembers } = await this.client.getFleetStats();
+      await this.client.analyticsManager.recordGuildChange({
+        joined: true,
+        memberCount: guild.memberCount,
+        totalServers,
+        totalMembers
+      });
     } catch (error) {
       log.error(`[GuildCreate] Error saving server count to analytics: ${error}`);
     }

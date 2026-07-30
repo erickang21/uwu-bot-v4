@@ -17,6 +17,8 @@ const imgapi = require("img-api");
 const translate = require("../helpers/translate.js");
 const AnalyticsManager = require("./AnalyticsManager.js");
 const imageService = require("../helpers/images.js");
+const { setAnalyticsManager } = require("../helpers/apiMetrics.js");
+const { getSizeRange } = require("../utils/analytics.js");
 
 class UwUClient extends Client {
   constructor() {
@@ -162,7 +164,8 @@ class UwUClient extends Client {
 
     this.log.info("Connected to MongoDB");
     this.db = this.dbClient.db("test");
-    this.analyticsManager = new AnalyticsManager(this.db, this.shard);
+    this.analyticsManager = new AnalyticsManager(this.db, this.shard, this.log);
+    setAnalyticsManager(this.analyticsManager);
     this.log.info("Analytics Manager initialized");
 
     for (const [name, settings] of Object.entries(this.settings)) {
@@ -179,6 +182,34 @@ class UwUClient extends Client {
 
     const { TOKEN, TOKEN_DEV } = process.env;
     return super.login(this.dev ? TOKEN_DEV : TOKEN);
+  }
+
+  /**
+   * Fleet-wide size, with guilds and members bucketed by server size. One
+   * broadcast serves both the authoritative daily snapshot and the join/leave
+   * totals, and it works whether or not the client is sharded.
+   */
+  async getFleetStats() {
+    const readMemberCounts = (client) =>
+      client.guilds.cache.map((guild) => guild.memberCount ?? 0);
+
+    const perShard = this.shard
+      ? await this.shard.broadcastEval(readMemberCounts)
+      : [readMemberCounts(this)];
+
+    const sizes = perShard.flat();
+    const sizeCounts = {};
+    const memberCounts = {};
+    let totalMembers = 0;
+
+    for (const size of sizes) {
+      const range = getSizeRange(size);
+      sizeCounts[range] = (sizeCounts[range] ?? 0) + 1;
+      memberCounts[range] = (memberCounts[range] ?? 0) + size;
+      totalMembers += size;
+    }
+
+    return { totalServers: sizes.length, totalMembers, sizeCounts, memberCounts };
   }
 
   async getGuildCount() {

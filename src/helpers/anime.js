@@ -2,6 +2,12 @@ const { request } = require("undici");
 const { get } = require("./api");
 const translate = require("./translate");
 const utils = require("../utils/utils.js");
+const { ApiError } = require("../utils/errors.js");
+const { apiNameFor, trackApi, trackNullableApi } = require("./apiMetrics.js");
+
+function apiError(url) {
+    return new ApiError(translate("error.api"), apiNameFor(url));
+}
 
 const NEKOS_BEST_USER_AGENT = "uwu-bot/4.0-alpha (https://github.com/erickang21/uwu-bot-v4)";
 
@@ -31,8 +37,13 @@ function resolveNekosBestEndpoint(endpoint) {
 
 async function getNekosBestAPI(endpoint) {
     const resolved = resolveNekosBestEndpoint(endpoint);
+    const url = `https://nekos.best/api/v2/${resolved}`;
+    return trackNullableApi(url, () => fetchNekosBest(url));
+}
+
+async function fetchNekosBest(requestUrl) {
     try {
-        const { statusCode, body } = await request(`https://nekos.best/api/v2/${resolved}`, {
+        const { statusCode, body } = await request(requestUrl, {
             headers: { "User-Agent": NEKOS_BEST_USER_AGENT },
         });
         const text = await body.text();
@@ -60,30 +71,39 @@ async function getNekosBestAPI(endpoint) {
 }
 
 async function waifuAPI(endpoint) {
-    const res = await get(`https://api.waifu.pics/sfw/${endpoint}`);
-    if (!res.url) {
-        console.log("Waifu API Error: ", res);
-        throw translate("error.api");
-    }
-    return res.url;
+    const url = `https://api.waifu.pics/sfw/${endpoint}`;
+    return trackApi(url, async () => {
+        const res = await get(url);
+        if (!res.url) {
+            console.log("Waifu API Error: ", res);
+            throw apiError(url);
+        }
+        return res.url;
+    });
 }
 
 async function nekoAPI(endpoint) {
-    const res = await get(`https://nekos.life/api/v2/img/${endpoint}`);
-    if (!res.url) {
-        console.log("Neko API Error: ",res);
-        throw translate("error.api");
-    }
-    return res.url;
+    const url = `https://nekos.life/api/v2/img/${endpoint}`;
+    return trackApi(url, async () => {
+        const res = await get(url);
+        if (!res.url) {
+            console.log("Neko API Error: ",res);
+            throw apiError(url);
+        }
+        return res.url;
+    });
 }
 
 async function otakuAPI(endpoint) {
-    const res = await get(`https://api.otakugifs.xyz/gif?reaction=${endpoint}`);
-    if (!res.url) {
-        console.log("Otaku API Error: ",res);
-        throw translate("error.api");
-    }
-    return res.url;
+    const url = `https://api.otakugifs.xyz/gif?reaction=${endpoint}`;
+    return trackApi(url, async () => {
+        const res = await get(url);
+        if (!res.url) {
+            console.log("Otaku API Error: ",res);
+            throw apiError(url);
+        }
+        return res.url;
+    });
 }
 
 function formatWaifuImValue(value) {
@@ -101,8 +121,13 @@ async function getWaifuIm(options = {}) {
         if (value == null) continue;
         params.set(toWaifuImParamName(key), formatWaifuImValue(value));
     }
+    const url = `https://api.waifu.im/images?${params}`;
+    return trackNullableApi(url, () => fetchWaifuIm(url));
+}
+
+async function fetchWaifuIm(url) {
     try {
-        const { statusCode, body } = await request(`https://api.waifu.im/images?${params}`);
+        const { statusCode, body } = await request(url);
         const text = await body.text();
         if (statusCode !== 200) {
             console.log("WaifuIm API Error:", statusCode, text);
@@ -128,8 +153,13 @@ async function getWaifuIm(options = {}) {
 }
 
 async function getPurrbotAPI(endpoint) {
+    const url = `https://api.purrbot.site/v2/img/nsfw/${endpoint}/gif`;
+    return trackNullableApi(url, () => fetchPurrbot(url));
+}
+
+async function fetchPurrbot(url) {
     try {
-        const { statusCode, body } = await request(`https://api.purrbot.site/v2/img/nsfw/${endpoint}/gif`);
+        const { statusCode, body } = await request(url);
         const text = await body.text();
         if (statusCode !== 200) {
             console.log("Purrbot API Error:", statusCode, text);
@@ -158,13 +188,16 @@ async function gelbooruAPI(tags) {
     const defaultTags = ["rating:explicit"];
     const allTags = [...bannedTags.map(tag => `-${tag}`), ...defaultTags, ...tags];
     const tagString = allTags.join("%20");
-    const res = await get(`https://gelbooru.com/index.php?page=dapi&api_key=${process.env.GELBOORU_API}&user_id=${process.env.GELBOORU_USER_ID}&s=post&q=index&json=1&tags=${tagString}`);
-    if (!res?.['@attributes']) {
-        console.log("Gelbooru API Error: ",res);
-        throw translate("error.api");
-    }
-    const urls = res.post.map((entry) => entry.sample_url.replace("/samples", "//samples"))
-    return utils.random(urls);
+    const url = `https://gelbooru.com/index.php?page=dapi&api_key=${process.env.GELBOORU_API}&user_id=${process.env.GELBOORU_USER_ID}&s=post&q=index&json=1&tags=${tagString}`;
+    return trackApi(url, async () => {
+        const res = await get(url);
+        if (!res?.['@attributes']) {
+            console.log("Gelbooru API Error: ",res);
+            throw apiError(url);
+        }
+        const urls = res.post.map((entry) => entry.sample_url.replace("/samples", "//samples"))
+        return utils.random(urls);
+    });
 }
 
 module.exports = { waifuAPI, nekoAPI, otakuAPI, gelbooruAPI, getNekosBestAPI, getWaifuIm, getPurrbotAPI };

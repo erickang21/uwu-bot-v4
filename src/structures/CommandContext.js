@@ -39,6 +39,18 @@ class CommandContext {
     return !!this.message;
   }
 
+  /**
+   * Whether this invocation should reach analytics, XP and command stats.
+   *
+   * The end-to-end harness drives commands by posting as a bot in development
+   * (see `CommandHandler#isAuthorAllowed`), so its traffic would otherwise show
+   * up as real usage. Interactions cannot be bot-authored, so slash commands are
+   * always recorded.
+   */
+  get trackable() {
+    return !this.message?.author?.bot;
+  }
+
   get guild() {
     return this.interaction?.guild ?? this.message.guild;
   }

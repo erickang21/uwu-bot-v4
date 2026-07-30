@@ -20,6 +20,7 @@
 const assert = require("node:assert");
 const test = require("node:test");
 
+const CommandContext = require("../src/structures/CommandContext.js");
 const CommandHandler = require("../src/structures/CommandHandler.js");
 const {
   CASES,
@@ -472,6 +473,44 @@ test("humans can always run commands", () => {
 test("bots can run commands in development only", () => {
   assert.equal(authorGate(true, true), true);
   assert.equal(authorGate(false, true), false);
+});
+
+// --- keeping harness traffic out of the metrics -----------------------------
+// Accepting bot authors in development means the harness's own runs reach every
+// analytics call site. They must all sit behind ctx.trackable, or a harness run
+// shows up as real usage.
+
+const contextFor = (bot) =>
+  new CommandContext(null, { message: { author: { bot, id: "1" } } });
+
+test("a bot-authored context is not trackable", () => {
+  assert.equal(contextFor(false).trackable, true);
+  assert.equal(contextFor(true).trackable, false);
+  // Interactions cannot be bot-authored, so slash is always recorded.
+  assert.equal(new CommandContext(null, { interaction: {} }).trackable, true);
+});
+
+test("harness traffic runs the command but records nothing", async () => {
+  const recorded = [];
+  const analytics = new Proxy(
+    {},
+    { get: (_, name) => (...args) => recorded.push({ name, args }) }
+  );
+  const handler = new CommandHandler({ analyticsManager: analytics });
+  const command = { name: "hug", category: "Anime", execute: () => "ran" };
+
+  const harness = contextFor(true);
+  assert.equal(await handler.executeTracked(harness, command, false), "ran");
+  handler.recordBlock(harness, command, "cooldown");
+  assert.deepEqual(recorded, [], "harness traffic must not reach analytics");
+
+  const human = contextFor(false);
+  assert.equal(await handler.executeTracked(human, command, false), "ran");
+  handler.recordBlock(human, command, "cooldown");
+  assert.deepEqual(
+    recorded.map((entry) => entry.name),
+    ["commandUsed", "commandCompleted", "commandBlocked"]
+  );
 });
 
 test("broadcast falls back to a local call when unsharded", async () => {
