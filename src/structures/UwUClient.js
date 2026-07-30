@@ -17,6 +17,7 @@ const imgapi = require("img-api");
 const translate = require("../helpers/translate.js");
 const AnalyticsManager = require("./AnalyticsManager.js");
 const imageService = require("../helpers/images.js");
+const { setAnalyticsManager } = require("../helpers/apiMetrics.js");
 
 class UwUClient extends Client {
   constructor() {
@@ -162,7 +163,8 @@ class UwUClient extends Client {
 
     this.log.info("Connected to MongoDB");
     this.db = this.dbClient.db("test");
-    this.analyticsManager = new AnalyticsManager(this.db, this.shard);
+    this.analyticsManager = new AnalyticsManager(this.db, this.shard, this.log);
+    setAnalyticsManager(this.analyticsManager);
     this.log.info("Analytics Manager initialized");
 
     for (const [name, settings] of Object.entries(this.settings)) {
