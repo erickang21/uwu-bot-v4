@@ -9,7 +9,8 @@
     "dev": "cross-env NODE_ENV=development node .",
     "pretty": "prettier --write .",
     "lint": "eslint .",
-    "deploy": "node src/deploy-commands.js"
+    "deploy": "node src/deploy-commands.js",
+    "test": "node tests/offline_harness.js"
   },
   "repository": {
     "type": "git",
