@@ -26,6 +26,20 @@ class CommandHandler {
     return { content, flags };
   }
 
+  /**
+   * broadcastEval() that also works when the client runs unsharded, which is
+   * the case for `npm run dev` (src/index.js instantiates UwUClient directly,
+   * so client.shard is null). Production always runs sharded and keeps going
+   * through broadcastEval untouched.
+   * @param {Function} fn - Same signature as broadcastEval's callback.
+   * @param {Object} [options] - broadcastEval options, e.g. { context }.
+   * @returns {Promise<Array>} One entry per shard, or a single entry unsharded.
+   */
+  async broadcast(fn, options = {}) {
+    if (this.client.shard) return this.client.shard.broadcastEval(fn, options);
+    return [await fn(this.client, options.context)];
+  }
+
   async isMemberInGuild(guildId, memberId) {
     const findMember = async (client, context) => {
       const guild = client.guilds.cache.get(context.guildId);
@@ -34,12 +48,27 @@ class CommandHandler {
         return !!memberMatch;
       }
     }
-    const results = await this.client.shard.broadcastEval(findMember, { context: { guildId, memberId } });
+    const results = await this.broadcast(findMember, { context: { guildId, memberId } });
     return results.includes(true);
   }
 
+  /**
+   * Whether a message's author is allowed to invoke commands.
+   *
+   * Bots (including uwu bot itself) are always ignored in production. In
+   * development only, they are accepted so the test harness
+   * (tests/discord_harness.js) can drive commands by posting them itself,
+   * since a bot cannot send messages as a human user.
+   * @param {Message} message
+   * @returns {Boolean}
+   */
+  isAuthorAllowed(message) {
+    if (!message.author.bot) return true;
+    return this.client.dev;
+  }
+
   async handleMessage(message) {
-    if (!message.content || message.author.bot) return;
+    if (!message.content || !this.isAuthorAllowed(message)) return;
     if (message.channel.partial) await message.channel.fetch();
     const { user } = this.client;
     const settings = this.client.getGuildSettings(message.guild?.id);
@@ -132,9 +161,13 @@ class CommandHandler {
       return message.channel.send(serverSpecificPermission.errorMessage);
     }
     // track analytics
-    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, false, command.category);
-    await this.handleXP(ctx);
-    await this.trackCmdStats(ctx, command);
+    // Bot authors only reach this point in development (see isAuthorAllowed),
+    // and harness traffic must not land in analytics, XP or command stats.
+    if (!message.author.bot) {
+      await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, false, command.category);
+      await this.handleXP(ctx);
+      await this.trackCmdStats(ctx, command);
+    }
 
     return await Promise.all([ctx.channel.sendTyping(), command.execute(ctx)]);
   }
@@ -326,11 +359,11 @@ class CommandHandler {
     // update lifetime stats
     if (!this.client.lifetimeCommandStats[command.name]) this.client.lifetimeCommandStats[command.name] = 1;
     else this.client.lifetimeCommandStats[command.name] += 1;
-    const totalUses = await this.client.shard.broadcastEval((client) => client.totalCommandUses).then((x) => x.reduce((a, b) => a + b));
+    const totalUses = await this.broadcast((client) => client.totalCommandUses).then((x) => x.reduce((a, b) => a + b));
     if (totalUses >= 25) { // avoid excessive DB writes.
       const cmdData = await this.client.syncCommandSettings("1");
       let totalLifetimeCmdStats = {};
-      const lifetimeStatsList = await this.client.shard.broadcastEval((client) => client.lifetimeCommandStats).then((x) => x.reduce((a, b) => a.concat(b), []));
+      const lifetimeStatsList = await this.broadcast((client) => client.lifetimeCommandStats).then((x) => x.reduce((a, b) => a.concat(b), []));
       for (const shard of lifetimeStatsList) {
         for (const cmd of Object.keys(shard)) {
           if (!Object.keys(totalLifetimeCmdStats).includes(cmd)) totalLifetimeCmdStats[cmd] = shard[cmd];
@@ -341,9 +374,9 @@ class CommandHandler {
         if (!cmdData[cmdName]) cmdData[cmdName] = totalLifetimeCmdStats[command.name];
         else cmdData[cmdName] += totalLifetimeCmdStats[command.name];
       }
-      await this.client.shard.broadcastEval((client) => client.lifetimeCommandStats = {});
+      await this.broadcast((client) => client.lifetimeCommandStats = {});
       await this.client.commandUpdate("1", cmdData);
-      await this.client.shard.broadcastEval((client) => client.totalCommandUses = 0);
+      await this.broadcast((client) => client.totalCommandUses = 0);
     }
     
   }
