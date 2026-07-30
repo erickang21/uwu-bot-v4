@@ -36,10 +36,16 @@ class GuildDelete extends Event {
       }
     }
 
-    await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild, emojis, iconURL: guild.iconURL(), ownerUsername: owner?.tag } });
+    // Fired on a ready shard during the spawn window, broadcastEval/setActivity
+    // throw ShardingInProcess; swallow it so a leave event can't crash the shard.
+    try {
+      await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild, emojis, iconURL: guild.iconURL(), ownerUsername: owner?.tag } });
 
-    log.info(`[GuildCreate] uwu bot LEFT a server: ${guild.name}`);
-    await this.client.setActivity();    
+      log.info(`[GuildDelete] uwu bot LEFT a server: ${guild.name}`);
+      await this.client.setActivity();
+    } catch (error) {
+      log.error(`[GuildDelete] Error broadcasting leave event: ${error}`);
+    }
 
     // Save to analytics.
     try {
