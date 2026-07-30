@@ -9,7 +9,9 @@
     "dev": "cross-env NODE_ENV=development node .",
     "pretty": "prettier --write .",
     "lint": "eslint .",
-    "deploy": "node src/deploy-commands.js"
+    "deploy": "node src/deploy-commands.js",
+    "test:harness": "node tests/harness_selftest.js",
+    "test:discord": "node tests/discord_harness.js"
   },
   "repository": {
     "type": "git",
