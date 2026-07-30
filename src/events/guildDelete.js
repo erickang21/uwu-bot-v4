@@ -1,5 +1,6 @@
 const Event = require("../structures/Event.js");
 const emojis = require("../structures/Emojis");
+const AnalyticsManager = require("../structures/AnalyticsManager.js");
 
 class GuildDelete extends Event {
   async run(guild) {
@@ -41,14 +42,19 @@ class GuildDelete extends Event {
     await this.client.setActivity();    
 
     // Save to analytics.
-    const currentServerCount = await this.client.getGuildCount();
-    const users = await this.client.shard.broadcastEval((c) =>
-      c.guilds.cache.reduce((sum, guild) => sum + guild.memberCount, 0)
-    );
-    const totalUsers = users.reduce((a, b) => a + b, 0);
     try {
-      await this.client.analyticsManager.serverLeft(guild.memberCount, currentServerCount);
-      await this.client.analyticsManager.serverLeftUpdateUsers(guild.memberCount, totalUsers);
+      const { totalServers, totalMembers } = await this.client.getFleetStats();
+      await this.client.analyticsManager.recordGuildChange({
+        joined: false,
+        memberCount: guild.memberCount,
+        totalServers,
+        totalMembers
+      });
+      // How long we lasted. Servers that drop us within a day are an onboarding
+      // problem, which is a different thing from ordinary churn.
+      this.client.analyticsManager.guildRetention(
+        AnalyticsManager.daysSince(guild.joinedTimestamp)
+      );
     } catch (error) {
       log.error(`[GuildDelete] Error saving server count to analytics: ${error}`);
     }

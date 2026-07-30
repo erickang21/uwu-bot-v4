@@ -20,6 +20,17 @@ The prefix is `uwu`.
 - Type `uwu help <category>` to view the commands for that category.
 - Type `uwu <command name> <arguments>` to run a command.
 
+### Testing
+
+Commands are verified end-to-end against a live development bot:
+
+```sh
+npm run test:harness   # checks the harness itself, no Discord needed
+npm run test:discord   # runs real commands and reports what the bot replied
+```
+
+See [`tests/README.md`](tests/README.md) for setup and options.
+
 ### Tech Stack
 [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?logo=node.js&logoColor=white)](#)
 [![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)](#)

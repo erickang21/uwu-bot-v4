@@ -16,6 +16,45 @@ class CommandHandler {
     this.ratelimiter = new RateLimiter();
   }
 
+  get analytics() {
+    return this.client.analyticsManager;
+  }
+
+  /**
+   * Runs a command while recording its usage and how long it took. Both the
+   * text and slash paths go through here so the two stay in sync.
+   *
+   * Untrackable invocations (the test harness posting as a bot) still run —
+   * only the recording is skipped.
+   */
+  async executeTracked(ctx, command, slash) {
+    if (!ctx.trackable) return command.execute(ctx);
+
+    this.analytics?.commandUsed({
+      command: command.name,
+      category: command.category,
+      userId: ctx.author.id,
+      guildId: ctx.guild?.id,
+      memberCount: ctx.guild?.memberCount,
+      slash
+    });
+
+    const startedAt = process.hrtime.bigint();
+    try {
+      return await command.execute(ctx);
+    } finally {
+      this.analytics?.commandCompleted({
+        command: command.name,
+        ms: Number(process.hrtime.bigint() - startedAt) / 1e6
+      });
+    }
+  }
+
+  recordBlock(ctx, command, reason) {
+    if (!ctx.trackable) return;
+    this.analytics?.commandBlocked({ reason, command: command?.name });
+  }
+
   getFlags(content) {
     const flags = {};
     content = content.replace(flagRegex, (match, fl, ...quote) => {
@@ -26,6 +65,22 @@ class CommandHandler {
     return { content, flags };
   }
 
+  /**
+   * broadcastEval() that also works when the client runs unsharded, which is
+   * the case for `npm run dev` (src/index.js instantiates UwUClient directly,
+   * so client.shard is null). Production always runs sharded and keeps going
+   * through broadcastEval untouched.
+   * @param {Function} fn - Same signature as broadcastEval's callback. Keep it
+   * self-contained: broadcastEval serialises it, so a callback that closes over
+   * outer scope works unsharded but breaks in production.
+   * @param {Object} [options] - broadcastEval options, e.g. { context }.
+   * @returns {Promise<Array>} One entry per shard, or a single entry unsharded.
+   */
+  async broadcast(fn, options = {}) {
+    if (this.client.shard) return this.client.shard.broadcastEval(fn, options);
+    return [await fn(this.client, options.context)];
+  }
+
   async isMemberInGuild(guildId, memberId) {
     const findMember = async (client, context) => {
       const guild = client.guilds.cache.get(context.guildId);
@@ -34,12 +89,27 @@ class CommandHandler {
         return !!memberMatch;
       }
     }
-    const results = await this.client.shard.broadcastEval(findMember, { context: { guildId, memberId } });
+    const results = await this.broadcast(findMember, { context: { guildId, memberId } });
     return results.includes(true);
   }
 
+  /**
+   * Whether a message's author is allowed to invoke commands.
+   *
+   * Bots (including uwu bot itself) are always ignored in production. In
+   * development only, they are accepted so the test harness
+   * (tests/discord_harness.js) can drive commands by posting them itself,
+   * since a bot cannot send messages as a human user.
+   * @param {Message} message
+   * @returns {Boolean}
+   */
+  isAuthorAllowed(message) {
+    if (!message.author.bot) return true;
+    return this.client.dev;
+  }
+
   async handleMessage(message) {
-    if (!message.content || message.author.bot) return;
+    if (!message.content || !this.isAuthorAllowed(message)) return;
     if (message.channel.partial) await message.channel.fetch();
     const { user } = this.client;
     const settings = this.client.getGuildSettings(message.guild?.id);
@@ -129,14 +199,20 @@ class CommandHandler {
     if (!(await this.runChecks(ctx, command))) return;
     const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
+      this.recordBlock(ctx, command, "serverConfig");
       return message.channel.send(serverSpecificPermission.errorMessage);
     }
-    // track analytics
-    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, false, command.category);
-    await this.handleXP(ctx);
-    await this.trackCmdStats(ctx, command);
+    // Bot authors only reach this point in development (see isAuthorAllowed),
+    // and harness traffic must not land in analytics, XP or command stats.
+    if (ctx.trackable) {
+      await this.handleXP(ctx);
+      await this.trackCmdStats(ctx, command);
+    }
 
-    return await Promise.all([ctx.channel.sendTyping(), command.execute(ctx)]);
+    return await Promise.all([
+      ctx.channel.sendTyping(),
+      this.executeTracked(ctx, command, false)
+    ]);
   }
 
   async handleInteraction(interaction) {
@@ -156,16 +232,17 @@ class CommandHandler {
     if (!(await this.runChecksSlash(interaction))) return ctx.reply({ content: "uwu bot cannot send messages in this channel. Please enable the 'Send Messages' permission at the very least.", ephemeral: true });
     const serverSpecificPermission = await this.checkServerSpecific(ctx, command);
     if (!serverSpecificPermission.allowed && serverSpecificPermission.errorMessage) {
+      this.recordBlock(ctx, command, "serverConfig");
       return interaction.editReply({ content: serverSpecificPermission.errorMessage });
     }
-    await this.client.analyticsManager.commandUsed(command.name, ctx.author.id, true, command.category);
     // await this.handleXP(ctx);
     //await this.trackCmdStats(ctx, command);
-    return command.execute(ctx);
+    return this.executeTracked(ctx, command, true);
   }
 
   async runChecks(ctx, command) {
     if (command.devOnly && !ctx.dev) {
+      this.recordBlock(ctx, command, "devOnly");
       await ctx.reply({
         content: `This command can only be used by the developers. ${emojis.NotAllowed}`,
       });
@@ -174,6 +251,7 @@ class CommandHandler {
     }
 
     if (command.guildOnly && !ctx.guild) {
+      this.recordBlock(ctx, command, "guildOnly");
       await ctx.reply({
         content: 'Ba-baka! What do you think you\'re doing in my DMs? That command can only be used in a server!'
       });
@@ -182,6 +260,7 @@ class CommandHandler {
     }
 
     if (command.nsfw && !ctx.channel.nsfw) {
+      this.recordBlock(ctx, command, "nsfw");
       await ctx.reply({
         content: `This command can only be run in NSFW channels. ${EMOJIS.BONK}`,
       });
@@ -213,6 +292,10 @@ class CommandHandler {
     const missing = missingPermissions(permissions, command.botPermissions);
 
     if (missing.length) {
+      this.recordBlock(ctx, command, "botPermissions");
+      // Which permissions we are actually missing in the wild is what tells us
+      // what the invite URL should be asking for.
+      if (ctx.trackable) this.analytics?.permissionBlocked(missing);
       await ctx.reply({
         content: `I need the following permission(s) to run that command: **${missing.join(', ')}**`
       });
@@ -227,6 +310,7 @@ class CommandHandler {
     const user = missingPermissions(userPermissions, command.userPermissions);
 
     if (user.length) {
+      this.recordBlock(ctx, command, "userPermissions");
       await ctx.reply({
         content: `You need the following permission(s) to run that command: **${user.join(', ')}**`
       });
@@ -326,11 +410,11 @@ class CommandHandler {
     // update lifetime stats
     if (!this.client.lifetimeCommandStats[command.name]) this.client.lifetimeCommandStats[command.name] = 1;
     else this.client.lifetimeCommandStats[command.name] += 1;
-    const totalUses = await this.client.shard.broadcastEval((client) => client.totalCommandUses).then((x) => x.reduce((a, b) => a + b));
+    const totalUses = await this.broadcast((client) => client.totalCommandUses).then((x) => x.reduce((a, b) => a + b));
     if (totalUses >= 25) { // avoid excessive DB writes.
       const cmdData = await this.client.syncCommandSettings("1");
       let totalLifetimeCmdStats = {};
-      const lifetimeStatsList = await this.client.shard.broadcastEval((client) => client.lifetimeCommandStats).then((x) => x.reduce((a, b) => a.concat(b), []));
+      const lifetimeStatsList = await this.broadcast((client) => client.lifetimeCommandStats).then((x) => x.reduce((a, b) => a.concat(b), []));
       for (const shard of lifetimeStatsList) {
         for (const cmd of Object.keys(shard)) {
           if (!Object.keys(totalLifetimeCmdStats).includes(cmd)) totalLifetimeCmdStats[cmd] = shard[cmd];
@@ -341,9 +425,9 @@ class CommandHandler {
         if (!cmdData[cmdName]) cmdData[cmdName] = totalLifetimeCmdStats[command.name];
         else cmdData[cmdName] += totalLifetimeCmdStats[command.name];
       }
-      await this.client.shard.broadcastEval((client) => client.lifetimeCommandStats = {});
+      await this.broadcast((client) => client.lifetimeCommandStats = {});
       await this.client.commandUpdate("1", cmdData);
-      await this.client.shard.broadcastEval((client) => client.totalCommandUses = 0);
+      await this.broadcast((client) => client.totalCommandUses = 0);
     }
     
   }
@@ -352,6 +436,7 @@ class CommandHandler {
     const { pass, remaining } = this.ratelimiter.check(ctx, command);
     if (pass) return true;
 
+    this.recordBlock(ctx, command, "cooldown");
     const duration = getDuration(remaining);
     const content = `You baka! This command is still on cooldown. You better wait another **${duration}** before asking again! ${emojis.ban}`;
 
@@ -360,6 +445,9 @@ class CommandHandler {
   }
 
   closestCommand(ctx, cmd) {
+    // What people try to run and miss is a standing list of alias gaps and
+    // feature requests.
+    if (ctx.trackable) this.analytics?.unknownCommandAttempted(cmd);
     const commands = this.client.commands.usableCommands(ctx.message);
     const aliases = commands.map(command => command.aliases).flat();
     const arr = [...commands.map(command => command.name), ...aliases];

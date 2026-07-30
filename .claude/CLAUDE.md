@@ -13,12 +13,14 @@ uwu-bot is a general-purpose anime/fun Discord bot (Discord.js v14) with slash a
 - `npm run lint` — ESLint (`eslint:recommended`, CommonJS/Node/ES2021)
 - `npm run pretty` — Prettier write (2-space, no tabs, LF, no trailing commas)
 - `npm run deploy` — register/update slash commands via `src/deploy-commands.js` (or run the `deploy` dev-only command from Discord itself)
-- There is no test suite in this repo.
+- `npm run test:discord` — end-to-end command harness (`tests/discord_harness.js`); spawns a dev bot, runs two commands per category in `TEST_CHANNEL`, and reports what the bot replied. See `tests/README.md`.
+- `npm run test:harness` — self-test for the harness's own logic (`tests/harness_selftest.js`); no token, DB or network required, so it is the one test that always runs.
+- There is no unit test suite for the commands themselves; a command's output is a Discord message, so the harness is the way to verify one.
 
 CI (`.github/workflows/ci.yml`) runs `npm ci` + `npm run lint` on push to `main`, then triggers a deploy webhook.
 
 ### Running a single command / file manually
-There's no per-file runner; to sanity-check a single command's logic, either load the bot with `npm run dev` and invoke it in a test server, or `node -e` a quick script requiring the relevant helper module.
+There's no per-file runner. To sanity-check a single command, use `node tests/discord_harness.js --only=<command>` (add `--attach` if you already have `npm run dev` running), load the bot with `npm run dev` and invoke it in a test server, or `node -e` a quick script requiring the relevant helper module.
 
 ## Entry points & sharding
 
@@ -48,6 +50,10 @@ Unifies message-based and interaction-based invocation behind one API: `ctx.slas
 
 ### CommandHandler (`src/structures/CommandHandler.js`)
 Central dispatcher owned by `CommandStore.handler`, invoked from the `messageCreate`/`interactionCreate` events. Responsibilities in order: prefix/mention matching, flag parsing (`--flag=value`), permission/cooldown/NSFW/devOnly/guildOnly checks, per-guild command enable/disable + role allowlist/denylist (`checkServerSpecific`, backed by `guildSettings.commandConfig`), XP/leveling on messages and commands, analytics tracking (`AnalyticsManager.commandUsed`), and "did you mean?" typo suggestions (`fastest-levenshtein`) when a command isn't found.
+- `isAuthorAllowed(message)` decides whether the author may run commands: bots (including uwu bot itself) are ignored in production but **accepted when `NODE_ENV=development`**, which is what lets `tests/discord_harness.js` drive commands by posting them itself.
+- `ctx.trackable` (`CommandContext`) is false for bot-authored messages, and **every** analytics, XP and command-stats call site must sit behind it, so harness runs never write to the `metrics`/`users`/`commands` collections. That means `executeTracked`, `recordBlock`, `permissionBlocked`, `unknownCommandAttempted` and `commandError`'s recorder — a new recording site added without the guard will silently count harness traffic as real usage. `tests/harness_selftest.js` covers this.
+- The one exception is `src/helpers/apiMetrics.js`: a harness run makes real upstream calls, so those land in `apiCalls` like any other. The counter measures provider health rather than user behaviour, so this is intentional.
+- `broadcast(fn, options)` is a `broadcastEval` that falls back to a local call when `client.shard` is null. Prefer it over `client.shard.broadcastEval` in any code reachable from a command, otherwise the code throws under `npm run dev`.
 
 ### Settings/persistence (MongoDB)
 - `Settings` (`src/structures/Settings.js`) wraps one Mongo collection per entity type (`guilds`, `members`, `users`, `commands` — instantiated on `UwUClient` in the constructor) with an in-memory cache merged against defaults from `src/utils/schema.js`. **Always add new persisted fields to `schema.js`** — `mergeDefault` fills missing keys from there, so undeclared fields silently won't exist for old documents.
@@ -62,10 +68,20 @@ Reaction-gif commands (`hug`, `pat`, `slap`, etc.) primarily hit the `nekos.best
 - HTTP requests use `undici`'s `request()`, **not** `node-fetch` or bare `fetch` — see `NOTES.md` for the historical reasoning and the exact migration pattern (`res.body.json()` instead of `res.json()`).
 
 ### Analytics
-`AnalyticsManager` (`src/structures/AnalyticsManager.js`) records daily/lifetime server-count, user-count, and command-usage stats into a Mongo `analytics` collection. Per-shard counters batch up before flushing (see `CommandHandler.trackCmdStats`, which only writes once total command uses across all shards hits 25).
+`AnalyticsManager` (`src/structures/AnalyticsManager.js`) writes two document families into the Mongo `metrics` collection: daily rows keyed `{ type, date, ...dimensions }` and lifetime rows keyed `{ type: `${type}Total`, ...dimensions }`. Dates are **UTC** (`luxon`), so buckets roll over at midnight UTC.
+
+- The older `analytics` collection is **frozen, not read or written** — its day keys are host-local and its category counters were inflated by a flush bug. Anything still pointing at `analytics` (including the website's `/api/stats` layer) is serving pre-refactor data.
+
+- Recording is synchronous and in-memory: each shard accumulates into a `MetricBuffer` (`src/structures/MetricBuffer.js`), and the coordinating shard (shard 0, or the single client when unsharded) drains every shard once a minute and writes the merged result in one `bulkWrite`. Draining and clearing happen in one step — do not add a separate reset.
+- To add a metric: add the daily→lifetime mapping to `METRIC_TYPES` in `src/utils/analytics.js` (a `null` lifetime means daily-only), then call `this.track(type, this.dimensions({ ...dims }), { field: n })` from a `record*` method. Give an aggregate and its own breakdown **different types** (see `commandBlocked` vs `commandBlockedByCommand`) or readers will double-count.
+- **Retention**: daily rows carry `expiresAt` and a TTL index keys off that field alone, so lifetime totals are never reaped. `buildOperation()` is the only place that sets `expiresAt`; never set it on a lifetime row.
+- Unique-actor sets (`uniqueUsers`, `activeGuilds`) live in `metrics_unique`, sharded across bucket documents so no document approaches the 16MB BSON limit. Never store a growing id array in a single document.
+- Fleet size (`totalServerCount`, `serverCount`, `totalUserCount`, `memberCountBySize`) is snapshotted hourly from authoritative totals via `snapshotFleet()` rather than only incremented, so a missed event cannot leave a day's count drifting.
+- Errors are attributed to `api` / `validation` / `logic` by `events/commandError.js` — an `ApiError` (`src/utils/errors.js`) means a provider failed, a bare string throw means the user was told they got it wrong, anything else is our bug. API helpers report per-call outcomes through `src/helpers/apiMetrics.js`, which the client registers at startup.
+- `uwu metrics` (dev-only, `src/commands/developer/metrics.js`) reads it back; the website's `/api/stats` layer is documented in `STATS_API.md` in `uwu-bot-website-2`.
 
 ### Sharding-aware code
-Multiple pieces of logic must work whether `client.shard` exists or not, and some operations (e.g. `AnalyticsManager.saveCommandUses`) are explicitly documented to run only once globally, not once per shard — check comments in `events/uwuReady.js` before adding new periodic/global logic. Cross-shard data (guild counts, member lookups) goes through `client.shard.broadcastEval(...)`.
+Multiple pieces of logic must work whether `client.shard` exists or not, and some operations run only once globally rather than once per shard — see `ReadyEvent.isAnalyticsCoordinator` in `events/uwuReady.js` before adding new periodic/global logic. Cross-shard data (guild counts, member lookups) goes through `client.shard.broadcastEval(...)`, or `client.getFleetStats()` which handles both cases.
 
 ## Conventions
 

@@ -1,5 +1,18 @@
 # Testing mode
 
+| Script | What it does | Needs Discord? |
+| --- | --- | --- |
+| `offline_harness.js` | Runs every command's `execute()` against a fake context and reports the payload it would have sent | no |
+| `harness_selftest.js` | Verifies the live harness's own logic and the dev-only author gate | no |
+| `discord_harness.js` | Runs commands against a live dev bot in a real channel | yes |
+
+Start with `offline_harness.js`: it needs nothing, covers every command, and runs
+in seconds. Reach for `discord_harness.js` when the question is whether Discord
+itself accepts and renders the result — see [the live harness](#the-live-harness)
+at the end.
+
+## The offline harness
+
 `offline_harness.js` runs a command's real `execute()` against a fake Discord
 context and prints the payload it would have sent. No token, no database, no
 network, no test server.
@@ -112,3 +125,38 @@ does, which surfaces code that assumes a shard manager exists.
 - Stubbed responses are one fixed shape per helper. A command that reads a field
   the stub does not provide shows up as an error, which is a harness gap rather
   than a bug in the command — the stack trace makes the difference obvious.
+
+## The live harness
+
+`discord_harness.js` covers the one thing the offline harness cannot: whether
+Discord accepts the payload, renders it, and lets the bot post it at all. It logs
+in with `TOKEN_DEV`, posts two commands per category into `TEST_CHANNEL`, and
+reports what came back.
+
+```sh
+npm run test:harness                              # self test, no Discord needed
+npm run test:discord                              # spawn the dev bot, run every case
+node tests/discord_harness.js --attach            # test a bot already running
+node tests/discord_harness.js --help              # all options
+```
+
+Setup: invite the dev bot to a test guild with Send Messages, Embed Links, Read
+Message History and Attach Files (plus Moderate Members and Manage Server, or the
+moderation and customization cases report `BLOCKED`), then set `TOKEN_DEV`,
+`MONGODB` and `TEST_CHANNEL` in `.env`. `TEST_TOKEN` and `TEST_BOT_ID` are
+optional overrides.
+
+It reports `PASS`, `FAIL`, `TIMEOUT`, `DEGRADED` (the command replied but an
+external dependency was down) or `BLOCKED` (refused for missing permissions), and
+exits non-zero on the first two. `--strict` also fails on the soft outcomes.
+
+This is why `CommandHandler#isAuthorAllowed()` accepts bot authors when
+`NODE_ENV=development`: a bot cannot post as a human, so the harness could not
+otherwise trigger a command. In production, bot messages are ignored exactly as
+before.
+
+Cases are read-only or self-targeted, and a run performs no database writes:
+`Settings.sync()` only reads, and analytics, XP and command-stat tracking are
+skipped for bot authors. Text commands only, `images` cases need `img-api` on
+`localhost:3030`, and `general/stats` is left out because it calls
+`client.shard.broadcastEval` directly while `npm run dev` runs unsharded.

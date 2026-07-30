@@ -2,9 +2,38 @@ const Event = require("../structures/Event.js");
 const { EMOJIS } = require("../utils/constants.js");
 const emojis = require("../structures/Emojis");
 const { getMessageContent } = require("../helpers/helpers.js");
+const { ApiError } = require("../utils/errors.js");
 
 class CommandError extends Event {
+  /**
+   * An ApiError means a provider failed us, a bare string means the user was
+   * told they did something wrong, anything else means we have a bug. Only the
+   * last kind should ever move the needle on our own error rate.
+   */
+  static classify(err) {
+    if (err instanceof ApiError) return "api";
+    if (typeof err === "string") return "validation";
+    return "logic";
+  }
+
+  record(ctx, err) {
+    if (!ctx.trackable) return;
+    this.client.analyticsManager?.commandErrored({
+      command: ctx.command?.name,
+      category: ctx.command?.category,
+      kind: CommandError.classify(err)
+    });
+  }
+
   async run(ctx, err) {
+    this.record(ctx, err);
+
+    // An upstream provider failed. The user sees the same message a bare string
+    // throw produces; only the analytics attribution differs.
+    if (err instanceof ApiError) {
+      return ctx.reply({ content: err.message });
+    }
+
     // Allow throw "string" to unwind stack from deepest calls
     // for replying with an error message.
     if (typeof err === "string") {
