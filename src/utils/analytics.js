@@ -60,6 +60,7 @@ const METRIC_TYPES = {
   commandLatency: "commandLatencyTotal",
   commandLatencyByCommand: "commandLatencyByCommandTotal",
   commandBlocked: "commandBlockedTotal",
+  commandBlockedByCommand: "commandBlockedByCommandTotal",
   permissionBlocked: "permissionBlockedTotal",
   unknownCommand: "unknownCommandTotal",
   guildRetention: "guildRetentionTotal",

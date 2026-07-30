@@ -114,7 +114,9 @@ class AnalyticsManager {
   commandBlocked({ reason, command }) {
     const dims = this.dimensions();
     this.track("commandBlocked", { ...dims, reason }, { count: 1 });
-    if (command) this.track("commandBlocked", { ...dims, reason, command }, { count: 1 });
+    if (command) {
+      this.track("commandBlockedByCommand", { ...dims, reason, command }, { count: 1 });
+    }
   }
 
   permissionBlocked(permissions = []) {
