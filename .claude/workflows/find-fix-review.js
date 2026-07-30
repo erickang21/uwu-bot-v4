@@ -82,9 +82,20 @@ const DEFAULT_AREAS = [
   'command dispatch, cooldowns, economy/leveling correctness, and the ctx.trackable analytics/XP guards in src/structures/CommandHandler.js and src/structures/AnalyticsManager.js'
 ]
 
-const areas = Array.isArray(args?.areas) && args.areas.length ? args.areas : DEFAULT_AREAS
-const maxFixes = Number.isInteger(args?.maxFixes) ? args.maxFixes : 3
-const openPr = args?.openPr !== false
+// args can arrive as an object or, depending on how the workflow is invoked,
+// as a JSON-encoded string — normalize both so the knobs actually apply.
+let opts = args || {}
+if (typeof opts === 'string') {
+  try {
+    opts = JSON.parse(opts)
+  } catch (e) {
+    opts = {}
+  }
+}
+
+const areas = Array.isArray(opts.areas) && opts.areas.length ? opts.areas : DEFAULT_AREAS
+const maxFixes = Number.isInteger(opts.maxFixes) ? opts.maxFixes : 3
+const openPr = opts.openPr !== false
 
 // ---------------------------------------------------------------------------
 // Phase 1 — Find (read-only, parallel by subsystem, then dedup + rank)
