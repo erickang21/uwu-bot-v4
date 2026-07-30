@@ -1,40 +1,28 @@
 const Event = require("../structures/Event.js");
 
+const FLUSH_INTERVAL_MS = 60000;
+const SNAPSHOT_INTERVAL_MS = 3600000;
+const RESOURCE_SAMPLE_INTERVAL_MS = 60000;
+
 class ReadyEvent extends Event {
+  get isAnalyticsCoordinator() {
+    return !this.client.shard || this.client.shard.ids[0] === 0;
+  }
+
   async run() {
     const { user, log } = this.client;
 
-    // Periodically merge and save command analytics.
-    if (this.client.shard?.ids[0] === 0) {
-      setInterval(async () => {
-        // returns:
-        // [{ usage: { ...}, count: 123}, { usage: {...}, count: 456}...]
-        const allUsage = await this.client.shard.broadcastEval((client) => {
-          return { usage: client.analyticsManager.commandUsage, slashCount: client.analyticsManager.slashCommandCount, textCount: client.analyticsManager.textCommandCount };
-        });
-    
-        const mergedUsage = allUsage.reduce((acc, shardUsage) => {
-          for (const [cmd, count] of Object.entries(shardUsage.usage)) {
-            acc[cmd] = (acc[cmd] ?? 0) + count;
-          }
-          return acc;
-        }, {});
+    // Every shard samples its own CPU and memory; the coordinator collects them.
+    this.client.analyticsManager.resourceSample();
+    setInterval(
+      () => this.client.analyticsManager.resourceSample(),
+      RESOURCE_SAMPLE_INTERVAL_MS
+    );
 
-        const mergedSlashCount = allUsage.reduce((acc, shardUsage) => {
-          return acc + shardUsage.slashCount;
-        }, 0);
-        const mergedTextCount = allUsage.reduce((acc, shardUsage) => {
-          return acc + shardUsage.textCount;
-        }, 0);
-    
-        await this.client.analyticsManager.saveCommandUses(mergedUsage, mergedSlashCount, mergedTextCount);
-        // Once done, reset command usage on all shards.
-        await this.client.shard.broadcastEval((client) => {
-          client.analyticsManager.resetCommandUsage();
-        });
-    
-      }, 60000);
+    if (this.isAnalyticsCoordinator) {
+      await this.startAnalyticsCoordinator();
     }
+
     //const guilds = await this.client.getGuildCount();
     /*
     const serverCount = this.client.guilds.cache.size;
@@ -59,7 +47,51 @@ class ReadyEvent extends Event {
     log.info(`Removed ${count} unnecessary GUILD entries in cache.`)
     //log.info(`Bot is in ${guilds} servers.`);
     //this.client.setActivity();
-    
+
+  }
+
+  /**
+   * Runs on one shard only: index setup, draining every shard's metric buffer,
+   * and the authoritative fleet snapshot.
+   */
+  async startAnalyticsCoordinator() {
+    const { analyticsManager, log } = this.client;
+
+    try {
+      await analyticsManager.ensureIndexes();
+      const stamped = await analyticsManager.backfillExpiry();
+      if (stamped) {
+        log.info(`[Analytics] Stamped retention on ${stamped} pre-existing daily documents.`);
+      }
+    } catch (error) {
+      log.error(`[Analytics] Failed to prepare indexes: ${error}`);
+    }
+
+    await this.flushMetrics();
+    setInterval(() => this.flushMetrics(), FLUSH_INTERVAL_MS);
+
+    await this.snapshotFleet();
+    setInterval(() => this.snapshotFleet(), SNAPSHOT_INTERVAL_MS);
+  }
+
+  async flushMetrics() {
+    try {
+      await this.client.analyticsManager.collect();
+    } catch (error) {
+      this.client.log.error(`[Analytics] Failed to flush metrics: ${error}`);
+    }
+  }
+
+  async snapshotFleet() {
+    try {
+      const stats = await this.client.getFleetStats();
+      await this.client.analyticsManager.snapshotFleet(stats);
+      this.client.log.debug(
+        `[Analytics] Fleet snapshot: ${stats.totalServers} servers, ${stats.totalMembers} members.`
+      );
+    } catch (error) {
+      this.client.log.error(`[Analytics] Failed to snapshot fleet: ${error}`);
+    }
   }
 }
 
