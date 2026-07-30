@@ -506,7 +506,7 @@ class AnalyticsManager {
       this.collection.find({ "_id.date": { $in: [today, yesterday] } }).toArray(),
       this.countUnique("uniqueUsers", today),
       this.countUnique("activeGuilds", today),
-      this.collection.findOne({ _id: { type: "guildRetentionTotal" } })
+      this.collection.findOne({ "_id.type": "guildRetentionTotal" })
     ]);
 
     const byDate = { [today]: {}, [yesterday]: {} };
