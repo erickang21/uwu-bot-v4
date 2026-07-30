@@ -17,6 +17,7 @@ class CommandError extends Event {
   }
 
   record(ctx, err) {
+    if (!ctx.trackable) return;
     this.client.analyticsManager?.commandErrored({
       command: ctx.command?.name,
       category: ctx.command?.category,
