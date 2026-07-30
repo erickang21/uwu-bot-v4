@@ -12,13 +12,17 @@ const {
   bucketIndex
 } = require("../utils/analytics.js");
 
-const UNIQUE_COLLECTION = "analytics_unique";
+// The pre-refactor `analytics` collection is left untouched: its day keys are
+// host-local rather than UTC and its category counters were inflated by a flush
+// bug, so mixing that data into these documents would corrupt the new series.
+const COLLECTION = "metrics";
+const UNIQUE_COLLECTION = "metrics_unique";
 const MS_PER_DAY = 86400000;
 
 /**
  * Records and reads the bot's analytics.
  *
- * Two document families live in the `analytics` collection:
+ * Two document families live in the `metrics` collection:
  *
  *   daily     { _id: { type, date, ...dimensions } } -> counters + `expiresAt`
  *   lifetime  { _id: { type: `${type}Total`, ...dimensions } } -> counters
@@ -37,7 +41,7 @@ class AnalyticsManager {
     this.db = db;
     this.shard = shard;
     this.log = log;
-    this.collection = db.collection("analytics");
+    this.collection = db.collection(COLLECTION);
     this.uniqueCollection = db.collection(UNIQUE_COLLECTION);
     this.buffer = new MetricBuffer();
     this.lastCpuSample = null;
@@ -420,28 +424,6 @@ class AnalyticsManager {
       this.uniqueCollection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
       this.uniqueCollection.createIndex({ "_id.type": 1, "_id.date": 1 })
     ]);
-  }
-
-  /**
-   * Daily documents written before retention existed have no `expiresAt` and
-   * would otherwise live forever. Idempotent: a no-op once every day is stamped.
-   */
-  async backfillExpiry() {
-    const dates = await this.collection.distinct("_id.date", {
-      "_id.date": { $exists: true },
-      expiresAt: { $exists: false }
-    });
-
-    let stamped = 0;
-    for (const date of dates) {
-      if (typeof date !== "string") continue;
-      const result = await this.collection.updateMany(
-        { "_id.date": date, expiresAt: { $exists: false } },
-        { $set: { expiresAt: this.expiryFor(date) } }
-      );
-      stamped += result.modifiedCount ?? 0;
-    }
-    return stamped;
   }
 
   // ---------------------------------------------------------------- reads

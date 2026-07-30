@@ -59,10 +59,6 @@ class ReadyEvent extends Event {
 
     try {
       await analyticsManager.ensureIndexes();
-      const stamped = await analyticsManager.backfillExpiry();
-      if (stamped) {
-        log.info(`[Analytics] Stamped retention on ${stamped} pre-existing daily documents.`);
-      }
     } catch (error) {
       log.error(`[Analytics] Failed to prepare indexes: ${error}`);
     }
