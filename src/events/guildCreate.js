@@ -1,4 +1,5 @@
 const Event = require("../structures/Event.js");
+const { PermissionFlagsBits } = require("discord.js");
 const emojis = require("../structures/Emojis");
 
 class GuildCreate extends Event {
@@ -52,18 +53,22 @@ class GuildCreate extends Event {
       log.error(`[GuildCreate] Error saving server count to analytics: ${error}`);
     }
 
-    // Permissions
-    const VIEW_CHANNEL = BigInt(1 << 10);
-    const SEND_MESSAGES = BigInt(1 << 11);
-    const EMBED_LINKS = BigInt(1 << 14);
-    const USE_EXTERNAL_EMOJIS = BigInt(1 << 18);
+    // Permissions we need to post the welcome message.
+    const WELCOME_PERMISSIONS = [
+      PermissionFlagsBits.ViewChannel,
+      PermissionFlagsBits.SendMessages,
+      PermissionFlagsBits.EmbedLinks,
+      PermissionFlagsBits.UseExternalEmojis
+    ];
 
     // send to server upon joining
     const botGuildMember = await guild.members.fetch(this.client.user.id);
     console.log("Attempting to prepare the welcome message!");
     let joinChannel;
     joinChannel = guild.channels.cache.find((c) => c.type === 0 && (c.name.includes("general") || c.name.includes("global") || c.name.includes("chat")));
-    if (!joinChannel) joinChannel = guild.channels.cache.find((c) => c.type === 0 && c.permissionsFor(botGuildMember).has(VIEW_CHANNEL) && c.permissionsFor(botGuildMember).has(SEND_MESSAGES) && c.permissionsFor(botGuildMember).has(EMBED_LINKS) && c.permissionsFor(botGuildMember).has(USE_EXTERNAL_EMOJIS));
+    // permissionsFor() is null when it cannot resolve the member, so it can
+    // only be dereferenced defensively.
+    if (!joinChannel) joinChannel = guild.channels.cache.find((c) => c.type === 0 && c.permissionsFor(botGuildMember)?.has(WELCOME_PERMISSIONS));
     if (!joinChannel) return;
     const embed = this.client.embed(this.client.user)
       .setTitle(`Thank you for choosing **uwu bot!** ${emojis.love}`)

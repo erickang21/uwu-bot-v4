@@ -19,6 +19,7 @@
 
 const assert = require("node:assert");
 const test = require("node:test");
+const { DMChannel, PermissionFlagsBits, PermissionsBitField } = require("discord.js");
 
 const CommandContext = require("../src/structures/CommandContext.js");
 const CommandHandler = require("../src/structures/CommandHandler.js");
@@ -537,6 +538,90 @@ test("broadcast uses broadcastEval when sharded", async () => {
 
   assert.deepEqual(await new CommandHandler(client).broadcast(() => 0, { context: { a: 1 } }), [1, 2]);
   assert.deepEqual(calls, [{ context: { a: 1 } }]);
+});
+
+// --- the permission gate in front of every text command --------------------
+// permissionsFor() exists on guild channels only. A DMChannel is text-based -
+// isTextBased() only asks whether the channel has a message manager - so
+// gating on isTextBased() sent every DM into a TypeError and no command in DMs
+// ever ran. The gate has to be "is this in a guild", and it has to survive
+// permissionsFor() returning null for a member it cannot resolve.
+
+const guildMessage = ({ permissions, me = { id: "bot" }, fetchMe } = {}) => ({
+  guildId: "g1",
+  inGuild() { return true; },
+  guild: {
+    members: {
+      me,
+      fetchMe: fetchMe ?? (() => Promise.reject(new Error("no member")))
+    }
+  },
+  channel: {
+    permissionsFor: (member) => (member ? permissions : null)
+  }
+});
+
+const perms = (...flags) => new PermissionsBitField(flags).freeze();
+
+test("a DM channel is text-based but has no permissionsFor", () => {
+  // The shape that produced the crash, straight from discord.js.
+  const dm = Object.create(DMChannel.prototype);
+  dm.messages = {};
+
+  assert.equal(dm.isTextBased(), true);
+  assert.equal(dm.permissionsFor, undefined);
+});
+
+test("the basic permission gate reads our own member's channel permissions", async () => {
+  const handler = new CommandHandler({});
+
+  assert.equal(await handler.hasBasicPermissions(guildMessage({
+    permissions: perms(PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks)
+  })), true);
+
+  assert.equal(await handler.hasBasicPermissions(guildMessage({
+    permissions: perms(PermissionFlagsBits.SendMessages)
+  })), false, "embed links is required too");
+});
+
+test("the basic permission gate fetches our member when it is not cached", async () => {
+  const handler = new CommandHandler({});
+  const message = guildMessage({
+    permissions: perms(PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks),
+    me: null,
+    fetchMe: () => Promise.resolve({ id: "bot" })
+  });
+
+  assert.equal(await handler.hasBasicPermissions(message), true);
+});
+
+test("unresolvable permissions do not silence the bot", async () => {
+  const handler = new CommandHandler({});
+  // Neither the cache nor a fetch can tell us what we may do here: run the
+  // command and let a failed send report itself, rather than dropping it.
+  const message = guildMessage({ permissions: null, me: null });
+
+  assert.equal(await handler.hasBasicPermissions(message), true);
+});
+
+test("the slash gate uses the interaction's own permissions", async () => {
+  const handler = new CommandHandler({});
+  const interaction = (appPermissions, guild = true) => ({
+    inGuild: () => guild,
+    appPermissions
+  });
+
+  assert.equal(await handler.runChecksSlash(interaction(perms(PermissionFlagsBits.SendMessages))), true);
+  assert.equal(await handler.runChecksSlash(interaction(perms(PermissionFlagsBits.ViewChannel))), false);
+  // No channel permissions to compute in a DM, and no channel needed either.
+  assert.equal(await handler.runChecksSlash(interaction(undefined, false)), true);
+});
+
+test("command permission checks are skipped outside guilds", async () => {
+  const handler = new CommandHandler({});
+  const ctx = new CommandContext(null, { message: { author: { bot: false, id: "1" }, guild: null } });
+
+  assert.equal(await handler.checkPermissions(ctx, { botPermissions: new PermissionsBitField() }), true);
 });
 
 test("parseArgs reads flags, values and rejects nonsense", () => {

@@ -108,6 +108,36 @@ class CommandHandler {
     return this.client.dev;
   }
 
+  /**
+   * Whether we can post an ordinary command reply in a guild channel.
+   *
+   * permissionsFor() is a GuildChannel/ThreadChannel method: a DMChannel is
+   * text-based (it has a message manager, which is all isTextBased() checks)
+   * but has no permission overwrites to compute, so calling it on one throws.
+   * Guard on the message being in a guild instead, never on isTextBased().
+   *
+   * It also returns null when the member it is asked about cannot be resolved
+   * from cache, so `.has()` is only safe behind a null check — hence resolving
+   * ourselves through guild.members.me (v14 renamed guild.me) with a fetch as
+   * a fallback, rather than passing the bare client user.
+   *
+   * When permissions genuinely cannot be resolved we assume we may reply: a
+   * cache miss should surface as a failed send we can see, not as the bot
+   * silently ignoring every command in the guild.
+   * @param {Message} message - A message sent in a guild.
+   * @returns {Promise<Boolean>}
+   */
+  async hasBasicPermissions(message) {
+    const me = message.guild.members.me ?? await message.guild.members.fetchMe().catch(() => null);
+    const permissions = me && message.channel?.permissionsFor(me);
+    if (!permissions) return true;
+
+    return permissions.has([
+      PermissionFlagsBits.SendMessages,
+      PermissionFlagsBits.EmbedLinks
+    ]);
+  }
+
   async handleMessage(message) {
     if (!message.content || !this.isAuthorAllowed(message)) return;
     if (message.channel.partial) await message.channel.fetch();
@@ -173,10 +203,8 @@ class CommandHandler {
     if (!match) return;
 
     // Don't run a command if we don't have the most basic permissions.
-    if (message.channel.isTextBased() && !message.channel.permissionsFor(this.client.user).has([
-      PermissionFlagsBits.SendMessages,
-      PermissionFlagsBits.EmbedLinks
-    ])) return;
+    // There is nothing to check in DMs, where we can always reply.
+    if (message.inGuild() && !(await this.hasBasicPermissions(message))) return;
 
     const prefixLength = match[0].length;
     const rawContent = message.content.slice(prefixLength).trim();
@@ -275,20 +303,23 @@ class CommandHandler {
   }
 
   async runChecksSlash(interaction) {
-    if (!interaction.channel) return;
+    // Nothing to check in DMs, where we can always reply.
+    if (!interaction.inGuild()) return true;
 
-    const permissions = interaction.channel.permissionsFor(interaction.client.user);
-
-    if (!permissions || !permissions.has('SendMessages')) {
-      return false;
-    }
-
-    return true;
+    // appPermissions comes with the interaction payload, so unlike
+    // channel.permissionsFor() it needs neither the channel nor the member to
+    // be cached, and it cannot be null.
+    return interaction.appPermissions.has(PermissionFlagsBits.SendMessages);
   }
 
   async checkPermissions(ctx, command) {
     if (!ctx.guild) return true;
-    const permissions = ctx.channel.permissionsFor(this.client.user);
+    // permissionsFor() returns null for an unresolvable member, and there is
+    // nothing to compute at all if the channel isn't cached, so in either case
+    // we have no permissions to compare the command's requirements against.
+    const me = ctx.guild.members.me ?? await ctx.guild.members.fetchMe().catch(() => null);
+    const permissions = me && ctx.channel?.permissionsFor(me);
+    if (!permissions) return true;
     const missing = missingPermissions(permissions, command.botPermissions);
 
     if (missing.length) {
@@ -306,7 +337,10 @@ class CommandHandler {
     if (ctx.dev) return true;
     if (ctx.slash) return true;
 
-    const userPermissions = ctx.channel.permissionsFor(ctx.author);
+    // Same null caveat as above: resolve the member we already have on the
+    // context rather than the user, and skip the check if it isn't there.
+    const userPermissions = ctx.channel?.permissionsFor(ctx.member ?? ctx.author);
+    if (!userPermissions) return true;
     const user = missingPermissions(userPermissions, command.userPermissions);
 
     if (user.length) {

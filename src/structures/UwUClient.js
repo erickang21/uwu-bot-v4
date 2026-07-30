@@ -3,6 +3,7 @@ const {
   EmbedBuilder,
   GatewayIntentBits,
   Partials,
+  PermissionFlagsBits,
 } = require("discord.js");
 const { COLOR } = require("../utils/constants.js");
 const { MongoClient } = require("mongodb");
@@ -279,12 +280,33 @@ class UwUClient extends Client {
   }
 
   // CHANNEL EXTENSIONS (rework)
+
+  /**
+   * Our permissions in a channel, or null if there are none to compute — the
+   * channel isn't in a guild (permissionsFor() is guild-channel only) or our
+   * own member isn't resolvable. Callers must handle the null.
+   * @param {Channel} channel
+   * @returns {?Readonly<PermissionsBitField>}
+   */
+  getOwnPermissions(channel) {
+    // guild.me was renamed to guild.members.me in discord.js v14, and permission
+    // names are PascalCase now ("ViewChannel", not "VIEW_CHANNEL") — prefer the
+    // PermissionFlagsBits constants so a typo is a crash at require time.
+    const me = channel?.guild?.members?.me;
+    if (!me) return null;
+
+    return channel.permissionsFor(me) ?? null;
+  }
+
   getChannelReadable(channel) {
-    return channel.permissionsFor(channel.guild.me).has("VIEW_CHANNEL")
+    return Boolean(this.getOwnPermissions(channel)?.has(PermissionFlagsBits.ViewChannel));
   }
 
   getChannelPostable(channel) {
-    return this.getChannelReadable(channel) && channel.permissionsFor(channel.guild.me).has("SEND_MESSAGES");
+    return Boolean(this.getOwnPermissions(channel)?.has([
+      PermissionFlagsBits.ViewChannel,
+      PermissionFlagsBits.SendMessages
+    ]));
   }
   
   // GUILDMEMBER EXTENSIONS (rework)

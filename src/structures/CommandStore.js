@@ -57,11 +57,10 @@ class CommandStore extends Store {
       // Skip guild only commands.
       if (!msg.guild && command.guildOnly) return false;
       // Skip commands that the user does not have permissions to run.
-      if (
-        msg.guild &&
-        !msg.channel.permissionsFor(msg.author).has(command.userPermissions)
-      )
-        return false;
+      // permissionsFor() is guild-channel only and is null for a member it
+      // can't resolve, so only filter when it actually gave us something.
+      const permissions = msg.inGuild() ? msg.channel?.permissionsFor(msg.member ?? msg.author) : null;
+      if (permissions && !permissions.has(command.userPermissions)) return false;
       // Skip NSFW commands.
       if (command.nsfw && !msg.channel.nsfw) return false;
       return true;
