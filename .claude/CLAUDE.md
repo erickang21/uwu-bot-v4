@@ -62,10 +62,18 @@ Reaction-gif commands (`hug`, `pat`, `slap`, etc.) primarily hit the `nekos.best
 - HTTP requests use `undici`'s `request()`, **not** `node-fetch` or bare `fetch` — see `NOTES.md` for the historical reasoning and the exact migration pattern (`res.body.json()` instead of `res.json()`).
 
 ### Analytics
-`AnalyticsManager` (`src/structures/AnalyticsManager.js`) records daily/lifetime server-count, user-count, and command-usage stats into a Mongo `analytics` collection. Per-shard counters batch up before flushing (see `CommandHandler.trackCmdStats`, which only writes once total command uses across all shards hits 25).
+`AnalyticsManager` (`src/structures/AnalyticsManager.js`) writes two document families into the Mongo `analytics` collection: daily rows keyed `{ type, date, ...dimensions }` and lifetime rows keyed `{ type: `${type}Total`, ...dimensions }`. Dates are **UTC** (`luxon`), so buckets roll over at midnight UTC.
+
+- Recording is synchronous and in-memory: each shard accumulates into a `MetricBuffer` (`src/structures/MetricBuffer.js`), and the coordinating shard (shard 0, or the single client when unsharded) drains every shard once a minute and writes the merged result in one `bulkWrite`. Draining and clearing happen in one step — do not add a separate reset.
+- To add a metric: add the daily→lifetime mapping to `METRIC_TYPES` in `src/utils/analytics.js` (a `null` lifetime means daily-only), then call `this.track(type, this.dimensions({ ...dims }), { field: n })` from a `record*` method. Give an aggregate and its own breakdown **different types** (see `commandBlocked` vs `commandBlockedByCommand`) or readers will double-count.
+- **Retention**: daily rows carry `expiresAt` and a TTL index keys off that field alone, so lifetime totals are never reaped. `buildOperation()` is the only place that sets `expiresAt`; never set it on a lifetime row.
+- Unique-actor sets (`uniqueUsers`, `activeGuilds`) live in `analytics_unique`, sharded across bucket documents so no document approaches the 16MB BSON limit. Never store a growing id array in a single document.
+- Fleet size (`totalServerCount`, `serverCount`, `totalUserCount`, `memberCountBySize`) is snapshotted hourly from authoritative totals via `snapshotFleet()` rather than only incremented, so a missed event cannot leave a day's count drifting.
+- Errors are attributed to `api` / `validation` / `logic` by `events/commandError.js` — an `ApiError` (`src/utils/errors.js`) means a provider failed, a bare string throw means the user was told they got it wrong, anything else is our bug. API helpers report per-call outcomes through `src/helpers/apiMetrics.js`, which the client registers at startup.
+- `uwu metrics` (dev-only, `src/commands/developer/metrics.js`) reads it back; the website's `/api/stats` layer is documented in `STATS_API.md` in `uwu-bot-website-2`.
 
 ### Sharding-aware code
-Multiple pieces of logic must work whether `client.shard` exists or not, and some operations (e.g. `AnalyticsManager.saveCommandUses`) are explicitly documented to run only once globally, not once per shard — check comments in `events/uwuReady.js` before adding new periodic/global logic. Cross-shard data (guild counts, member lookups) goes through `client.shard.broadcastEval(...)`.
+Multiple pieces of logic must work whether `client.shard` exists or not, and some operations run only once globally rather than once per shard — see `ReadyEvent.isAnalyticsCoordinator` in `events/uwuReady.js` before adding new periodic/global logic. Cross-shard data (guild counts, member lookups) goes through `client.shard.broadcastEval(...)`, or `client.getFleetStats()` which handles both cases.
 
 ## Conventions
 
