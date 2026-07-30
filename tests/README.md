@@ -1,138 +1,162 @@
 # Testing mode
 
-Two scripts live here:
-
 | Script | What it does | Needs Discord? |
 | --- | --- | --- |
-| `discord_harness.js` | Runs real commands against a live dev bot and reports what it sent back | yes |
-| `harness_selftest.js` | Verifies the harness's own logic and the dev-only author gate | no |
+| `offline_harness.js` | Runs every command's `execute()` against a fake context and reports the payload it would have sent | no |
+| `harness_selftest.js` | Verifies the live harness's own logic and the dev-only author gate | no |
+| `discord_harness.js` | Runs commands against a live dev bot in a real channel | yes |
 
-## Why a testing mode was needed
+Start with `offline_harness.js`: it needs nothing, covers every command, and runs
+in seconds. Reach for `discord_harness.js` when the question is whether Discord
+itself accepts and renders the result — see [the live harness](#the-live-harness)
+at the end.
 
-The bot has no unit-testable seam for a command: a command's real output is a
-Discord message, and the only way to produce one is to invoke the command the
-way a user does. A bot account cannot post as a human, and until now
-`CommandHandler#handleMessage()` dropped every bot-authored message, so nothing
-automated could trigger a command or read the result.
+## The offline harness
 
-`CommandHandler#isAuthorAllowed()` now accepts bot authors — including uwu bot
-itself — **when `NODE_ENV=development`**. In production, bot messages are ignored
-exactly as before. Nothing user-facing changes.
+`offline_harness.js` runs a command's real `execute()` against a fake Discord
+context and prints the payload it would have sent. No token, no database, no
+network, no test server.
 
-## Setup
+```sh
+npm test                                        # every command
+node tests/offline_harness.js --sweep           # one command per category
+node tests/offline_harness.js --only=hug --dump # one command, full payload
+node tests/offline_harness.js --help            # all options
+```
 
-1. Invite the dev bot to a test guild. Give it Send Messages, Embed Links, Read
-   Message History and Attach Files in the channel you will test in. Moderate
-   Members and Manage Server let the moderation and customization cases run
-   instead of reporting `BLOCKED`.
-2. Fill in `.env`:
+A full run is 97 commands in about five seconds.
 
-   ```
-   TOKEN_DEV=...        # the dev bot token
-   MONGODB=...          # the bot needs it; the harness does not
-   TEST_CHANNEL=...     # id of the channel to test in
-   ```
+## Why
 
-   Optional: `TEST_TOKEN` (log in with a different token) and `TEST_BOT_ID`
-   (test a bot other than the harness's own user, e.g. when the harness runs on
-   its own token).
+A command's output is a Discord message, so there was no way to check one
+without a bot account, a server and a human reading the result. But the message
+is just an object until it is sent — build a context, call `execute()`, and read
+the object. That is the whole idea.
 
-## Running
+This is deliberately **not** an assertion suite. It answers "what does this
+command produce right now, and did it blow up doing it", which is the input you
+need to judge whether a change broke something. Nothing here encodes what the
+output *should* be, so it never goes stale against intentional changes.
+
+## What you get
+
+```
+CATEGORY  COMMAND  RESULT  MS  SENDS  TEXT  EMBED  IMAGE  FILE  DBW  OUTPUT
+anime     hug      OK      52  1      -     y      y      -     0    embed "Hug!" image=https://cdn.example.invalid/hug.gif
+general   ping     OK      51  2      y     -      -      -     0    "Ping? <a:loading:…>" +1 more
+mod       warn     OK      51  2      y     y      -      -     1    embed "You have received a warning." +1 more
+```
+
+- `SENDS` — how many messages the command would send, counting edits
+- `TEXT` / `EMBED` / `IMAGE` / `FILE` — what the payload contains
+- `DBW` — settings writes it would perform
+- `OUTPUT` — the actual title, text or image url it produced
+
+`--dump` prints the full payload for each send: embed title, description, image
+and thumbnail urls, fields, footer, colour, attachment names and kinds,
+components, ephemeral flag. `--json=path` writes the same thing as a file.
+
+| Result | Meaning |
+| --- | --- |
+| `OK` | Sent at least one message, nothing thrown |
+| `REJECTED` | Threw a string, which `Command.execute` turns into a user-facing refusal. Usually the sample argument's fault, not the command's |
+| `NO_OUTPUT` | Ran without error and sent nothing. The user would see silence |
+| `ERROR` | Threw a real error. The user would see the generic error embed |
+
+Exit code is 1 if anything is `ERROR` or `NO_OUTPUT`.
+
+## How the fake world is built
+
+- The real `UwUClient` is constructed but never logged in, and commands load
+  through the real `CommandStore`, so categories, aliases, declared options and
+  the real argument parser are all in play.
+- `client.db` is swapped for an in-memory stand-in, so the real `Settings` class
+  runs unchanged — cache, `mergeDefault`, upserts — and every write is recorded
+  instead of persisted.
+- Guild, channel, users, member and roles are fakes whose mutating methods
+  (`member.ban`, `channel.bulkDelete`, `roles.add`, webhooks…) record the call
+  instead of performing it. The invoking member holds a role above the target's,
+  because moderation commands compare role positions and a flat hierarchy would
+  make all of them refuse.
+- External APIs are stubbed with deterministic responses matching each helper's
+  real return shape: nekos.best, waifu.pics, nekos.life, otakugifs, waifu.im,
+  purrbot, gelbooru, the local image cache, img-api and top.gg, plus `undici`
+  itself for the four commands that call it directly. `--live` calls the real
+  endpoints instead.
+- Settings are seeded (economy balances, an audit-log entry, level 7, an expired
+  daily cooldown) so read paths render populated output rather than empty
+  states, and are reset between commands so a run does not depend on its order.
+  `--empty` starts from schema defaults instead.
+
+## Inputs
+
+One sample value per declared option, chosen by type: a mention for `user` and
+`member`, a channel mention for `channel`, a role name for `role`, `1` for
+`integer`. Strings use the option's `choices` when it declares them, otherwise a
+value keyed off the option's name and description, so `time` gets `10m`, `reason`
+gets a sentence and an on/off toggle gets `on` rather than falling into the
+command's invalid-usage branch. `--list` shows exactly what will be passed.
+
+Three input modes are worth running, and they find different things:
+
+```sh
+npm test                                # every option filled
+node tests/offline_harness.js --minimal # only required options
+node tests/offline_harness.js --junk    # nonsense for every string option
+```
+
+`--minimal` finds commands that break when an optional argument is absent.
+`--junk` finds commands that answer invalid input with silence.
+
+Also useful: `--unsharded` sets `client.shard` to null, the way `npm run dev`
+does, which surfaces code that assumes a shard manager exists.
+
+## Limitations
+
+- Text-mode invocation only. Slash-specific behaviour (`interactionCreate`,
+  deferrals, ephemeral replies) is not exercised, though `CommandContext` means
+  most command logic is shared.
+- It proves a payload was built, not that Discord accepts it. Embed and
+  attachment builders do validate as they go, so malformed embeds still throw
+  here, but permissions, rate limits and rendering are out of scope.
+- Developer-only commands are always skipped: they gate on a developer id and
+  include `eval`, `exec` and `reboot`. NSFW commands are included by default
+  since nothing is actually sent; `--no-nsfw` skips them.
+- Stubbed responses are one fixed shape per helper. A command that reads a field
+  the stub does not provide shows up as an error, which is a harness gap rather
+  than a bug in the command — the stack trace makes the difference obvious.
+
+## The live harness
+
+`discord_harness.js` covers the one thing the offline harness cannot: whether
+Discord accepts the payload, renders it, and lets the bot post it at all. It logs
+in with `TOKEN_DEV`, posts two commands per category into `TEST_CHANNEL`, and
+reports what came back.
 
 ```sh
 npm run test:harness                              # self test, no Discord needed
 npm run test:discord                              # spawn the dev bot, run every case
 node tests/discord_harness.js --attach            # test a bot already running
-node tests/discord_harness.js --category=anime    # one category
-node tests/discord_harness.js --only=hug,ping     # specific commands
-node tests/discord_harness.js --json=report.json  # machine readable report
-node tests/discord_harness.js --list              # print the plan and exit
 node tests/discord_harness.js --help              # all options
 ```
 
-By default the harness spawns `src/index.js` itself with
-`NODE_ENV=development`, waits for it to log in, runs the cases and shuts it down
-again. Use `--attach` when you already have `npm run dev` going.
+Setup: invite the dev bot to a test guild with Send Messages, Embed Links, Read
+Message History and Attach Files (plus Moderate Members and Manage Server, or the
+moderation and customization cases report `BLOCKED`), then set `TOKEN_DEV`,
+`MONGODB` and `TEST_CHANNEL` in `.env`. `TEST_TOKEN` and `TEST_BOT_ID` are
+optional overrides.
 
-## What it does
+It reports `PASS`, `FAIL`, `TIMEOUT`, `DEGRADED` (the command replied but an
+external dependency was down) or `BLOCKED` (refused for missing permissions), and
+exits non-zero on the first two. `--strict` also fails on the soft outcomes.
 
-1. Logs in with `TOKEN_DEV` as a second gateway session, alongside the bot under
-   test.
-2. Sends a bare mention as a preflight. The reply proves the bot can see and
-   answer in `TEST_CHANNEL`, and it names the prefix that guild actually uses,
-   so a custom prefix cannot silently break the run. Override with
-   `--prefix="uwu "`.
-3. Posts each invocation, then collects every message the bot sends back, waits
-   out a settle window (`--settle`, default 2.5s) so edits and follow-ups are
-   caught, and re-fetches each message's final state.
-4. Records what it can observe about each response:
+This is why `CommandHandler#isAuthorAllowed()` accepts bot authors when
+`NODE_ENV=development`: a bot cannot post as a human, so the harness could not
+otherwise trigger a command. In production, bot messages are ignored exactly as
+before.
 
-   - whether a message was sent at all, and how long it took
-   - whether it has text content, and whether it is a reply to the invocation
-   - embeds: how many, title, description, image, thumbnail, field count, footer
-   - attachments: how many, name, content type, whether they are images
-   - whether an image is present anywhere (embed image, thumbnail or attachment)
-   - whether the message was edited after being sent
-   - component count
-
-5. Compares that against each case's expectations and prints a table:
-
-   ```
-   CATEGORY  COMMAND    OUTCOME   MS   MSG  TEXT  EMBED  IMAGE  FILE  EDIT  REPLY
-   anime     hug        PASS      412  y    -     y      y      -     -     y
-   general   ping       PASS      289  y    y     -      -      -     y     y
-   images    beautiful  DEGRADED  190  y    y     N      N      N     -     y
-   level     profile    TIMEOUT   -    N    -     N      -      -     -     -
-   ```
-
-   `y` observed, `N` expected but missing, `-` neither expected nor seen.
-
-## Outcomes
-
-| Outcome | Meaning | Fails the run |
-| --- | --- | --- |
-| `PASS` | Every expected property was observed | no |
-| `FAIL` | A property is missing, the command threw, or the command no longer exists (the bot answered with a "did you mean?" suggestion) | yes |
-| `TIMEOUT` | The bot never responded | yes |
-| `DEGRADED` | The command replied correctly, but an external dependency was unavailable (image API down, `error.api`, cooldown) | only with `--strict` |
-| `BLOCKED` | The invocation was refused before running, usually missing permissions in the test guild | only with `--strict` |
-
-Exit code is 0 when nothing failed, 1 otherwise, so this drops into CI or a
-pre-deploy check as-is.
-
-## Cases
-
-Two per category, excluding `developer` and `nsfw`. `--list` prints the current
-plan. `analytics` is skipped because both of its commands are `devOnly`; the
-harness re-derives this from `src/commands` on every run and prints a
-`Coverage gap:` warning if a category drops below two cases, so adding a
-category or making a dev-only command public shows up immediately.
-
-Every invocation is read-only or self-targeted by design:
-
-- `mod` uses `audit` against the bot's own id (read-only) and `mute` with no
-  member, which exercises the refusal path and mutes nobody. Nothing bans,
-  kicks, purges or times out a real member.
-- `customization` invokes `prefix` and `modlog` with no arguments, which reports
-  the current setting instead of changing it.
-- `economy` reads a balance and asks for an out-of-range leaderboard page, so
-  the reply is deterministic whether or not the test guild has economy data.
-  Nothing spends or grants currency.
-
-A run performs no database writes. `Settings.sync()` only reads, and analytics,
-XP and command-stat tracking are skipped for bot authors, so harness traffic
-never lands in the `analytics`, `users` or `commands` collections.
-
-## Limitations
-
-- Text commands only. A bot cannot invoke a slash command, so slash-specific
-  paths (`interactionCreate`, deferrals, ephemeral replies) are not covered.
-  Most command logic is shared between the two modes via `CommandContext`.
-- `images` cases need the `img-api` service on `localhost:3030`. Without it they
-  report `DEGRADED` rather than failing.
-- Commands that require a shard manager are not covered. `general/stats` is left
-  out for this reason: it calls `client.shard.broadcastEval` directly, and
-  `npm run dev` runs unsharded.
-- The harness asserts on observable message properties, not on exact wording. It
-  catches "the embed lost its image" and "the command stopped replying", not
-  "this sentence was reworded".
+Cases are read-only or self-targeted, and a run performs no database writes:
+`Settings.sync()` only reads, and analytics, XP and command-stat tracking are
+skipped for bot authors. Text commands only, `images` cases need `img-api` on
+`localhost:3030`, and `general/stats` is left out because it calls
+`client.shard.broadcastEval` directly while `npm run dev` runs unsharded.

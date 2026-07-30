@@ -10,6 +10,7 @@
     "pretty": "prettier --write .",
     "lint": "eslint .",
     "deploy": "node src/deploy-commands.js",
+    "test": "node tests/offline_harness.js",
     "test:harness": "node tests/harness_selftest.js",
     "test:discord": "node tests/discord_harness.js"
   },
