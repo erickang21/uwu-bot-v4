@@ -29,6 +29,9 @@ const {
   inspectMessage,
   observedProperties,
   parseArgs,
+  renderDetails,
+  renderSummary,
+  renderTable,
   selectCases
 } = require("./discord_harness.js");
 
@@ -349,6 +352,109 @@ test("filters select by command, alias target and category", () => {
     selectCases({ only: null, categories: ["mod"] }).map((entry) => entry.command),
     ["audit", "mute"]
   );
+});
+
+// --- reporting ---------------------------------------------------------------
+
+/** Runs a renderer with console.log captured, and returns what it printed. */
+function capture(render) {
+  const original = console.log;
+  const lines = [];
+  console.log = (...args) => lines.push(args.join(" "));
+  try {
+    const value = render();
+    return { lines, output: lines.join("\n"), value };
+  } finally {
+    console.log = original;
+  }
+}
+
+const fakeResult = (overrides) => ({
+  category: "anime",
+  command: "hug",
+  invocation: "uwu hug",
+  note: null,
+  expected: { message: true, embed: true, image: true },
+  observed: observedProperties([
+    inspectMessage(fakeMessage({ embeds: [{ image: { url: "https://x/y.gif" } }] }), PROBE)
+  ]),
+  missing: [],
+  outcome: OUTCOME.PASS,
+  reason: null,
+  responseCount: 1,
+  latencyMs: 412,
+  elapsedMs: 2900,
+  responses: [],
+  ...overrides
+});
+
+test("the table marks observed, missing and unexpected properties", () => {
+  const results = [
+    fakeResult({}),
+    fakeResult({
+      command: "beautiful",
+      category: "images",
+      outcome: OUTCOME.FAIL,
+      missing: ["image"],
+      reason: "missing expected property: image",
+      observed: observedProperties([inspectMessage(fakeMessage({ embeds: [{ title: "x" }] }), PROBE)])
+    })
+  ];
+
+  const { output } = capture(() => renderTable(results));
+  const rows = output.split("\n").filter((line) => /^(anime|images)\s/.test(line));
+
+  assert.equal(rows.length, 2);
+  // hug: message, embed and image all observed and expected.
+  assert.match(rows[0], /^anime\s+hug\s+PASS\s+412\s+y\s+-\s+y\s+y\s+-\s+-\s+y$/);
+  // beautiful: the expected image is missing, so it is flagged with N. The
+  // attachment column stays "-" because this row does not expect one.
+  assert.match(rows[1], /^images\s+beautiful\s+FAIL\s+412\s+y\s+-\s+y\s+N\s+-\s+-\s+y$/);
+  assert.match(output, /CATEGORY\s+COMMAND\s+OUTCOME\s+MS/);
+});
+
+test("a missing latency renders as a dash rather than null", () => {
+  const { output } = capture(() =>
+    renderTable([fakeResult({ outcome: OUTCOME.TIMEOUT, latencyMs: null, observed: observedProperties([]) })])
+  );
+
+  assert.doesNotMatch(output, /null/);
+  assert.match(output, /TIMEOUT\s+-/);
+});
+
+test("details list every non-passing case with its reason", () => {
+  const { output } = capture(() =>
+    renderDetails([
+      fakeResult({}),
+      fakeResult({ command: "mute", outcome: OUTCOME.BLOCKED, reason: "invocation was refused: ...", note: "n/a" })
+    ])
+  );
+
+  assert.match(output, /BLOCKED\s+anime\/mute/);
+  assert.match(output, /invocation was refused/);
+  assert.match(output, /note: n\/a/);
+  assert.doesNotMatch(output, /PASS/);
+});
+
+test("the summary counts outcomes and only fails on hard failures", () => {
+  const results = [
+    fakeResult({}),
+    fakeResult({ outcome: OUTCOME.DEGRADED }),
+    fakeResult({ outcome: OUTCOME.BLOCKED })
+  ];
+
+  const lenient = capture(() => renderSummary(results, { strict: false }));
+  assert.equal(lenient.value, 0);
+  assert.match(lenient.output, /3 case\(s\)/);
+  assert.match(lenient.output, /1 pass/);
+  assert.match(lenient.output, /1 degraded/);
+  assert.match(lenient.output, /1 blocked/);
+
+  // --strict promotes degraded and blocked to failures.
+  assert.equal(capture(() => renderSummary(results, { strict: true })).value, 2);
+
+  const failed = [fakeResult({ outcome: OUTCOME.FAIL }), fakeResult({ outcome: OUTCOME.TIMEOUT })];
+  assert.equal(capture(() => renderSummary(failed, { strict: false })).value, 2);
 });
 
 // --- the gate the harness depends on ----------------------------------------

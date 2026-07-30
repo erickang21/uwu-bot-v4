@@ -31,7 +31,9 @@ class CommandHandler {
    * the case for `npm run dev` (src/index.js instantiates UwUClient directly,
    * so client.shard is null). Production always runs sharded and keeps going
    * through broadcastEval untouched.
-   * @param {Function} fn - Same signature as broadcastEval's callback.
+   * @param {Function} fn - Same signature as broadcastEval's callback. Keep it
+   * self-contained: broadcastEval serialises it, so a callback that closes over
+   * outer scope works unsharded but breaks in production.
    * @param {Object} [options] - broadcastEval options, e.g. { context }.
    * @returns {Promise<Array>} One entry per shard, or a single entry unsharded.
    */

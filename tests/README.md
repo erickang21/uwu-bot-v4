@@ -78,9 +78,11 @@ again. Use `--attach` when you already have `npm run dev` going.
 5. Compares that against each case's expectations and prints a table:
 
    ```
-   CATEGORY  COMMAND  OUTCOME  MS   MESSA  CONTE  EMBED  IMAGE  ATTAC  EDITE  REPLY
-   anime     hug      PASS     412  y      -      y      y      -      -      y
-   general   ping     PASS     289  y      y      -      -      -      y      y
+   CATEGORY  COMMAND    OUTCOME   MS   MSG  TEXT  EMBED  IMAGE  FILE  EDIT  REPLY
+   anime     hug        PASS      412  y    -     y      y      -     -     y
+   general   ping       PASS      289  y    y     -      -      -     y     y
+   images    beautiful  DEGRADED  190  y    y     N      N      N     -     y
+   level     profile    TIMEOUT   -    N    -     N      -      -     -     -
    ```
 
    `y` observed, `N` expected but missing, `-` neither expected nor seen.

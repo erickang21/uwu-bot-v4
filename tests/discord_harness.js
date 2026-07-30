@@ -496,6 +496,17 @@ function inspectMessage(message, probe) {
 /** Every property the harness knows how to observe, in report column order. */
 const PROPERTIES = ["message", "content", "embed", "image", "attachment", "edited", "reply"];
 
+/** Column headings for those properties. */
+const PROPERTY_HEADERS = {
+  message: "MSG",
+  content: "TEXT",
+  embed: "EMBED",
+  image: "IMAGE",
+  attachment: "FILE",
+  edited: "EDIT",
+  reply: "REPLY"
+};
+
 function observedProperties(responses) {
   return {
     message: responses.length > 0,
@@ -867,7 +878,7 @@ function renderTable(results) {
     ...PROPERTIES.map((property) => cell(result.expected[property], result.observed[property]))
   ]);
 
-  const header = ["CATEGORY", "COMMAND", "OUTCOME", "MS", ...PROPERTIES.map((p) => p.slice(0, 5).toUpperCase())];
+  const header = ["CATEGORY", "COMMAND", "OUTCOME", "MS", ...PROPERTIES.map((p) => PROPERTY_HEADERS[p])];
   const widths = header.map((title, column) =>
     Math.max(title.length, ...rows.map((row) => String(row[column]).length))
   );
@@ -1094,5 +1105,8 @@ module.exports = {
   inspectMessage,
   observedProperties,
   parseArgs,
+  renderDetails,
+  renderSummary,
+  renderTable,
   selectCases
 };
