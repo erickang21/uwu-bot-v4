@@ -14,6 +14,7 @@ const schema = require("../utils/schema.js");
 const topgg = require("@top-gg/sdk");
 const { request } = require('undici');
 const imgapi = require("img-api");
+const { patchImgapiClient } = require("../helpers/imgapi.js");
 const translate = require("../helpers/translate.js");
 const AnalyticsManager = require("./AnalyticsManager.js");
 const imageService = require("../helpers/images.js");
@@ -75,7 +76,7 @@ class UwUClient extends Client {
     this.lifetimeCommandStats = {};
     this.totalCommandUses = 0;
     this.topgg = new topgg.Api(process.env.TOPGG_API);
-    this.imgapi = new imgapi.Client({ port: 3030, host: "localhost" });
+    this.imgapi = patchImgapiClient(new imgapi.Client({ port: 3030, host: "localhost" }));
     this.once("ready", () => {
       this.emit("uwuReady");
     });
