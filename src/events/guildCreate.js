@@ -34,10 +34,21 @@ class GuildCreate extends Event {
       }
     }
 
-    await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild, emojis, iconURL: guild.iconURL(), ownerUsername: owner?.tag } });
+    // broadcastEval/setActivity throw ShardingInProcess while the fleet is still
+    // spawning; swallow it so a join during startup can't crash the shard.
+    try {
+      await this.client.shard.broadcastEval(sendLoggedMessage, { context: { guild, emojis, iconURL: guild.iconURL(), ownerUsername: owner?.tag } });
+    } catch (error) {
+      log.error(`[GuildCreate] Error sending join log message: ${error}`);
+    }
 
     log.info(`[GuildCreate] uwu bot JOINED a server: ${guild.name}`);
-    await this.client.setActivity();
+
+    try {
+      await this.client.setActivity();
+    } catch (error) {
+      log.error(`[GuildCreate] Error setting activity: ${error}`);
+    }
 
     // Save to analytics.
     try {
