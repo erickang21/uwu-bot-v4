@@ -615,20 +615,36 @@ class AnalyticsManager {
   }
 
   /**
-   * Percentile estimated from latency bucket counters. Returns the upper edge of
-   * the bucket the percentile falls into.
+   * Percentile estimated from the latency bucket counters, interpolating within
+   * the bucket the percentile lands in.
+   *
+   * Returning the bucket's upper edge instead overstates badly at the
+   * boundaries: a command whose runs all sit just above 1000ms lands in the
+   * 1000-3000 bucket and reports a p95 of 3000ms — higher than its own slowest
+   * run, which is not a value a percentile can take.
    */
   approximatePercentile(latency = {}, percentile = 0.95) {
     const total = latency.count ?? 0;
     if (!total) return 0;
 
+    const maxMs = latency.maxMs ?? 0;
     const target = total * percentile;
     let cumulative = 0;
+    let lowerEdge = 0;
+
     for (const bucket of LATENCY_BUCKETS) {
-      cumulative += latency[`le${bucket}`] ?? 0;
-      if (cumulative >= target) return bucket;
+      const inBucket = latency[`le${bucket}`] ?? 0;
+      if (cumulative + inBucket >= target) {
+        const upperEdge = maxMs > 0 ? Math.min(bucket, maxMs) : bucket;
+        const fraction = inBucket > 0 ? (target - cumulative) / inBucket : 1;
+        const estimate = lowerEdge + Math.max(upperEdge - lowerEdge, 0) * fraction;
+        return maxMs > 0 ? Math.min(estimate, maxMs) : estimate;
+      }
+      cumulative += inBucket;
+      lowerEdge = bucket;
     }
-    return latency.maxMs ?? 0;
+
+    return maxMs;
   }
 
   /**
