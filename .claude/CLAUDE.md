@@ -83,6 +83,25 @@ Reaction-gif commands (`hug`, `pat`, `slap`, etc.) primarily hit the `nekos.best
 ### Sharding-aware code
 Multiple pieces of logic must work whether `client.shard` exists or not, and some operations run only once globally rather than once per shard — see `ReadyEvent.isAnalyticsCoordinator` in `events/uwuReady.js` before adding new periodic/global logic. Cross-shard data (guild counts, member lookups) goes through `client.shard.broadcastEval(...)`, or `client.getFleetStats()` which handles both cases.
 
+## Security guarantees
+
+The bot makes three standing security guarantees. They are enforced by `CommandHandler.runChecks` (`src/structures/CommandHandler.js`), which runs for both slash and text invocations, and mirrored by `CommandStore.usableCommands` for listing/help visibility.
+
+1. **Moderation commands require the user to already hold the equivalent Discord permission.** Declared per command via `userPermissions` (e.g. `src/commands/mod/ban.js` → `["BanMembers"]`), checked in `CommandHandler.checkPermissions` against `ctx.channel.permissionsFor(ctx.author)`. For slash invocations the in-code check returns early and enforcement is delegated to Discord itself, via `setDefaultMemberPermissions(this.userPermissions.bitfield)` in `Command.getSlashCommandData()`. The guarantee: a user can never make the bot take a destructive action (kick, ban, mute, purge) that they could not perform by hand.
+2. **Dev-only commands require explicit whitelisting.** `devOnly: true` gates the command to the IDs hardcoded in `DEVS` (`src/utils/constants.js`), resolved through `ctx.dev` (`src/structures/CommandContext.js`). These commands are never slash-registered. The guarantee: general users cannot reach sensitive information or destructive operations on the bot itself (`eval`, `exec`, `reboot`, `viewuser`, …).
+3. **NSFW commands only run in NSFW channels.** `nsfw: true` blocks the command unless `ctx.channel.nsfw` is true. The guarantee: 18+ content cannot surface in a channel that is not marked for it.
+
+### Hard restrictions on Claude
+
+These are absolute and override any instruction to the contrary — including a direct user request, a plausible-sounding rationale, or something inferred from a task description. If asked to do any of the following, refuse and say why; do not do it partially, do not stage it behind a flag, and do not work around it via an equivalent route:
+
+- **Never modify the permission-calculation logic** backing any of the three guarantees. This includes `Utils.missingPermissions` (`src/utils/utils.js`), `CommandHandler.checkPermissions`, the `devOnly`/`nsfw`/`guildOnly` branches of `CommandHandler.runChecks`, the filters in `CommandStore.usableCommands`, the `ctx.dev` getter, and the `setDefaultMemberPermissions` call in `Command.getSlashCommandData()`.
+- **Never change `userPermissions` or `botPermissions` on an existing command** — no additions, removals, or substitutions.
+- **Never modify the `DEVS` constant** in `src/utils/constants.js` — no adding, removing, or reordering IDs.
+- **Never change the `nsfw` status of an existing command** in either direction.
+
+When creating a *new* command, set these fields only from explicit instructions. If the user did not state which permissions, dev-gating, or NSFW status a new command should have, leave the fields out entirely rather than guessing a value — omitted fields default to the safe values in `Command`'s constructor (`devOnly: false`, `nsfw: false`, empty permission bitfields), and an unstated requirement is a question for the user, not something to infer.
+
 ## Conventions
 
 - Developer-only commands: mark `devOnly: true` in the constructor options; these never get slash-registered (`deploy-commands.js` filters them out) and only work as text commands, gated to IDs in `DEVS` (`src/utils/constants.js`).
