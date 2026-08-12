@@ -1,6 +1,11 @@
 const Command = require("../../structures/Command.js");
 const emojis = require("../../structures/Emojis");
 
+const DAYS_REGEX = /^(\d+)d$/i;
+const SECONDS_PER_DAY = 24 * 60 * 60;
+const DEFAULT_DELETE_DAYS = 7;
+const MAX_DELETE_DAYS = 7;
+
 class Ban extends Command {
   constructor(...args) {
     super(...args, {
@@ -8,13 +13,18 @@ class Ban extends Command {
       userPermissions: ["BanMembers"],
       botPermissions: ["BanMembers"],
       guildOnly: true,
-      usage: "ban <@​member> [reason]",
+      usage: "ban <@​member> [days, e.g. 3d] [reason]",
       options: [
         {
           name: "member",
           description: "the user you want to ban",
           type: "user",
           required: true
+        },
+        {
+            name: "days",
+            description: "(optional) days of messages to delete, e.g. 3d (0-7, defaults to 7d)",
+            type: "string"
         },
         {
             name: "reason",
@@ -33,12 +43,32 @@ class Ban extends Command {
     if(member.roles.highest.position >= ctx.member.roles.highest.position) return ctx.reply(`You can't ban this user. ${emojis.error}`);
     if(!member.bannable) return ctx.reply(`I can't ban this user! ${emojis.error}`);
     
-    const data = { deleteMessageSeconds: 0 };
+    let days = options.getString("days");
+    let reason = options.getString("reason");
+
+    // Text args are positional, so anything that isn't a `3d`-style token is
+    // really the start of the reason.
+    if (ctx.text && days && !DAYS_REGEX.test(days)) {
+      reason = [days, reason].filter((part) => part?.length > 0).join(" ");
+      days = null;
+    }
+
+    let deleteDays = DEFAULT_DELETE_DAYS;
+
+    if (days) {
+      const match = DAYS_REGEX.exec(days);
+      if (!match) return ctx.reply(`Baka! Days must look like \`3d\`. ${emojis.error}`);
+      deleteDays = parseInt(match[1], 10);
+      // Discord only lets us delete up to 7 days of messages.
+      if (deleteDays > MAX_DELETE_DAYS) return ctx.reply(`I can only delete up to ${MAX_DELETE_DAYS} days of messages. ${emojis.error}`);
+    }
+
+    const data = { deleteMessageSeconds: deleteDays * SECONDS_PER_DAY };
 
     let banReason =  "";
 
-    if (options.getString("reason")?.length > 0) {
-      banReason += options.getString("reason");
+    if (reason?.length > 0) {
+      banReason += reason;
     } else {
       banReason += "No reason provided."
     }
@@ -58,7 +88,7 @@ class Ban extends Command {
     const auditLogEntry = {
       action: "ban",
       timestamp: msg.createdTimestamp,
-      reason: options.getString("reason"),
+      reason,
       moderator: ctx.author.id,
     }
     updatedAuditLog[member.id] = [...updatedAuditLog[member.id], auditLogEntry];
