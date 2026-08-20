@@ -1,3 +1,5 @@
+> **⚠️ This repository is no longer used.** Development has moved to the [`uwu-bot` monorepo](https://github.com/erickang21/uwu-bot) — this package now lives in its [`bot/`](https://github.com/erickang21/uwu-bot/tree/main/bot) folder. This repo is kept for history only; please open issues and PRs there.
+
 # uwu bot
 
 A fan-favorite anime Discord bot! Send cute GIFs to friends, generate memes, and customize your own profile!
